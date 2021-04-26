@@ -6,7 +6,8 @@ local options = {
       fterm = {
         height = 0.7,
         width = 0.7
-      }
+      },
+      inspath = "~/.local/share/nvim/site/pack/packer/start/code_runner.nvim/python/"
 }
 
 local M = {}

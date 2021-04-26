@@ -26,22 +26,41 @@ use {
 use 'CRAG666/code_runner.nvim'
 ```
 
--   With [vim-plug](https://github.com/junegunn/vim-plug)
-
-#### Use FTerm
-```vim
-Plug 'numtostr/FTerm.nvim'
-Plug 'CRAG666/code_runner.nvim'
-```
-
-#### Use native Terminal
-```vim
-Plug 'CRAG666/code_runner.nvim'
-```
-
 ### Functions
 
 -   `:RunCode` - Run current file in native terminal.
--   `:FRunCode` - Run current file in FTerm.
+-   `:FRunCode` - Run current file in FTerm(if exist).
+
 
 ### Configuration
+
+-   `term`: configurations for the integrated terminal
+
+    Fields:
+  
+  -   `position` - integrated terminal position(for option :h windows) default: `belowright`
+  -   `size` - size of the terminal window (default: `8`)
+  
+-   `fterm`: Object containing the [FTerm](https://github.com/numToStr/FTerm.nvim) window dimensions.
+
+    Fields: (Values should be between `0` and `1`)
+  -   `height` - Height of the terminal window (default: `0.8`)
+  -   `width` - Width of the terminal window (default: `0.8`)
+
+
+### Setup
+
+```lua
+
+require('code_runner').setup {
+  term = {
+    position = "vert",
+    size = 8
+  },
+  fterm = {
+    height = 0.7,
+    width = 0.7
+  }
+}
+
+```

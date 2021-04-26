@@ -2,7 +2,7 @@ local o = require("code_runner.options")
 
 local function get_command()
   filepath = vim.fn.expand("%")
-  command ="python ~/.local/share/nvim/site/pack/packer/start/code_runner.nvim/python/code_runner.py "
+  command = "python " .. o.get().inspath .. "code_runner.py "
   return command .. filepath .. " && read -n 1"
 end
 
