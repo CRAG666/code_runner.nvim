@@ -6,14 +6,26 @@ Usage:
 
 import sys
 from pathlib import Path
-from json import loads
+from json import dump, loads
 from subprocess import check_call, CalledProcessError
 
 
-config_path = Path(__file__).parent.absolute() / 'code_runner.json'
-with open(config_path, 'r') as myfile:
-    config=myfile.read()
-commands = loads(config)
+def load_filetypes():
+    config_path = Path(__file__).parent.absolute() / 'code_runner.json'
+    if not config_path.exists():
+        supported_filetypes = {
+            "java": "cd {dir} && javac {fileName} && java {fileNameWithoutExt}",
+            "c": "cd {dir} && gcc {fileName} -o {fileNameWithoutExt} && {dir}{fileNameWithoutExt}",
+            "cpp": "cd {dir} && g++ {fileName} -o {fileNameWithoutExt} && {dir}{fileNameWithoutExt}",
+            "py": "python -u {file}",
+            "ts": "deno run {file}",
+            "rs": "cd {dir} && rustc {fileName} && {dir}{fileNameWithoutExt}"
+        }
+        with open(config_path, 'w') as json_file:
+            dump(supported_filetypes, json_file)
+    with open(config_path, 'r') as myfile:
+        config = myfile.read()
+    return loads(config)
 
 
 def run_code(file):
@@ -22,6 +34,7 @@ def run_code(file):
     fileNameWithoutExt = filePath.stem
     file_extension = fileName.replace(fileNameWithoutExt,'')
     dir = filePath.parent.absolute()
+    commands = load_filetypes()
     command_for_file = commands.get(
         file_extension[1:],
         "echo '{fileName} did not run. {file_extension} extension is not supported, if you want to support the extension modify code_runner.json'")
