@@ -38,13 +38,12 @@ use 'CRAG666/code_runner.nvim'
 -   `term`: configurations for the integrated terminal
 
     Fields:
-  
-  - `position` - integrated terminal position(for option :h windows) default: `belowright`
-  
-  - `size` - size of the terminal window (default: `8`)
-  
 
-  
+  - `position` - integrated terminal position(for option :h windows) default: `belowright`
+
+  - `size` - size of the terminal window (default: `8`)
+
+
 -   `fterm`: Object containing the [FTerm](https://github.com/numToStr/FTerm.nvim) window dimensions.
 
     Fields: (Values should be between `0` and `1`)
@@ -98,7 +97,7 @@ the available variables are the following:
   * file  -- file path to currend file opened
   * fileName  -- file name to curren file opened
   * fileNameWithoutExt  -- file without extension file opened
-  * dir  currend path to file opened
+  * dir  -- currend path to file opened
 
 ##### Example
 
