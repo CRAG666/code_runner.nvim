@@ -192,5 +192,6 @@ Thumbs.db
 # profiling data
 .prof
 
+code_runner.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,lua
