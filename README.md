@@ -1,6 +1,6 @@
 <h1 align='center'>Code_Runner</h1>
 
-<h4 align='center'>🔥 Code Runner like vscode written in lua and python 🔥</h4>
+<h4 align='center'>🔥 Code Runner for Neovim written in lua and python 🔥</h4>
 
 ![Code_Runner](https://i.ibb.co/XX43DDs/2021-04-26-00-34.png "Code Runner with python")
 
