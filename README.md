@@ -25,6 +25,13 @@ use {
 ```lua
 use 'CRAG666/code_runner.nvim'
 ```
+### Quick start
+
+Add the following line to your init.vim
+
+```vimscript
+lua require('code_runner').setup({})
+```
 
 ### Functions
 
@@ -67,7 +74,6 @@ require('code_runner').setup {
 }
 
 ```
-
 
 ### Add support for more file types
 Run :SRunCode, The configuration file is called code_runner.json.
