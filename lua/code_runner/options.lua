@@ -7,7 +7,7 @@ local options = {
         height = 0.7,
         width = 0.7
       },
-      inspath = "~/.local/share/nvim/site/pack/packer/start/code_runner.nvim/python/"
+      map = "<leader>r"
 }
 
 local M = {}
