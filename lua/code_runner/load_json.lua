@@ -1,5 +1,5 @@
 -- load the JSON library.
-local Json = require("dkjson")
+local Json = require("code_runner.dkjson")
 loadTable = function(filename)
     local path = system.pathForFile( filename, system.DocumentsDirectory)
     local contents = ""
