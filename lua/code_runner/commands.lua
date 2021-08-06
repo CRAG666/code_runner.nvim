@@ -3,6 +3,10 @@ local o = require("code_runner.options")
 local loadTable = require("code_runner.load_json")
 local fileCommands = loadTable()
 
+if not fileCommands then
+	return vim.inspect
+end
+
 -- Create prefix for run commands
 local prefix = string.format("%s %dsplit term://", o.get().term.position, o.get().term.size)
 local suffix = "<CR>"
