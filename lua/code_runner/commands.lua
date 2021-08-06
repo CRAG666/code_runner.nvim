@@ -12,9 +12,17 @@ local function vimcmd(lang, config)
 	vim.cmd ("autocmd FileType " .. lang .. " nnoremap <buffer> " .. o.get().map .. " :" .. config .. "<CR>")
 end
 
+local function subvarcomm(command)
+	local vars_json = {["$file"] = "%", ["$fileName"] = "%:t", ["$fileNameWithoutExt"] = "%:r", ["$dir"] = "%:p:h"}
+	for var, var_vim in pairs(vars_json) do
+		command = command:gsub(var, var_vim)
+	end
+end
+
 function run()
 	for lang, command in pairs(fileCommands) do
-		shellcmd(lang, command)
+		command_vim = subvarcomm(command)
+		shellcmd(lang, command_vim)
 	end
 	-- vimcmd("markdown", defaults.commands.markdown)
 	vimcmd("vim", "source %")
