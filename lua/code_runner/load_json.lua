@@ -11,7 +11,6 @@ loadTable = function()
         -- read all contents of file into a string
         local contents = file:read( "*a" )
         local myTable, pos, err = Json.decode( contents )
-        print(vim.inspect(myTable))
         io.close( file )
         return myTable
     end
