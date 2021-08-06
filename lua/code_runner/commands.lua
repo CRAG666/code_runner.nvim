@@ -1,5 +1,5 @@
 local o = require("code_runner.options")
-local json = require("code_runner.commands")
+local json = require("code_runner.luad_json")
 local fileCommands = json.decode('code_runner.json')
 local prefix = string.format("%s %dsplit term://", o.get().term.position, o.get().term.size)
 local suffix = "<CR>"
