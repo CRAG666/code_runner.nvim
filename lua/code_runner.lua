@@ -6,7 +6,7 @@ M.setup = function(user_options)
   vim.api.nvim_exec([[
   command! SRunCode lua require('code_runner').open_filetype_suported()
   ]], false)
-  vim.cmd 'lua require('code_runner').run_code()'
+  vim.cmd [[lua require('code_runner').run_code()]]
 end
 
 M.frun_code = function()
