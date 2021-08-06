@@ -7,7 +7,8 @@ local options = {
         height = 0.7,
         width = 0.7
       },
-      map = "<leader>r"
+      map = "<leader>r",
+      json_path = '~/.local/share/nvim/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json'
 }
 
 local M = {}

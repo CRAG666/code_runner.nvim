@@ -1,9 +1,11 @@
 -- load the JSON library.
+local o = require("code_runner.options")
 local Json = require("code_runner.dkjson")
-loadTable = function(filename)
+
+loadTable = function()
     local contents = ""
     local myTable = {}
-    local file = io.open( filename, "r" )
+    local file = io.open( o.get().json_path, "r" )
 
     if file then
         -- read all contents of file into a string
