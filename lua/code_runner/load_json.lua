@@ -1,6 +1,5 @@
 -- load the JSON library.
-local Json = require("json")
-
+local Json = require("dkjson")
 loadTable = function(filename)
     local path = system.pathForFile( filename, system.DocumentsDirectory)
     local contents = ""
@@ -10,7 +9,7 @@ loadTable = function(filename)
     if file then
         -- read all contents of file into a string
         local contents = file:read( "*a" )
-        myTable = Json.decode(contents);
+        local myTable, pos, err = Json.decode('code_runner.json')
         io.close( file )
         return myTable
     end
