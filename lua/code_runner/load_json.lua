@@ -10,7 +10,7 @@ loadTable = function()
     if file then
         -- read all contents of file into a string
         local contents = file:read( "*a" )
-        local myTable, pos, err = Json.decode('code_runner.json')
+        local myTable, pos, err = Json.decode( contents )
         io.close( file )
         return myTable
     end
