@@ -2,7 +2,7 @@
 
 <h4 align='center'>🔥 Code Runner for Neovim written in pure lua 🔥</h4>
 
-![Code_Runner](https://i.ibb.co/XX43DDs/2021-04-26-00-34.png "Code Runner with python")
+![Code_Runner](https://i.ibb.co/gFRhLgr/screen-1628272271.png "Code Runner with python")
 
 ### Requirements
 
@@ -35,9 +35,9 @@ lua require('code_runner').setup({})
 
     Fields:
 
-  - `position` - integrated terminal position(for option :h windows) default: `belowright`
+      - `position` - integrated terminal position(for option :h windows) default: `belowright`
 
-  - `size` - size of the terminal window (default: `8`)
+      - `size` - size of the terminal window (default: `8`)
 
 -   `json_path`: absolute path to json file config (default: packer module path)
 
@@ -50,7 +50,7 @@ require('code_runner').setup {
   term = {
     position = "vert",
     size = 8
-  objective-c,
+  },
   json_path = "/home/myuser/.config/nvim/code_runner.json"
 }
 
@@ -59,14 +59,14 @@ require('code_runner').setup {
 ### Add support for more file types
 Run :SRunCode, The configuration file is called code_runner.json.
 
-The file should look like this:
+The file should look like this(the default file does not exist create it with the SRunCode command):
 
 ```` json
 
 {
     "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
-    "python": "python -u $file",
-    "typescript": "deno run $file",
+    "python": "python -U",
+    "typescript": "deno run",
     "rust": "cd {dir} && rustc $fileName && $dir$fileNameWithoutExt"
 }
 
@@ -85,14 +85,16 @@ The available variables are the following:
 
 ##### Example
 
-add support to javascript and objective c:
+Add support to javascript and objective c:
 
 ```` json
 {
-....... more..........
-     "javascript": "node $file",
+....... more ........
+     "javascript": "node",
      "objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt"
 }
 ````
+In this example, there are two file types, one uses variables and the other does not. If no variables are used, the plugin adds the current file path. This is a way to add commands in a simple way for those languages that do not require complexity to execute (python and javascrip for example)
+
 # Important!
 If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon
