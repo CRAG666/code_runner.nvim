@@ -20,7 +20,7 @@ M.run_code = function()
 end
 
 M.open_filetype_suported = function()
-  command ="tabnew " .. "code_runner/code_runner.json"
+  command ="tabnew " ..fn.stdpath('data') .. '/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json'
   vim.cmd(command)
 end
 
