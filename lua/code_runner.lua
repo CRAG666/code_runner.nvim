@@ -9,18 +9,13 @@ M.setup = function(user_options)
   vim.cmd [[lua require('code_runner').run_code()]]
 end
 
-M.frun_code = function()
-  run = require("code_runner.fterm_commands")
-  run()
-end
-
 M.run_code = function()
   run = require("code_runner.commands")
   run()
 end
 
 M.open_filetype_suported = function()
-  command ="tabnew " .. '~/.local/share/nvim/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json'
+  command ="tabnew " .. o.get().json_path
   vim.cmd(command)
 end
 
