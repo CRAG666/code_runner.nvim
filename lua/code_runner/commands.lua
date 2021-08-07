@@ -1,10 +1,15 @@
 local o = require("code_runner.options")
--- load json config and convert to table
+
+-- Load json config and convert to table
 local loadTable = require("code_runner.load_json")
 local fileCommands = loadTable()
 
+-- Message if json file not exist
+local function file_not_found() then
+  print(vim.inspect("File not exist, please execute :SRunCode"))
+end
 if not fileCommands then
-	return vim.inspect
+	return file_not_found
 end
 
 -- Create prefix for run commands
@@ -48,4 +53,5 @@ function run()
 	vimcmd("vim", "source %")
 	vimcmd("lua", "luafile %")
 end
+
 return run

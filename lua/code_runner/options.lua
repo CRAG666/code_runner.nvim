@@ -15,4 +15,3 @@ end
 M.get = function() return options end
 
 return M
-

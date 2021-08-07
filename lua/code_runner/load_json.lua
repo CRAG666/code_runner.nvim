@@ -1,18 +1,19 @@
--- load the JSON library.
 local o = require("code_runner.options")
-local Json = require("code_runner.dkjson")
 
 loadTable = function()
     local contents = ""
-    local myTable = {}
     local file = io.open( o.get().json_path, "r" )
 
     if file then
         -- read all contents of file into a string
         local contents = file:read( "*a" )
-        myTable, _, _ = Json.decode( contents )
+        local status, result = pcall(vim.fn.json_decode, contents)
         io.close( file )
-        return myTable
+        if status then
+            return result
+        else
+            return nil
+        end
     end
     return nil
 end
