@@ -5,7 +5,7 @@ local loadTable = require("code_runner.load_json")
 local fileCommands = loadTable()
 
 -- Message if json file not exist
-local function file_not_found() then
+local function file_not_found()
   print(vim.inspect("File not exist, please execute :SRunCode"))
 end
 if not fileCommands then
