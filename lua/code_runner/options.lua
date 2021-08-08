@@ -4,7 +4,7 @@ local options = {
         size = 8
       },
       map = "<leader>r",
-      json_path = os.getenv("HOME") .. '/.local/share/nvim/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json'
+      json_path = vim.fn.stdpath("data") .. '/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json'
 }
 
 local M = {}
