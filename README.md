@@ -31,15 +31,16 @@ lua require('code_runner').setup({})
 
 ### Options
 
--   `term`: configurations for the integrated terminal
+- `term`: configurations for the integrated terminal
 
-    Fields:
+  Fields:
 
-      - `position` - integrated terminal position(for option :h windows) default: `belowright`
+    - `position` - integrated terminal position(for option :h windows) default: `belowright`
+    - `size` - size of the terminal window (default: `8`)
 
-      - `size` - size of the terminal window (default: `8`)
+- `map`: keys to trigger execution (default: `<leader>r`)
 
--   `json_path`: absolute path to json file config (default: packer module path)
+- `json_path`: absolute path to json file config (default: packer module path)
 
 
 ### Setup
@@ -51,6 +52,7 @@ require('code_runner').setup {
     position = "vert",
     size = 8
   },
+  map = "<leader>r",
   json_path = "/home/myuser/.config/nvim/code_runner.json"
 }
 
