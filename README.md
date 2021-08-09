@@ -63,7 +63,7 @@ Run :SRunCode, The configuration file is called code_runner.json.
 
 The file should look like this(the default file does not exist create it with the SRunCode command):
 
-```` json
+````json
 
 {
     "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
@@ -89,7 +89,7 @@ The available variables are the following:
 
 Add support to javascript and objective c:
 
-```` json
+````json
 {
 ....... more ........
      "javascript": "node",

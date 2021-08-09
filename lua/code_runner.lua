@@ -10,12 +10,12 @@ M.setup = function(user_options)
 end
 
 M.run_code = function()
-  run = require("code_runner.commands")
+  local run = require("code_runner.commands")
   run()
 end
 
 M.open_filetype_suported = function()
-  command ="tabnew " .. o.get().json_path
+  local command ="tabnew " .. o.get().json_path
   vim.cmd(command)
 end
 
