@@ -44,9 +44,9 @@ local function subvarcomm(command)
 end
 
 -- call subvarcomm and shellcmd
-function run()
+function Run()
 	for lang, command in pairs(fileCommands) do
-		command_vim = subvarcomm(command)
+		local command_vim = subvarcomm(command)
 		shellcmd(lang, command_vim)
 	end
 	-- vimcmd("markdown", defaults.commands.markdown)
@@ -54,4 +54,4 @@ function run()
 	vimcmd("lua", "luafile %")
 end
 
-return run
+return Run
