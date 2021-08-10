@@ -6,7 +6,7 @@ local fileCommands = loadTable()
 
 -- Message if json file not exist
 local function file_not_found()
-  print(vim.inspect("File not exist, please execute :SRunCode"))
+  print(vim.inspect("File not exist or format invalid, please execute :SRunCode"))
 end
 if not fileCommands then
 	return file_not_found
@@ -27,7 +27,7 @@ end
 
 -- Substitute json vars to vim vars in commands for each file type.
 -- If a command has no arguments, one is added with the current file path
-local function subvarcomm(command)
+local function sub_var_command(command)
 	local vars_json = {
 		["%$fileNameWithoutExt"] = "%%:r",
 		["$fileName"] = "%%:t",
@@ -43,10 +43,10 @@ local function subvarcomm(command)
 	return command
 end
 
--- call subvarcomm and shellcmd
+-- Create shellcmd
 function Run()
 	for lang, command in pairs(fileCommands) do
-		local command_vim = subvarcomm(command)
+		local command_vim = sub_var_command(command)
 		shellcmd(lang, command_vim)
 	end
 	-- vimcmd("markdown", defaults.commands.markdown)
