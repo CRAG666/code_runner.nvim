@@ -3,8 +3,14 @@ local options = {
         position = "belowright",
         size = 8,
       },
-      map = "<leader>r",
-      json_path = vim.fn.stdpath("data") .. '/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json'
+      filetype = {
+        map = "<leader>r",
+        json_path = vim.fn.stdpath("data") .. '/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json',
+      },
+      project_context = {
+        map = "<leader>r",
+        json_path = vim.fn.stdpath("data") .. '/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json'
+      }
 }
 
 local M = {}

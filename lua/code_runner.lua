@@ -1,22 +1,36 @@
 local o = require("code_runner.options")
+local commands = require("code_runner.commands")
 local M = {}
 
 M.setup = function(user_options)
   o.set(user_options)
   vim.api.nvim_exec([[
   command! SRunCode lua require('code_runner').open_filetype_suported()
+  command! RCProjects lua require('code_runner').open_project_manager()
   ]], false)
-  vim.cmd [[lua require('code_runner').run_code()]]
+  if o.get().filetype.map == o.get().project_context.map then
+    vim.api.nvim_set_keymap('n', o.get().filetype.map, "lua require('code_runner').run_code()", {expr = true, noremap = true})
+  else
+    vim.api.nvim_set_keymap('n', o.get().filetype.map, "lua require('code_runner').run_filetype()", {expr = true, noremap = true})
+    vim.api.nvim_set_keymap('n', o.get().project_context.map, "lua require('code_runner').run_project()", {expr = true, noremap = true})
+  end
 end
 
-M.run_code = function()
-  local run = require("code_runner.commands")
-  run()
+M.run_code = function() commands.run() end
+M.run_filetype = function() commands.run_filetype() end
+M.run_project = function() commands.run_project() end
+
+local function open_json(json_path)
+  local command ="tabnew " .. json_path
+  vim.cmd(command)
 end
 
 M.open_filetype_suported = function()
-  local command ="tabnew " .. o.get().json_path
-  vim.cmd(command)
+  open_json(o.get().filetype.json_path)
+end
+
+M.open_project_manager = function()
+  open_json(o.get().project_context.json_path)
 end
 
 return M

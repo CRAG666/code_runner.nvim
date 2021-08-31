@@ -1,8 +1,6 @@
-local o = require("code_runner.options")
-
-LoadTable = function()
+function LoadTable(json_path)
     local contents = ""
-    local file = io.open( o.get().json_path, "r" )
+    local file = io.open( json_path, "r" )
 
     if file then
         -- read all contents of file into a string
