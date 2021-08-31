@@ -10,7 +10,7 @@ if not fileCommands then
 	print(vim.inspect("File not exist or format invalid, please execute :SRunCode"))
 end
 
-if not fileCommands then
+if not projectManager then
 	print(vim.inspect())
 end
 
