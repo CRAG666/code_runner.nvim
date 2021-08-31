@@ -3,7 +3,7 @@ local o = require("code_runner.options")
 -- Load json config and convert to table
 local loadTable = require("code_runner.load_json")
 local fileCommands = loadTable(o.get().filetype.json_path)
-local projectManager = loadTable(o.get().project_manager.json_path)
+local projectManager = loadTable(o.get().project_context.json_path)
 
 -- Message if json file not exist
 if not fileCommands then
