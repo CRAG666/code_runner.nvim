@@ -1,19 +1,5 @@
 local o = require("code_runner.options")
 
--- Load json config and convert to table
-local loadTable = require("code_runner.load_json")
-local fileCommands = loadTable(o.get().filetype.json_path)
-local projectManager = loadTable(o.get().project_context.json_path)
-
--- Message if json file not exist
-if not fileCommands then
-	print(vim.inspect("File not exist or format invalid, please execute :SRunCode"))
-end
-
-if not projectManager then
-	print(vim.inspect("Nothing Projects"))
-end
-
 -- Create prefix for run commands
 local prefix = string.format("%s %dsplit term://", o.get().term.position, o.get().term.size)
 
@@ -43,7 +29,7 @@ local function get_context()
 	local path = vim.fn.expand("%")
 	while path ~= "/" do
 		path = path:gsub("[^\\]+\\?$", "")
-		local project = projectManager[path]
+		local project = vim.g.projectManager[path]
 		if project then
 			project["path"] = path
 			return project
@@ -55,7 +41,7 @@ end
 
 local function get_command(filetype, path)
 	path = path or "%%"
-	local command = fileCommands[filetype]
+	local command = vim.g.fileCommands[filetype]
 	if command then
 		local command_vim = sub_var_command(command)
 		return prefix .. command_vim
