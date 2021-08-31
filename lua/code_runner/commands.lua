@@ -11,7 +11,7 @@ if not fileCommands then
 end
 
 if not projectManager then
-	print(vim.inspect())
+	print(vim.inspect("Nothing Projects"))
 end
 
 -- Create prefix for run commands
