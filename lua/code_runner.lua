@@ -8,13 +8,16 @@ M.setup = function(user_options)
   vim.cmd [[lua require('code_runner').load_json_files()]]
   vim.api.nvim_exec([[
   command! SRunCode lua require('code_runner').open_filetype_suported()
-  command! RCProjects lua require('code_runner').open_project_manager()
+  command! CRProjects lua require('code_runner').open_project_manager()
+  command! RunCode lua require('code_runner').run_code()
+  command! RunFile lua require('code_runner').run_filetype()
+  command! RunProject lua require('code_runner').run_project()
   ]], false)
   if o.get().filetype.map == o.get().project_context.map then
-    vim.api.nvim_set_keymap('n', o.get().filetype.map, "lua require('code_runner').run_code()", {expr = true, noremap = true})
+    vim.api.nvim_set_keymap('n', o.get().filetype.map, ":RunCode", {expr = true, noremap = true})
   else
-    vim.api.nvim_set_keymap('n', o.get().filetype.map, "lua require('code_runner').run_filetype()", {expr = true, noremap = true})
-    vim.api.nvim_set_keymap('n', o.get().project_context.map, "lua require('code_runner').run_project()", {expr = true, noremap = true})
+    vim.api.nvim_set_keymap('n', o.get().filetype.map, ":RunFile", {expr = true, noremap = true})
+    vim.api.nvim_set_keymap('n', o.get().project_context.map, ":RunProject", {expr = true, noremap = true})
   end
 end
 
