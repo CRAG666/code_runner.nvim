@@ -15,9 +15,8 @@ local options = {
 
 local M = {}
 M.set = function(user_options)
-    for key, _ in pairs(options) do
-      options[key] = vim.tbl_extend("force", options[key], user_options[key])
-    end
+  options = vim.tbl_extend("force", options, user_options)
+  print(vim.inspect(options))
 end
 
 M.get = function() return options end
