@@ -15,7 +15,11 @@ local options = {
 
 local M = {}
 M.set = function(user_options)
-  options = vim.tbl_extend("force", user_options, options)
+  for key, value in pairs(options) do
+    local status, current_key = pcall("vim.tbl_extend", "force", value, user_options[key])
+    if not status then
+      options[key] = current_key
+  end
   print(vim.inspect(options))
 end
 
