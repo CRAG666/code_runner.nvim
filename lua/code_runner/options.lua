@@ -19,6 +19,7 @@ M.set = function(user_options)
     local status, current_key = pcall("vim.tbl_extend", "force", value, user_options[key])
     if not status then
       options[key] = current_key
+    end
   end
   print(vim.inspect(options))
 end
