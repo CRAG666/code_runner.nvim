@@ -26,7 +26,11 @@ lua require('code_runner').setup({})
 
 ### Functions
 
--   `:SRunCode` - Open json  with supported files.
+-   `CRFiletype` - Open json  with supported files.
+-   `CRProjects` - Open json with list of projects.
+-   `RunCode`    - Run the current project or file(Depending on whether the file belongs to a project or not)
+-   `RunFile`    - Run the current file
+-   `RunProject` - Run the current project(If you are in a project otherwise you will not do anything)
 
 
 ### Options
@@ -35,12 +39,24 @@ lua require('code_runner').setup({})
 
   Fields:
 
-    - `position` - integrated terminal position(for option :h windows) default: `belowright`
-    - `size` - size of the terminal window (default: `8`)
+    - `position`: integrated terminal position(for option :h windows) default: `belowright`
+    - `size`: size of the terminal window (default: `8`)
 
-- `map`: keys to trigger execution (default: `<leader>r`)
+- `filetype`: Configuration for filetype
 
-- `json_path`: absolute path to json file config (default: packer module path)
+  Fields:
+
+    - `map`: keys to trigger execution (default: `<leader>r`)
+
+    - `json_path`: absolute path to json file config (default: packer module path)
+
+- `project_context`: Configuration for projects
+
+  Fields:
+
+    - `map`: keys to trigger execution (default: `<leader>r`)
+
+    - `json_path`: absolute path to json file config (default: packer module path)
 
 
 ### Setup
@@ -52,16 +68,24 @@ require('code_runner').setup {
     position = "vert",
     size = 8
   },
-  map = "<leader>r",
-  json_path = "/home/myuser/.config/nvim/code_runner.json"
+  filetype = {
+    map = "<leader>r",
+    json_path = "/home/myuser/.config/nvim/code_runner.json"
+  },
+  project_context = {
+    map = "<leader>r",
+    json_path = "/home/myuser/.config/nvim/projects.json"
+  }
 }
 
 ```
+As seen in this example configuration, both project_context and filetype have the same keymap assigned, this does not cause any problem because in these cases the plugin assigns a single map to `:RunCode`(read how it works `:RunCode`).
+
 
 ### Add support for more file types
-Run :SRunCode, The configuration file is called code_runner.json.
+Run `CRFiletype` , Open the configuration file.
 
-The file should look like this(the default file does not exist create it with the SRunCode command):
+The file should look like this(the default file does not exist create it with the `CRFiletype` command):
 
 ````json
 
@@ -69,7 +93,7 @@ The file should look like this(the default file does not exist create it with th
     "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
     "python": "python -U",
     "typescript": "deno run",
-    "rust": "cd {dir} && rustc $fileName && $dir$fileNameWithoutExt"
+    "rust": "cd {dir} && rustc $fileName && $dir/$fileNameWithoutExt"
 }
 
 ````
@@ -92,11 +116,57 @@ Add support to javascript and objective c:
 ````json
 {
 ....... more ........
-     "javascript": "node",
-     "objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir$fileNameWithoutExt"
+"javascript": "node",
+"objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
 }
 ````
+
 In this example, there are two file types, one uses variables and the other does not. If no variables are used, the plugin adds the current file path. This is a way to add commands in a simple way for those languages that do not require complexity to execute (python and javascrip for example)
+
+
+### Add projects
+Run `CRProjects` , Open the project list.
+
+The file should look like this(the default file does not exist create it with the `CRProjects` command):
+
+````json
+{
+    "~/python/intel_2021_1": {
+        "name": "Intel Course 2021"
+        "description": "Simple python project",
+        "file_name": "POO/main.py",
+        "filetype": "python"
+    },
+    "~/deno/example": {
+        "name": "ExapleDeno"
+        "description": "Project with deno using other command",
+        "file_name": "http/main.ts",
+        "command": "deno run --allow-net"
+    },
+    "~/cpp/example": {
+        "name": "ExapleCpp"
+        "description": "Project with make file",
+        "command": "make buid & cd buid/ & ./compiled_file"
+    },
+}
+````
+There are 3 main ways to configure the execution of a project (found in the example.)
+
+1. Use the default command defined in the filetypes file (see `:CRFiletype`). In order to do that it is necessary to define file_name & filetype (the latter because I still don't know how to extract it from the path if someone knows how it would help a lot).
+
+2. Use a different command than the one set in `CRFiletype`. In this case, the file_name and command must be provided.
+
+3. Use a command to run the project. It is only necessary to define command.
+
+#### Projects parameters
+
+-  `name`: Project name
+-  `description`: Project description
+-  `file_name`: Rilename relative to root path
+-  `filetype`: File type relative to file_name
+-  `command`: Command to run the project.It is possible to use variables exactly the same as we would in `CRFiletype`
+
+warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described below
 
 # Important!
 If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon

@@ -7,8 +7,8 @@ M.setup = function(user_options)
   o.set(user_options)
   vim.cmd [[lua require('code_runner').load_json_files()]]
   vim.api.nvim_exec([[
-  command! SRunCode lua require('code_runner').open_filetype_suported()
-  command! CRprojects lua require('code_runner').open_project_manager()
+  command! CRFiletype lua require('code_runner').open_filetype_suported()
+  command! CRProjects lua require('code_runner').open_project_manager()
   command! RunCode lua require('code_runner').run_code()
   command! RunFile lua require('code_runner').run_filetype()
   command! RunProject lua require('code_runner').run_project()
@@ -30,7 +30,7 @@ M.load_json_files = function()
   end
 
   if not vim.g.projectManager then
-    print(vim.inspect("Nothing Projects"))
+    print("Nothing Projects")
   end
 end
 
