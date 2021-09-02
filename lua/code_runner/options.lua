@@ -14,16 +14,15 @@ local options = {
 }
 
 local M = {}
+-- set user config
 M.set = function(user_options)
   for key, value in pairs(options) do
-    local status, current_key = pcall("vim.tbl_extend", "force", value, user_options[key])
-    if not status then
-      options[key] = current_key
-    end
+    local u_o = user_options[key] or {}
+    options[key] = vim.tbl_extend("force", value, u_o)
   end
-  print(vim.inspect(options))
 end
 
+-- get user options
 M.get = function() return options end
 
 return M

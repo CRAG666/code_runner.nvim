@@ -1,18 +1,40 @@
--- import options
+-- Import options
 local o = require("code_runner.options")
 
 -- Create prefix for run commands
 local prefix = string.format("%s %dsplit term://", o.get().term.position, o.get().term.size)
 
+--[[ -- Return dir path, File name and extension starting from File path
+local function split_filename(file_path)
+  file_path = file_path .. "."
+  return file_path:match("^(.-)([^\\/]-%.([^\\/%.]-))%.?$")
+end --]]
+
+-- Create file modifiers
+local function filename_modifiers(path, modifiers)
+	if path == "%%" then
+		return path .. modifiers
+	end
+	return vim.fn.fnamemodify(path, modifiers)
+end
+
+
 -- Substitute json vars to vim vars in commands for each file type.
 -- If a command has no arguments, one is added with the current file path
+	--[[ local dir, fileName, ext = split_filename(path)
+	local vars_json = {
+		["%$fileNameWithoutExt"] = string.gsub(path, "." .. ext, ""),
+		["$fileName"] = fileName,
+		["$file"] = path,
+		["$dir"] = dir
+	} --]]
 local function sub_var_command(command, path)
 	local no_sub_command = command
 	local vars_json = {
-		["%$fileNameWithoutExt"] = path .. ":r",
-		["$fileName"] = path .. ":t",
+		["%$fileNameWithoutExt"] = filename_modifiers(path, ":t:r"),
+		["$fileName"] = filename_modifiers(path, ":t"),
 		["$file"] = path,
-		["$dir"] = path .. ":p:h"
+		["$dir"] = filename_modifiers(path, ":p:h")
 	}
 	for var, var_vim in pairs(vars_json) do
 		command = command:gsub(var, var_vim)
@@ -31,13 +53,13 @@ local function get_context()
 	local path = "%:p:~:h"
 	local expand = ""
 	while expand ~= "~" do
-		path = path .. ":h"
 		expand = vim.fn.expand(path)
 		local project = vim.g.projectManager[expand]
 		if project then
 			project["path"] = expand
 			return project
 		end
+		path = path .. ":h"
 	end
 	return nil
 end
@@ -53,18 +75,25 @@ local function get_command(filetype, path)
 	return nil
 end
 
-local M = {}
 
+-- Run command in project context
 local function run_command_context(context)
 		local command = ""
-		local file = context.path .. "/" .. context.file_name
-		if context.command then
-				command = context.command .. " " .. file
+		if context.file_name then
+			local file = context.path .. "/" .. context.file_name
+			if context.command then
+					command = prefix .. sub_var_command(context.command, file)
+			else
+					command = get_command(context.filetype, file)
+			end
 		else
-				command = get_command(context.filetype, file)
+			command = prefix .. "cd " .. context.path .. context.command
 		end
 		vim.cmd(command)
 end
+
+
+local M = {}
 
 -- Execute filetype or project
 function M.run()
@@ -76,7 +105,6 @@ function M.run()
 	end
 end
 
-
 -- Execute filetype
 function M.run_filetype()
 		local filetype = vim.bo.filetype
@@ -86,7 +114,7 @@ function M.run_filetype()
 		elseif filetype == "vim" then
 			command = "source %"
 		else
-			command = get_command(filetype)
+			command = get_command(filetype) or ""
 		end
 		vim.cmd(command)
 	end
