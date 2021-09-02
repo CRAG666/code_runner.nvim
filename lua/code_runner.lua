@@ -24,13 +24,10 @@ end
 M.load_json_files = function()
   vim.g.fileCommands = loadTable(o.get().filetype.json_path)
   vim.g.projectManager = loadTable(o.get().project_context.json_path)
+
   -- Message if json file not exist
   if not vim.g.fileCommands then
-    print(vim.inspect("File not exist or format invalid, please execute :SRunCode"))
-  end
-
-  if not vim.g.projectManager then
-    print("Nothing Projects")
+    print("File not exist or format invalid, please execute :CRFiletype")
   end
 end
 

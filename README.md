@@ -147,7 +147,7 @@ The file should look like this(the default file does not exist create it with th
         "name": "ExapleCpp"
         "description": "Project with make file",
         "command": "make buid & cd buid/ & ./compiled_file"
-    },
+    }
 }
 ````
 There are 3 main ways to configure the execution of a project (found in the example.)
@@ -167,6 +167,9 @@ There are 3 main ways to configure the execution of a project (found in the exam
 -  `command`: Command to run the project.It is possible to use variables exactly the same as we would in `CRFiletype`
 
 warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described below
+
+# Tip
+For unknown reasons, leaving a comma in the trailing element in any json file causes an error when loading into lua, so you have to remove the trailing comma in the last item.
 
 # Important!
 If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon

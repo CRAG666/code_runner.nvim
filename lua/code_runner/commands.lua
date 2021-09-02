@@ -113,11 +113,14 @@ function M.run_filetype()
 		local filetype = vim.bo.filetype
 		local command = get_command(filetype) or ""
 		vim.cmd(command)
-	end
+end
 
 -- Execute project
 function M.run_project()
-	local context = get_project_rootpath()
+	local context = nil
+	if vim.g.projectManager then
+		context = get_project_rootpath()
+	end
 	if context then
 		run_project(context)
 		return true
