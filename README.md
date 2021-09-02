@@ -24,6 +24,20 @@ Add the following line to your init.vim
 lua require('code_runner').setup({})
 ```
 
+### chek new features
+check out the new_features branch(Unstable)
+
+```lua
+use {'CRAG666/code_runner.nvim', branch = "new_features"}
+```
+#### Features
+* Better code
+* Faster
+* Project management and execution
+* Execution functions like jetbrains IDEs but without being so heavy
+
+Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas
+
 ### Functions
 
 -   `:SRunCode` - Open json  with supported files.
