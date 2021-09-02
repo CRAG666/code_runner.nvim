@@ -162,7 +162,7 @@ There are 3 main ways to configure the execution of a project (found in the exam
 
 -  `name`: Project name
 -  `description`: Project description
--  `file_name`: Rilename relative to root path
+-  `file_name`: Filename relative to root path
 -  `filetype`: File type relative to file_name
 -  `command`: Command to run the project.It is possible to use variables exactly the same as we would in `CRFiletype`
 
