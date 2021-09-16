@@ -27,7 +27,19 @@ M.load_json_files = function()
 
   -- Message if json file not exist
   if not vim.g.fileCommands then
-    print("File not exist or format invalid, please execute :CRFiletype")
+    local orunners = o.get().runners
+    if orunners and #orunners > 0 then
+     vim.g.fileCommands = vim.tbl_extend("force", vim.g.fileCommands, orunners)
+    else
+      print("File not exist or format invalid, please execute :CRFiletype")
+    end
+  end
+
+  local oprojects = o.get().projects
+  if not vim.g.projectManager and oprojects and #oprojects > 0 then
+    vim.g.projectManager = vim.deepcopy(oprojects)
+  else
+    vim.g.projectManager = vim.tbl_extend("force", projectManager, o.get().projects)
   end
 end
 
