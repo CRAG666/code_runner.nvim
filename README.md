@@ -107,7 +107,7 @@ The file should look like this(the default file does not exist create it with th
     "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
     "python": "python -U",
     "typescript": "deno run",
-    "rust": "cd {dir} && rustc $fileName && $dir/$fileNameWithoutExt"
+    "rust": "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
 }
 
 ````
@@ -121,7 +121,17 @@ The available variables are the following:
   * file  -- file path to currend file opened
   * fileName  -- file name to curren file opened
   * fileNameWithoutExt  -- file without extension file opened
-  * dir  -- currend path to file opened
+  * dir  -- path of directory to file opened
+
+###### Example
+Below is an example of an absolute path and how it behaves depending on the variable:
+
+absolute path: /home/anyuser/current/file.py
+
+* file = /home/anyuser/current/file.py
+* fileName = file.py
+* fileNameWithoutExt = file
+* dir = /home/anyuser/current/
 
 ##### Example
 
@@ -170,7 +180,7 @@ There are 3 main ways to configure the execution of a project (found in the exam
 
 2. Use a different command than the one set in `CRFiletype`. In this case, the file_name and command must be provided.
 
-3. Use a command to run the project. It is only necessary to define command.
+3. Use a command to run the project. It is only necessary to define command(You do not need to write navigate to the root of the project, because automatically the plugin is located in the root of the project).
 
 #### Projects parameters
 
@@ -178,7 +188,7 @@ There are 3 main ways to configure the execution of a project (found in the exam
 -  `description`: Project description
 -  `file_name`: Filename relative to root path
 -  `filetype`: File type relative to file_name
--  `command`: Command to run the project.It is possible to use variables exactly the same as we would in `CRFiletype`
+-  `command`: Command to run the project. It is possible to use variables exactly the same as we would in `CRFiletype`
 
 warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described below
 

@@ -1,8 +1,8 @@
 -- Import options
-local o = require("code_runner.options")
+local o = require("code_runner.options").get()
 
 -- Create prefix for run commands
-local prefix = string.format("%s %dsplit term://", o.get().term.position, o.get().term.size)
+local prefix = string.format("%s %dsplit term://", o.term.position, o.term.size)
 
 --[[ -- Return dir path, File name and extension starting from File path
 local function split_filename(file_path)
@@ -90,7 +90,7 @@ local function run_project(context)
       command = get_command(context.filetype, file)
     end
   else
-    command = prefix .. "cd " .. context.path .. context.command
+    command = prefix .. "cd " .. context.path .. " &&" .. context.command
   end
   vim.cmd(command)
 end
