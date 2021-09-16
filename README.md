@@ -123,15 +123,14 @@ The available variables are the following:
   * fileNameWithoutExt  -- file without extension file opened
   * dir  -- path of directory to file opened
 
-###### Example
 Below is an example of an absolute path and how it behaves depending on the variable:
 
 absolute path: /home/anyuser/current/file.py
 
-* file = /home/anyuser/current/file.py
-* fileName = file.py
-* fileNameWithoutExt = file
-* dir = /home/anyuser/current/
+- file = /home/anyuser/current/file.py
+- fileName = file.py
+- fileNameWithoutExt = file
+- dir = /home/anyuser/current
 
 ##### Example
 
