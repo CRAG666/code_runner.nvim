@@ -1,4 +1,5 @@
-local o = require("code_runner.options").get()
+local options = require("code_runner.options")
+local og = options.get()
 local commands = require("code_runner.commands")
 local M = {}
 
@@ -6,7 +7,7 @@ local M = {}
 local loadTable = require("code_runner.load_json")
 
 M.setup = function(user_options)
-  o.set(user_options)
+  options.set(user_options)
   vim.cmd([[lua require('code_runner').load_json_files()]])
   vim.api.nvim_exec(
     [[
@@ -18,21 +19,21 @@ M.setup = function(user_options)
   ]],
     false
   )
-  if o.filetype.map == o.project_context.map then
-    vim.api.nvim_set_keymap("n", o.filetype.map, ":RunCode<CR>", { noremap = true })
+  if og.filetype.map == og.project_context.map then
+    vim.api.nvim_set_keymap("n", og.filetype.map, ":RunCode<CR>", { noremap = true })
   else
-    vim.api.nvim_set_keymap("n", o.filetype.map, ":RunFile<CR>", { noremap = true })
-    vim.api.nvim_set_keymap("n", o.project_context.map, ":RunProject<CR>", { noremap = true })
+    vim.api.nvim_set_keymap("n", og.filetype.map, ":RunFile<CR>", { noremap = true })
+    vim.api.nvim_set_keymap("n", og.project_context.map, ":RunProject<CR>", { noremap = true })
   end
 end
 
 M.load_json_files = function()
-  vim.g.fileCommands = loadTable(o.filetype.json_path)
-  vim.g.projectManager = loadTable(o.project_context.json_path)
+  vim.g.fileCommands = loadTable(og.filetype.json_path)
+  vim.g.projectManager = loadTable(og.project_context.json_path)
 
   -- Message if json file not exist
   if not vim.g.fileCommands then
-    local orunners = o.runners
+    local orunners = og.runners
     if orunners and #orunners > 0 then
      vim.g.fileCommands = vim.tbl_extend("force", vim.g.fileCommands, orunners)
     else
@@ -40,7 +41,7 @@ M.load_json_files = function()
     end
   end
 
-  local oprojects = o.projects
+  local oprojects = og.projects
   if not vim.g.projectManager and oprojects and #oprojects > 0 then
     vim.g.projectManager = vim.deepcopy(oprojects)
   end
@@ -56,11 +57,11 @@ local function open_json(json_path)
 end
 
 M.open_filetype_suported = function()
-  open_json(o.filetype.json_path)
+  open_json(og.filetype.json_path)
 end
 
 M.open_project_manager = function()
-  open_json(o.project_context.json_path)
+  open_json(og.project_context.json_path)
 end
 
 return M
