@@ -38,8 +38,6 @@ M.load_json_files = function()
   local oprojects = o.get().projects
   if not vim.g.projectManager and oprojects and #oprojects > 0 then
     vim.g.projectManager = vim.deepcopy(oprojects)
-  else
-    vim.g.projectManager = vim.tbl_extend("force", projectManager, o.get().projects)
   end
 end
 
