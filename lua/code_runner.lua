@@ -5,19 +5,22 @@ local M = {}
 local loadTable = require("code_runner.load_json")
 M.setup = function(user_options)
   o.set(user_options)
-  vim.cmd [[lua require('code_runner').load_json_files()]]
-  vim.api.nvim_exec([[
+  vim.cmd([[lua require('code_runner').load_json_files()]])
+  vim.api.nvim_exec(
+    [[
   command! CRFiletype lua require('code_runner').open_filetype_suported()
   command! CRProjects lua require('code_runner').open_project_manager()
   command! RunCode lua require('code_runner').run_code()
   command! RunFile lua require('code_runner').run_filetype()
   command! RunProject lua require('code_runner').run_project()
-  ]], false)
+  ]],
+    false
+  )
   if o.get().filetype.map == o.get().project_context.map then
-    vim.api.nvim_set_keymap('n', o.get().filetype.map, ":RunCode<CR>", {noremap = true})
+    vim.api.nvim_set_keymap("n", o.get().filetype.map, ":RunCode<CR>", { noremap = true })
   else
-    vim.api.nvim_set_keymap('n', o.get().filetype.map, ":RunFile<CR>", {noremap = true})
-    vim.api.nvim_set_keymap('n', o.get().project_context.map, ":RunProject<CR>", {noremap = true})
+    vim.api.nvim_set_keymap("n", o.get().filetype.map, ":RunFile<CR>", { noremap = true })
+    vim.api.nvim_set_keymap("n", o.get().project_context.map, ":RunProject<CR>", { noremap = true })
   end
 end
 
@@ -31,12 +34,18 @@ M.load_json_files = function()
   end
 end
 
-M.run_code = function() commands.run() end
-M.run_filetype = function() commands.run_filetype() end
-M.run_project = function() commands.run_project() end
+M.run_code = function()
+  commands.run()
+end
+M.run_filetype = function()
+  commands.run_filetype()
+end
+M.run_project = function()
+  commands.run_project()
+end
 
 local function open_json(json_path)
-  local command ="tabnew " .. json_path
+  local command = "tabnew " .. json_path
   vim.cmd(command)
 end
 
