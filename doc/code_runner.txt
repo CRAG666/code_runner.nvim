@@ -1,0 +1,91 @@
+*code_runner.nvim*
+
+
+==============================================================================
+INTRODUCTION                                               *code_runner-instroduction*
+
+The best code runner you could have, it is like the one in vscode but with super powers.
+
+
+==============================================================================
+REQUIREMENTS                                                *code_runner-requirements*
+
+- Neovim >= v0.5.0
+
+
+==============================================================================
+INTERFACE                                                      *code_runner-interface*
+
+------------------------------------------------------------------------------
+FUNCTIONS                                                      *code_runner-functions*
+
+code_runner.setup([{opts}])                                              *code_runner.setup()*
+   Set up the code_runner.
+   Please see |code_runner-settings|.
+
+:CRFiletype                                                             *:CRFiletype*
+    Open json  with supported files.
+:CRProjects                                                             *:CRProjects*
+    Open json with list of projects.
+:RunCode                                                                *:RunCode*
+    Run the current project or file.
+:RunFile                                                                *:RunFile*
+    Run the current file.
+:RunProject                                                             *:RunProject*
+    Run the current project.
+
+==============================================================================
+SETTINGS                                                        *code_runner-settings*
+
+You can set it with |code_runner.setup()|.
+
+default value: >
+
+    {
+        term = {
+            position = "belowright",
+            size = 8,
+        },
+        filetype = {
+            map = "<leader>r",
+            json_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
+        },
+        project_context = {
+            map = "<leader>r",
+            json_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+        },
+    }
+<
+
+term                                            *code_runner-settings-term*
+    Configurations for the integrated terminal
+
+filetype                                        *code_runner-settings-filetype*
+    Configuration for filetype
+
+project_context                                 *code_runner-settings-project_context*
+    Configuration for project
+
+Example: >
+
+    require'code_runner'.setup {
+        term = {
+            position = "vert",
+            size = 8
+        },
+        filetype = {
+            map = "<leader>r",
+            json_path = "/home/myuser/.config/nvim/code_runner.json"
+        },
+        project_context = {
+            map = "<leader>r",
+            json_path = "/home/myuser/.config/nvim/projects.json"
+        }
+    }
+
+
+==============================================================================
+FAQ                                                                  *code_runner-faq*
+
+==============================================================================
+vim:tw=78:sw=4:sts=4:ts=4:ft=help:norl:et
