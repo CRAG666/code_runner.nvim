@@ -11,6 +11,9 @@ local function split_filename(file_path)
 end --]]
 
 -- Create file modifiers
+-- @param path absolute path
+-- @param modifiers modifiers to apply
+-- @return file name modify
 local function filename_modifiers(path, modifiers)
   if path == "%%" then
     return path .. modifiers
@@ -20,6 +23,9 @@ end
 
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path
+-- @param command command to run the path
+-- @param path absolute path
+-- @return command with variables replaced by modifiers
 --[[ local dir, fileName, ext = split_filename(path)
 	local vars_json = {
 		["%$fileNameWithoutExt"] = string.gsub(path, "." .. ext, ""),
@@ -65,6 +71,9 @@ local function get_project_rootpath()
 end
 
 -- Return a command for filetype
+-- @param filetype filetype of path
+-- @param path absolute path to file
+-- @return command
 local function get_command(filetype, path)
   local nvim_files = {
     lua = "luafile %",
