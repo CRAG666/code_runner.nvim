@@ -189,6 +189,12 @@ There are 3 main ways to configure the execution of a project (found in the exam
 
 warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described above.
 
+# Screenshots
+
+![typescript](https://i.ibb.co/JCg3tNd/ezgif-com-video-to-gif.gif)
+
+![python](https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif)
+
 # Tip
 For unknown reasons, leaving a comma in the trailing element in any json file causes an error when loading into lua, so you have to remove the trailing comma in the last item.
 
