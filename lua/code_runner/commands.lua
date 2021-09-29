@@ -97,7 +97,16 @@ end
 local M = {}
 
 -- Execute filetype or project
-function M.run()
+function M.run(...)
+  if select('#',...) == 1 then
+    local json_key_select = select(1,...)
+    -- since we have reached here, means we have our command key
+    local cmd_to_execute = get_command(json_key_select)
+    vim.cmd(cmd_to_execute)
+    return
+  end
+
+  --  procede here if no input arguments
   local is_a_project = M.run_project()
   if not is_a_project then
     M.run_filetype()
