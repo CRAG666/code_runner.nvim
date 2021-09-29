@@ -190,7 +190,7 @@ There are 3 main ways to configure the execution of a project (found in the exam
 -  `filetype`: File type relative to file_name
 -  `command`: Command to run the project. It is possible to use variables exactly the same as we would in `CRFiletype`
 
-warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described below
+warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described above.
 
 # Tip
 For unknown reasons, leaving a comma in the trailing element in any json file causes an error when loading into lua, so you have to remove the trailing comma in the last item.
