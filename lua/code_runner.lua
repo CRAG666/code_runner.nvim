@@ -18,9 +18,10 @@ M.setup = function(user_options)
     endfor
     return cmd_keys
   endfunction
+
   command! CRFiletype lua require('code_runner').open_filetype_suported()
   command! CRProjects lua require('code_runner').open_project_manager()
-  command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code()
+  command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
   command! RunFile lua require('code_runner').run_filetype()
   command! RunProject lua require('code_runner').run_project()
   ]],
