@@ -26,24 +26,14 @@ end
 -- @param command command to run the path
 -- @param path absolute path
 -- @return command with variables replaced by modifiers
---[[ local dir, fileName, ext = split_filename(path)
-	local vars_json = {
-		["%$fileNameWithoutExt"] = string.gsub(path, "." .. ext, ""),
-		["$fileName"] = fileName,
-		["$file"] = path,
-		["$dir"] = dir
-	} --]]
 local function re_jsonvar_with_vimvar(command, path)
   local no_sub_command = command
-  local vars_json = {
-    ["%$fileNameWithoutExt"] = filename_modifiers(path, ":t:r"),
-    ["$fileName"] = filename_modifiers(path, ":t"),
-    ["$file"] = path,
-    ["$dir"] = filename_modifiers(path, ":p:h"),
-  }
-  for var, var_vim in pairs(vars_json) do
-    command = command:gsub(var, var_vim)
-  end
+
+  command = command:gsub("$fileNameWithoutExt", filename_modifiers(path, ":t:r"))
+  command = command:gsub("$fileName", filename_modifiers(path, ":t"))
+  command = command:gsub("$file", path)
+  command = command:gsub("$dir", filename_modifiers(path, ":p:h"))
+
   if command == no_sub_command then
     if path == "%%" then
       path = "%"
@@ -79,7 +69,7 @@ local function get_command(filetype, path)
     lua = "luafile %",
     vim = "source %",
   }
-  path = path or "%%"
+  path = path or vim.fn.expand("%:p")
   local command = vim.g.fileCommands[filetype]
   if command then
     local command_vim = re_jsonvar_with_vimvar(command, path)
