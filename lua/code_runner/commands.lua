@@ -100,7 +100,6 @@ local M = {}
 function M.run(...)
   if select('#',...) == 1 then
     local json_key_select = select(1,...)
-    print(json_key_select)
     -- since we have reached here, means we have our command key
     local cmd_to_execute = get_command(json_key_select)
     vim.cmd(cmd_to_execute)
