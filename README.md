@@ -2,7 +2,7 @@
 
 <h4 align='center'>🔥 Code Runner for Neovim written in pure lua 🔥</h4>
 
-![Code_Runner](https://i.ibb.co/gFRhLgr/screen-1628272271.png "Code Runner with python")
+![Code Runner](https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif)
 
 ### Requirements
 
@@ -194,6 +194,8 @@ warning! : Avoid using all the parameters at the same time. The correct way to u
 ![typescript](https://i.ibb.co/JCg3tNd/ezgif-com-video-to-gif.gif)
 
 ![python](https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif)
+
+![Code_Runner](https://i.ibb.co/gFRhLgr/screen-1628272271.png "Code Runner with python")
 
 # Tip
 For unknown reasons, leaving a comma in the trailing element in any json file causes an error when loading into lua, so you have to remove the trailing comma in the last item.
