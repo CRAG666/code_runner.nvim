@@ -31,10 +31,7 @@ check out the new_features branch(Unstable)
 use {'CRAG666/code_runner.nvim', branch = "new_features"}
 ```
 #### Features
-* Better code
-* Faster
-* Project management and execution
-* Execution functions like jetbrains IDEs but without being so heavy
+* (Nothing new for now)
 
 Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas
 
