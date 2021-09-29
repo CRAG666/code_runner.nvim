@@ -27,8 +27,10 @@ code_runner.setup([{opts}])                                              *code_r
     Open json  with supported files.
 :CRProjects                                                             *:CRProjects*
     Open json with list of projects.
-:RunCode                                                                *:RunCode*
-    Run the current project or file.
+:RunCode {opt}                                                          *:RunCode*
+    Run the current project or file, if {opt} provided, it will run the
+    command that maps to that {opt} from the keys in the supported files
+    json
 :RunFile                                                                *:RunFile*
     Run the current file.
 :RunProject                                                             *:RunProject*
