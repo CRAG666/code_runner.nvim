@@ -4,23 +4,6 @@ local o = require("code_runner.options").get()
 -- Create prefix for run commands
 local prefix = string.format("%s %dsplit term://", o.term.position, o.term.size)
 
---[[ -- Return dir path, File name and extension starting from File path
-local function split_filename(file_path)
-  file_path = file_path .. "."
-  return file_path:match("^(.-)([^\\/]-%.([^\\/%.]-))%.?$")
-end --]]
-
--- Create file modifiers
--- @param path absolute path
--- @param modifiers modifiers to apply
--- @return file name modify
-local function filename_modifiers(path, modifiers)
-  if path == "%%" then
-    return path .. modifiers
-  end
-  return vim.fn.fnamemodify(path, modifiers)
-end
-
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path
 -- @param command command to run the path
@@ -29,15 +12,12 @@ end
 local function re_jsonvar_with_vimvar(command, path)
   local no_sub_command = command
 
-  command = command:gsub("$fileNameWithoutExt", filename_modifiers(path, ":t:r"))
-  command = command:gsub("$fileName", filename_modifiers(path, ":t"))
+  command = command:gsub("$fileNameWithoutExt", vim.fn.fnamemodify(path, ":t:r"))
+  command = command:gsub("$fileName", vim.fn.fnamemodify(path, ":t"))
   command = command:gsub("$file", path)
-  command = command:gsub("$dir", filename_modifiers(path, ":p:h"))
+  command = command:gsub("$dir", vim.fn.fnamemodify(path, ":p:h"))
 
   if command == no_sub_command then
-    if path == "%%" then
-      path = "%"
-    end
     command = command .. " " .. path
   end
   return command
@@ -98,8 +78,8 @@ local M = {}
 
 -- Execute filetype or project
 function M.run(...)
-  if select('#',...) == 1 then
-    local json_key_select = select(1,...)
+  local json_key_select = select(1,...)
+  if json_key_select ~= "" then
     -- since we have reached here, means we have our command key
     local cmd_to_execute = get_command(json_key_select)
     vim.cmd(cmd_to_execute)
