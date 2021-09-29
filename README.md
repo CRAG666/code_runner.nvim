@@ -42,7 +42,8 @@ Your help is needed to make this plugin the best of its kind, be free to contrib
 
 -   `CRFiletype` - Open json  with supported files.
 -   `CRProjects` - Open json with list of projects.
--   `RunCode`    - Run the current project or file(Depending on whether the file belongs to a project or not)
+-   `:RunCode` - Runs based on file type, first checking if belongs to project, then if filetype mapping exists
+-   `:RunCode <A_key_here>` - Runs command with key of cool in the current directory.
 -   `RunFile`    - Run the current file
 -   `RunProject` - Run the current project(If you are in a project otherwise you will not do anything)
 
