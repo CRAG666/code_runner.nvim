@@ -66,7 +66,9 @@ local function run_project(context)
     if context.command then
       command = prefix .. re_jsonvar_with_vimvar(context.command, file)
     else
-      command = get_command(context.filetype, file)
+      local filetype = require'plenary.filetype'
+      local current_filetype = filetype.detect_from_extension(file)
+      command = get_command(current_filetype, file)
     end
   else
     command = prefix .. "cd " .. context.path .. " &&" .. context.command

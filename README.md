@@ -14,7 +14,7 @@
 
 
 ```lua
-use 'CRAG666/code_runner.nvim'
+use { 'folke/todo-comments.nvim', requires = 'nvim-lua/plenary.nvim' }
 ```
 ### Quick start
 
@@ -24,11 +24,11 @@ Add the following line to your init.vim
 lua require('code_runner').setup({})
 ```
 
-### chek new features
+### Chek new features
 check out the new_features branch(Unstable)
 
 ```lua
-use {'CRAG666/code_runner.nvim', branch = "new_features"}
+use { 'folke/todo-comments.nvim', requires = 'nvim-lua/plenary.nvim', branch = "new_features" }
 ```
 #### Features
 * (Nothing new for now)
@@ -155,8 +155,7 @@ The file should look like this(the default file does not exist create it with th
     "~/python/intel_2021_1": {
         "name": "Intel Course 2021"
         "description": "Simple python project",
-        "file_name": "POO/main.py",
-        "filetype": "python"
+        "file_name": "POO/main.py"
     },
     "~/deno/example": {
         "name": "ExapleDeno"
@@ -173,7 +172,7 @@ The file should look like this(the default file does not exist create it with th
 ````
 There are 3 main ways to configure the execution of a project (found in the example.)
 
-1. Use the default command defined in the filetypes file (see `:CRFiletype`). In order to do that it is necessary to define file_name & filetype (the latter because I still don't know how to extract it from the path if someone knows how it would help a lot).
+1. Use the default command defined in the filetypes file (see `:CRFiletype`). In order to do that it is necessary to define file_name.
 
 2. Use a different command than the one set in `CRFiletype`. In this case, the file_name and command must be provided.
 
@@ -184,7 +183,6 @@ There are 3 main ways to configure the execution of a project (found in the exam
 -  `name`: Project name
 -  `description`: Project description
 -  `file_name`: Filename relative to root path
--  `filetype`: File type relative to file_name
 -  `command`: Command to run the project. It is possible to use variables exactly the same as we would in `CRFiletype`
 
 warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described above.
