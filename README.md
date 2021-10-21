@@ -14,7 +14,7 @@
 
 
 ```lua
-use { 'folke/todo-comments.nvim', requires = 'nvim-lua/plenary.nvim' }
+use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' }
 ```
 ### Quick start
 
@@ -28,7 +28,7 @@ lua require('code_runner').setup({})
 check out the new_features branch(Unstable)
 
 ```lua
-use { 'folke/todo-comments.nvim', requires = 'nvim-lua/plenary.nvim', branch = "new_features" }
+use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim', branch = "new_features" }
 ```
 #### Features
 * (Nothing new for now)
