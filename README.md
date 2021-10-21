@@ -31,9 +31,18 @@ check out the new_features branch(Unstable)
 use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim', branch = "new_features" }
 ```
 #### Features
-* (Nothing new for now)
+
+* Run in a Float window(unstable)
 
 Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas
+
+##### Help build this feature
+The things to do are listed below:
+* toggle window
+* improve setup function
+* improve the way you switch between normal terminal and floating terminal(is currently filled with if else)
+* handling buffers and windows in a better way (I still don't know how it works exactly)
+* open an issue to know if it is worth implementing this function and if there are people interested in its existence
 
 ### Functions
 
