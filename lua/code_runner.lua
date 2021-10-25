@@ -58,6 +58,8 @@ end
 M.run_code = commands.run
 M.run_filetype = commands.run_filetype
 M.run_project = commands.run_project
+M.get_filetype_command = commands.get_filetype_command
+M.get_project_command = commands.get_project_command
 
 local function open_json(json_path)
   local command = "tabnew " .. json_path
