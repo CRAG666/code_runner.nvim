@@ -78,7 +78,8 @@ local M = {}
 -- Get command for the current filetype
 function M.get_filetype_command()
   local filetype = vim.bo.filetype
-  return get_command(filetype)
+  local command = get_command(filetype) or ""
+  return command
 end
 
 -- Execute filetype

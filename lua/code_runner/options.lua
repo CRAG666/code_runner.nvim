@@ -9,8 +9,7 @@ local options = {
   },
   project_context = {
     map = "<leader>r",
-    json_path = vim.fn.stdpath("data")
-      .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+    json_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
   },
 }
 
