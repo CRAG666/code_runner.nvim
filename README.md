@@ -208,8 +208,7 @@ require("code_runner").get_project_command() -- get the current command for this
 
 ## Harpoon
 
-you can directly integrate this plugin with [ThePrimeagen/harpoon](https://github.com/ThePrimeagen/harpoon) the way to do it is through command queries, harpoon allows the command to be sent to a terminal, below it is shown how to use harpoon term together with code_runner.nvim.
-harpoon allows the command to be sent to a terminal, below it is shown how to use harpoon term together with code_runner.nvim:
+you can directly integrate this plugin with [ThePrimeagen/harpoon](https://github.com/ThePrimeagen/harpoon) the way to do it is through command queries, harpoon allows the command to be sent to a terminal, below it is shown how to use harpoon term together with code_runner.nvim:
 
 ```vimscript
 :lua require("harpoon.term").sendCommand(1, require("code_runner").get_filetype_command() .. "\n")
