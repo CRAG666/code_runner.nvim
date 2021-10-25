@@ -1,9 +1,6 @@
 -- Import options
 local o = require("code_runner.options").get()
 
--- Create prefix for run commands
-local prefix = string.format("%s %dsplit term://", o.term.position, o.term.size)
-
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path
 -- @param command command to run the path
@@ -45,74 +42,103 @@ end
 -- @param path absolute path to file
 -- @return command
 local function get_command(filetype, path)
-  local nvim_files = {
-    lua = "luafile %",
-    vim = "source %",
-  }
   path = path or vim.fn.expand("%:p")
   local command = vim.g.fileCommands[filetype]
   if command then
     local command_vim = re_jsonvar_with_vimvar(command, path)
-    return prefix .. command_vim
+    return command_vim
   end
-  return nvim_files[filetype]
+  return nil
 end
 
 -- Run command in project context
-local function run_project(context)
-  local command = ""
+local function get_project_command(context)
+  local command = nil
   if context.file_name then
     local file = context.path .. "/" .. context.file_name
     if context.command then
-      command = prefix .. re_jsonvar_with_vimvar(context.command, file)
+      command = re_jsonvar_with_vimvar(context.command, file)
     else
       local filetype = require'plenary.filetype'
       local current_filetype = filetype.detect_from_extension(file)
       command = get_command(current_filetype, file)
     end
   else
-    command = prefix .. "cd " .. context.path .. " &&" .. context.command
+    command = "cd " .. context.path .. " &&" .. context.command
   end
-  vim.cmd(command)
+  return command
 end
 
+-- Create prefix for run commands
+local prefix = string.format("%s %dsplit term://", o.term.position, o.term.size)
+
 local M = {}
+
+
+-- Get command for the current filetype
+function M.get_filetype_command()
+  local filetype = vim.bo.filetype
+  return get_command(filetype) or ""
+end
+
+-- Execute filetype
+function M.run_filetype()
+  local command = M.get_filetype_command()
+  if command then
+    vim.cmd(prefix .. command)
+  else
+    local nvim_files = {
+      lua = "luafile %",
+      vim = "source %"
+    }
+    vim.cmd(nvim_files[vim.bo.filetype])
+  end
+end
+
+
+-- Get command for this current project
+function M.get_project_command()
+  local context = nil
+  if vim.g.projectManager then
+    context = get_project_rootpath()
+  end
+  return get_project_command(context) or ""
+end
+
+-- Check if is a project
+local function is_a_project()
+  local command = M.get_project_command()
+  if command ~= "" then
+    return command
+  end
+  return nil
+end
+
+-- Execute project
+function M.run_project()
+  local command = is_a_project()
+  if command then
+    vim.cmd(prefix .. command)
+  end
+end
+
 
 -- Execute filetype or project
 function M.run(...)
   local json_key_select = select(1,...)
   if json_key_select ~= "" then
     -- since we have reached here, means we have our command key
-    local cmd_to_execute = get_command(json_key_select)
+    local cmd_to_execute = get_command(json_key_select) or ""
     vim.cmd(cmd_to_execute)
     return
   end
-
   --  procede here if no input arguments
-  local is_a_project = M.run_project()
-  if not is_a_project then
+  local project = is_a_project()
+  if project then
+    vim.cmd(prefix .. project)
+  else
     M.run_filetype()
   end
-end
-
--- Execute filetype
-function M.run_filetype()
-  local filetype = vim.bo.filetype
-  local command = get_command(filetype) or ""
-  vim.cmd(command)
-end
-
--- Execute project
-function M.run_project()
-  local context = nil
-  if vim.g.projectManager then
-    context = get_project_rootpath()
-  end
-  if context then
-    run_project(context)
-    return true
-  end
-  return false
 end
 
 return M
