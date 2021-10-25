@@ -108,7 +108,7 @@ Run `CRFiletype` , Open the configuration file.
 
 The file should look like this(the default file does not exist create it with the `CRFiletype` command):
 
-````json
+```json
 
 {
     "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
@@ -117,7 +117,7 @@ The file should look like this(the default file does not exist create it with th
     "rust": "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
 }
 
-````
+```
 
 In the code_runner.json a series of commands associated with file type (chek file type in vim/neovim) is specified, if you want to add some other language follow this structure "file_type": "commans"
 
@@ -143,13 +143,13 @@ absolute path: /home/anyuser/current/file.py
 
 Add support to javascript and objective c:
 
-````json
+```json
 {
 ....... more ........
 "javascript": "node",
 "objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
 }
-````
+```
 
 In this example, there are two file types, one uses variables and the other does not. If no variables are used, the plugin adds the current file path. This is a way to add commands in a simple way for those languages that do not require complexity to execute (python and javascrip for example)
 
@@ -159,7 +159,7 @@ Run `CRProjects` , Open the project list.
 
 The file should look like this(the default file does not exist create it with the `CRProjects` command):
 
-````json
+```json
 {
     "~/python/intel_2021_1": {
         "name": "Intel Course 2021"
@@ -178,7 +178,7 @@ The file should look like this(the default file does not exist create it with th
         "command": "make buid & cd buid/ & ./compiled_file"
     }
 }
-````
+```
 There are 3 main ways to configure the execution of a project (found in the example.)
 
 1. Use the default command defined in the filetypes file (see `:CRFiletype`). In order to do that it is necessary to define file_name.
@@ -196,6 +196,28 @@ There are 3 main ways to configure the execution of a project (found in the exam
 
 warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described above.
 
+### Queries
+These functions could be useful if you intend to create plugins around code_runner, currently only the file type and current project commands can be accessed respectively
+
+```lua
+require("code_runner").get_filetype_command() -- get the current command for this filetype
+require("code_runner").get_project_command() -- get the current command for this project
+```
+
+# Integration with other plugins
+
+## Harpoon
+
+you can directly integrate this plugin with [ThePrimeagen/harpoon](https://github.com/ThePrimeagen/harpoon) the way to do it is through command queries, harpoon allows the command to be sent to a terminal, below it is shown how to use harpoon term together with code_runner.nvim.
+harpoon allows the command to be sent to a terminal, below it is shown how to use harpoon term together with code_runner.nvim:
+
+```vimscript
+:lua require("harpoon.term").sendCommand(1, require("code_runner").get_filetype_command() .. "\n")
+```
+
+# Tip
+For unknown reasons, leaving a comma in the trailing element in any json file causes an error when loading into lua, so you have to remove the trailing comma in the last item.
+
 # Screenshots
 
 ![typescript](https://i.ibb.co/JCg3tNd/ezgif-com-video-to-gif.gif)
@@ -203,9 +225,6 @@ warning! : Avoid using all the parameters at the same time. The correct way to u
 ![python](https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif)
 
 ![Code_Runner](https://i.ibb.co/gFRhLgr/screen-1628272271.png "Code Runner with python")
-
-# Tip
-For unknown reasons, leaving a comma in the trailing element in any json file causes an error when loading into lua, so you have to remove the trailing comma in the last item.
 
 # Important!
 If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon
