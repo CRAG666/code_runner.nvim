@@ -84,7 +84,7 @@ end
 -- Execute filetype
 function M.run_filetype()
   local command = M.get_filetype_command()
-  if command then
+  if command ~= "" then
     vim.cmd(prefix .. command)
   else
     local nvim_files = {
