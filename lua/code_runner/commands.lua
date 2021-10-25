@@ -102,7 +102,10 @@ function M.get_project_command()
   if vim.g.projectManager then
     context = get_project_rootpath()
   end
-  return get_project_command(context) or ""
+  if context then
+    return get_project_command(context) or ""
+  end
+  return ""
 end
 
 -- Check if is a project
