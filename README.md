@@ -4,6 +4,10 @@
 
 ![Code Runner](https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif)
 
+# Introduction
+
+When I was still going to university, it was common to try multiple programming languages, at that time I used vscode which with a single complement allowed me to execute many programming languages, I left the ballast that electron apps are and I switched to neovim, I searched the internet and eventually I found a lot of plugins but none of them I liked (maybe I don't search well) so I started adding autocmds like I didn't would have a tomorrow, this was working fine but I'm lazy to do it (it might work for ti, if you only program in one or three languages at most). So I decided to make this add-on and since the migration of my commands was very fast, it was just copy and paste and everything was working. Currently I no longer test many languages, and I work in the professional environment, this plugin is still my Swiss army knife.
+
 ### Requirements
 
 -   Neovim (0.5)
@@ -217,6 +221,18 @@ you can directly integrate this plugin with [ThePrimeagen/harpoon](https://githu
 # Tip
 For unknown reasons, leaving a comma in the trailing element in any json file causes an error when loading into lua, so you have to remove the trailing comma in the last item.
 
+
+# inspirations and thanks
+
+* The idea of this project comes from the vscode plugin [code_runner](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner) You can even copy your configuration and pass it to this plugin, as they are the same in the way of defining commands associated with [filetypes](https://github.com/CRAG666/code_runner.nvim#add-support-for-more-file-types)
+
+* [absp-nvim](https://github.com/is0n/absp-nvim) some ideas of how to execute commands were taken from this plugin, thank you very much.
+
+* [FTerm.nvim](https://github.com/numToStr/FTerm.nvim) Much of how this README.md is structured was blatantly stolen from this plugin, thank you very much
+
+* Thanks to all current and future collaborators, without their contributions this plugin would not be what it is today
+
+
 # Screenshots
 
 ![typescript](https://i.ibb.co/JCg3tNd/ezgif-com-video-to-gif.gif)
@@ -224,6 +240,7 @@ For unknown reasons, leaving a comma in the trailing element in any json file ca
 ![python](https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif)
 
 ![Code_Runner](https://i.ibb.co/gFRhLgr/screen-1628272271.png "Code Runner with python")
+
 
 # Important!
 If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon
