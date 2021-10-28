@@ -1,11 +1,9 @@
-local options = require("code_runner.options")
-local o = options.options
 local commands = require("code_runner.commands")
 local M = {}
 
 
 M.setup = function(user_options)
-  options.set(user_options)
+  require("code_runner.options").set(user_options)
   M.load_json_files()
   vim.api.nvim_exec(
     [[
@@ -31,6 +29,7 @@ end
 M.load_json_files = function()
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
+  local o = require("code_runner.options").options
   vim.g.fileCommands = load_json_as_table(o.filetype_path)
   vim.g.projectManager = load_json_as_table(o.project_path)
 
