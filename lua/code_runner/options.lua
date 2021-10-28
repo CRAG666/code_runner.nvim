@@ -9,7 +9,7 @@ local defaults = {
 
 local M = {}
 -- set user config
-M.options = {}
+M.options = nil
 M.set = function(user_options)
   M.options = vim.tbl_deep_extend("force",{}, defaults, M.options or {}, user_options or {})
 end
