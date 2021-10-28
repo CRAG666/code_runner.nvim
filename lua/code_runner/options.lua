@@ -1,4 +1,4 @@
-local options = {
+local defaults = {
   term = {
     position = "belowright",
     size = 8,
@@ -9,13 +9,10 @@ local options = {
 
 local M = {}
 -- set user config
+M.options = {}
 M.set = function(user_options)
-  options = vim.tbl_deep_extend("force",{}, options, user_options)
+  M.options = vim.tbl_deep_extend("force",{}, defaults, M.options or {}, user_options)
 end
 
--- get user options
-M.get = function()
-  return options
-end
 
 return M
