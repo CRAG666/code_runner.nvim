@@ -10,7 +10,7 @@ local options = {
 local M = {}
 -- set user config
 M.set = function(user_options)
-  options = vim.tbl_deep_extend("force", options, user_options)
+  options = vim.tbl_deep_extend("force",{}, options, user_options)
 end
 
 -- get user options
