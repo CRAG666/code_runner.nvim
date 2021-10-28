@@ -1,4 +1,5 @@
-local defaults = {
+local M = {}
+M.options = {
   term = {
     position = "belowright",
     size = 8,
@@ -7,11 +8,16 @@ local defaults = {
   project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
 }
 
-local M = {}
 -- set user config
-M.options = nil
 M.set = function(user_options)
-  M.options = vim.tbl_deep_extend("force", defaults, user_options)
+  for key, value in pairs(M.options) do
+    local user_value = user_options[key]
+    if user_value and type(user_value) == "table" then
+      M.options[key] = vim.tbl_deep_extend("force", value, user_value)
+    else
+      M.options[key] = user_value or value
+    end
+  end
 end
 
 
