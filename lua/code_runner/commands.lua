@@ -1,5 +1,5 @@
 -- Import options
-local o = require("code_runner.options").options
+local o = require("code_runner.options").get()
 
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path

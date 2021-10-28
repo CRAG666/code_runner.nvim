@@ -29,7 +29,7 @@ end
 M.load_json_files = function()
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
-  local o = require("code_runner.options").options
+  local o = require("code_runner.options").get()
   vim.g.fileCommands = load_json_as_table(o.filetype_path)
   vim.g.projectManager = load_json_as_table(o.project_path)
 
