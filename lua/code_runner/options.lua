@@ -11,7 +11,6 @@ M.options = {
 -- set user config
 M.set = function(user_options)
   M.options = vim.tbl_deep_extend("force", M.options, user_options)
-  print(vim.inspect(M.options))
 end
 
 
