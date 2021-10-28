@@ -11,7 +11,10 @@ local M = {}
 -- set user config
 M.options = nil
 M.set = function(user_options)
-  M.options = vim.tbl_deep_extend("force",{}, defaults, M.options or {}, user_options or {})
+  for key, value in pairs(defaults) do
+    local u_o = user_options[key] or {}
+    M.options[key] = vim.tbl_extend("force", value, u_o)
+  end
 end
 
 
