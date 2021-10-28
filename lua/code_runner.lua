@@ -1,9 +1,10 @@
 local commands = require("code_runner.commands")
 local M = {}
+local o = require("code_runner.options")
 
 
 M.setup = function(user_options)
-  require("code_runner.options").set(user_options)
+  o.set(user_options)
   M.load_json_files()
   vim.api.nvim_exec(
     [[
@@ -17,6 +18,8 @@ M.setup = function(user_options)
 
       command! CRFiletype lua require('code_runner').open_filetype_suported()
       command! CRProjects lua require('code_runner').open_project_manager()
+      command! CRFiletype lua require('code_runner').open_filetype_suported()
+      command! CRProjects lua require('code_runner').open_project_manager()
       command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
       command! RunFile lua require('code_runner').run_filetype()
       command! RunProject lua require('code_runner').run_project()
@@ -26,26 +29,29 @@ M.setup = function(user_options)
 end
 
 
+local function open_json(json_path)
+  local command = "tabnew " .. json_path
+  vim.cmd(command)
+end
+
+local function get_conf_runners(option)
+  if option and #option > 0 then
+    return vim.deepcopy(option)
+  end
+  return nil
+end
+
 M.load_json_files = function()
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
-  local o = require("code_runner.options").get()
-  vim.g.fileCommands = load_json_as_table(o.filetype_path)
-  vim.g.projectManager = load_json_as_table(o.project_path)
+  local opt = o.get()
+  vim.g.fileCommands = load_json_as_table(opt.filetype_path) or get_conf_runners(opt.filetype)
+  vim.g.projectManager = load_json_as_table(o.get().project_path) or get_conf_runners(opt.projects)
+  vim.g.crPrefix = string.format("%s %dsplit term://", opt.term.position, opt.term.size)
 
   -- Message if json file not exist
   if not vim.g.fileCommands then
-    local orunners = o.runners
-    if orunners and #orunners > 0 then
-     vim.g.fileCommands = vim.tbl_extend("force", vim.g.fileCommands, orunners)
-    else
-      print("File not exist or format invalid, please execute :CRFiletype")
-    end
-  end
-
-  local oprojects = o.projects
-  if not vim.g.projectManager and oprojects and #oprojects > 0 then
-    vim.g.projectManager = vim.deepcopy(oprojects)
+      print("Not exist command for filetypes or format invalid, if use json please execute :CRFiletype")
   end
 end
 
@@ -55,17 +61,12 @@ M.run_project = commands.run_project
 M.get_filetype_command = commands.get_filetype_command
 M.get_project_command = commands.get_project_command
 
-local function open_json(json_path)
-  local command = "tabnew " .. json_path
-  vim.cmd(command)
-end
-
 M.open_filetype_suported = function()
-  open_json(o.filetype_path)
+  open_json(o.get().filetype_path)
 end
 
 M.open_project_manager = function()
-  open_json(o.project_path)
+  open_json(o.get().project_path)
 end
 
 return M

@@ -50,12 +50,14 @@ The things to do are listed below:
 
 ### Functions
 
--   `CRFiletype` - Open json  with supported files.
--   `CRProjects` - Open json with list of projects.
 -   `:RunCode` - Runs based on file type, first checking if belongs to project, then if filetype mapping exists
 -   `:RunCode <A_key_here>` - Runs command with key of cool in the current directory.
--   `RunFile`    - Run the current file
--   `RunProject` - Run the current project(If you are in a project otherwise you will not do anything)
+-   `:RunFile`    - Run the current file
+-   `:RunProject` - Run the current project(If you are in a project otherwise you will not do anything)
+-   `:CRFiletype` - Open json  with supported files(Use only if you configured with json files).
+-   `:CRProjects` - Open json with list of projects(Use only if you configured with json files).
+
+This plugin stopped creating mappings, in favor of you creating your own
 
 
 ### Options
@@ -67,21 +69,13 @@ The things to do are listed below:
     - `position`: integrated terminal position(for option :h windows) default: `belowright`
     - `size`: size of the terminal window (default: `8`)
 
-- `filetype`: Configuration for filetype
+- `filetype_path`: absolute path to json file config (default: packer module path)
 
-  Fields:
+- `filetype`: If you prefer to use lua instead of json files, you can add your settings by file type here(type table)
 
-    - `map`: keys to trigger execution (default: `<leader>r`)
+- `project_path`: absolute path to json file config (default: packer module path)
 
-    - `json_path`: absolute path to json file config (default: packer module path)
-
-- `project_context`: Configuration for projects
-
-  Fields:
-
-    - `map`: keys to trigger execution (default: `<leader>r`)
-
-    - `json_path`: absolute path to json file config (default: packer module path)
+- `project`: If you prefer to use lua instead of json files, you can add your settings by project here(type table)
 
 
 ### Setup
@@ -93,21 +87,59 @@ require('code_runner').setup {
     position = "vert",
     size = 8
   },
-  filetype = {
-    map = "<leader>r",
-    json_path = "/home/myuser/.config/nvim/code_runner.json"
-  },
-  project_context = {
-    map = "<leader>r",
-    json_path = "/home/myuser/.config/nvim/projects.json"
-  }
+  filetype_path = "/home/myuser/.config/nvim/code_runner.json"
+  project_path = "/home/myuser/.config/nvim/projects.json"
 }
-
 ```
-As seen in this example configuration, both project_context and filetype have the same keymap assigned, this does not cause any problem because in these cases the plugin assigns a single map to `:RunCode`(read how it works `:RunCode`).
 
+#### Default values
+
+```lua
+require('code_runner').setup {
+  term = {
+    position = "belowright",
+    size = 8,
+  },
+  filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
+  filetype = {},
+  project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+  project = {},
+}
+```
+
+It is important that you know that the configuration in json is given priority, but if you prefer to configure everything in lua, do not add the filetype_path and project_path options, and configure over the filetype and project options, below is a configuration in pure lua:
+
+```lua
+require('code_runner').setup {
+  term = {
+    position = "vert",
+    size = 15,
+  },
+  filetype = {
+    java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+    python = "python -U",
+    typescript = "deno run",
+    rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+  },
+  project = {
+    ["~/deno/example"] = {
+        name = "ExapleDeno"
+        description = "Project with deno using other command",
+        file_name = "http/main.ts",
+        command = "deno run --allow-net"
+    },
+    ["~/cpp/example"] = {
+        name = "ExapleCpp"
+        description = "Project with make file",
+        command = "make buid & cd buid/ & ./compiled_file"
+    }
+  },
+}
+```
 
 ### Add support for more file types
+
+#### Configure with json files
 Run `CRFiletype` , Open the configuration file.
 
 The file should look like this(the default file does not exist create it with the `CRFiletype` command):
@@ -121,6 +153,19 @@ The file should look like this(the default file does not exist create it with th
     "rust": "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
 }
 
+```
+
+#### Configure with lua files
+```lua
+..... more config .....
+  filetype = {
+    java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+    python = "python -U",
+    typescript = "deno run",
+    rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+  },
+..... more config .....
+}
 ```
 
 In the code_runner.json a series of commands associated with file type (chek file type in vim/neovim) is specified, if you want to add some other language follow this structure "file_type": "commans"
@@ -159,6 +204,8 @@ In this example, there are two file types, one uses variables and the other does
 
 
 ### Add projects
+
+#### Configure with json files
 Run `CRProjects` , Open the project list.
 
 The file should look like this(the default file does not exist create it with the `CRProjects` command):
@@ -183,11 +230,38 @@ The file should look like this(the default file does not exist create it with th
     }
 }
 ```
+
+#### Configure with lua files
+
+```lua
+..... more config .....
+  project = {
+    ["~/python/intel_2021_1"] = {
+        name = "Intel Course 2021"
+        description = "Simple python project",
+        file_name = "POO/main.py"
+    },
+    ["~/deno/example"] = {
+        name = "ExapleDeno"
+        description = "Project with deno using other command",
+        file_name = "http/main.ts",
+        command = "deno run --allow-net"
+    },
+    ["~/cpp/example"] = {
+        name = "ExapleCpp"
+        description = "Project with make file",
+        command = "make buid & cd buid/ & ./compiled_file"
+    }
+  },
+..... more config .....
+}
+```
+
 There are 3 main ways to configure the execution of a project (found in the example.)
 
-1. Use the default command defined in the filetypes file (see `:CRFiletype`). In order to do that it is necessary to define file_name.
+1. Use the default command defined in the filetypes file (see `:CRFiletype`or check your confi lua). In order to do that it is necessary to define file_name.
 
-2. Use a different command than the one set in `CRFiletype`. In this case, the file_name and command must be provided.
+2. Use a different command than the one set in `CRFiletype` or your config lua. In this case, the file_name and command must be provided.
 
 3. Use a command to run the project. It is only necessary to define command(You do not need to write navigate to the root of the project, because automatically the plugin is located in the root of the project).
 

@@ -1,6 +1,3 @@
--- Import options
-local o = require("code_runner.options").get()
-
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path
 -- @param command command to run the path
@@ -70,8 +67,6 @@ local function get_project_command(context)
 end
 
 -- Create prefix for run commands
-local prefix = string.format("%s %dsplit term://", o.term.position, o.term.size)
-
 local M = {}
 
 
@@ -85,7 +80,7 @@ end
 function M.run_filetype()
   local command = M.get_filetype_command()
   if command ~= "" then
-    vim.cmd(prefix .. command)
+    vim.cmd(vim.g.crPrefix .. command)
   else
     local nvim_files = {
       lua = "luafile %",
@@ -121,7 +116,7 @@ end
 function M.run_project()
   local command = is_a_project()
   if command then
-    vim.cmd(prefix .. command)
+    vim.cmd(vim.g.crPrefix .. command)
   end
 end
 
@@ -138,7 +133,7 @@ function M.run(...)
   --  procede here if no input arguments
   local project = is_a_project()
   if project then
-    vim.cmd(prefix .. project)
+    vim.cmd(vim.g.crPrefix .. project)
   else
     M.run_filetype()
   end

@@ -48,14 +48,10 @@ default value: >
             position = "belowright",
             size = 8,
         },
-        filetype = {
-            map = "<leader>r",
-            json_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
-        },
-        project_context = {
-            map = "<leader>r",
-            json_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
-        },
+        filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
+        filetype = {},
+        project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+        project = {},
     }
 <
 
@@ -65,7 +61,7 @@ term                                            *code_runner-settings-term*
 filetype                                        *code_runner-settings-filetype*
     Configuration for filetype
 
-project_context                                 *code_runner-settings-project_context*
+project                                 *code_runner-settings-project_context*
     Configuration for project
 
 Example: >
@@ -75,14 +71,8 @@ Example: >
             position = "vert",
             size = 8
         },
-        filetype = {
-            map = "<leader>r",
-            json_path = "/home/myuser/.config/nvim/code_runner.json"
-        },
-        project_context = {
-            map = "<leader>r",
-            json_path = "/home/myuser/.config/nvim/projects.json"
-        }
+        filetype_path = "/home/myuser/.config/nvim/code_runner.json"
+        project_path = "/home/myuser/.config/nvim/projects.json"
     }
 
 
