@@ -1,5 +1,5 @@
 local options = require("code_runner.options")
-local og = options.get()
+local og = options.options()
 local commands = require("code_runner.commands")
 local M = {}
 
