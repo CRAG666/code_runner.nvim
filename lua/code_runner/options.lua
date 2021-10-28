@@ -10,14 +10,15 @@ M.options = {
 
 -- set user config
 M.set = function(user_options)
-  for key, value in pairs(M.options) do
-    local user_value = user_options[key]
-    if user_value and type(user_value) == "table" then
-      M.options[key] = vim.tbl_deep_extend("force", value, user_value)
-    else
-      M.options[key] = user_value or value
-    end
-  end
+  M.options = vim.tbl_deep_extend("force", M.options, user_options)
+  -- for key, value in pairs(M.options) do
+  --   local user_value = user_options[key]
+  --   if user_value and type(user_value) == "table" then
+  --     M.options[key] = vim.tbl_deep_extend("force", value, user_value)
+  --   else
+  --     M.options[key] = user_value or value
+  --   end
+  -- end
 end
 
 
