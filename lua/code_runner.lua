@@ -1,5 +1,5 @@
 local options = require("code_runner.options")
-local og = options.options()
+local o = options.options
 local commands = require("code_runner.commands")
 local M = {}
 
@@ -31,12 +31,12 @@ end
 M.load_json_files = function()
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
-  vim.g.fileCommands = load_json_as_table(og.filetype_path)
-  vim.g.projectManager = load_json_as_table(og.project_path)
+  vim.g.fileCommands = load_json_as_table(o.filetype_path)
+  vim.g.projectManager = load_json_as_table(o.project_path)
 
   -- Message if json file not exist
   if not vim.g.fileCommands then
-    local orunners = og.runners
+    local orunners = o.runners
     if orunners and #orunners > 0 then
      vim.g.fileCommands = vim.tbl_extend("force", vim.g.fileCommands, orunners)
     else
@@ -44,7 +44,7 @@ M.load_json_files = function()
     end
   end
 
-  local oprojects = og.projects
+  local oprojects = o.projects
   if not vim.g.projectManager and oprojects and #oprojects > 0 then
     vim.g.projectManager = vim.deepcopy(oprojects)
   end
@@ -62,11 +62,11 @@ local function open_json(json_path)
 end
 
 M.open_filetype_suported = function()
-  open_json(og.filetype_path)
+  open_json(o.filetype_path)
 end
 
 M.open_project_manager = function()
-  open_json(og.project_path)
+  open_json(o.project_path)
 end
 
 return M
