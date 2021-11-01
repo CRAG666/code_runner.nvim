@@ -8,21 +8,21 @@ M.setup = function(user_options)
   M.load_json_files()
   vim.api.nvim_exec(
     [[
-      function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
-        let cmd_keys = ""
-        for x in keys(g:fileCommands)
-          let cmd_keys = cmd_keys.x."\n"
-        endfor
-        return cmd_keys
-      endfunction
+    function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
+    let cmd_keys = ""
+    for x in keys(g:fileCommands)
+    let cmd_keys = cmd_keys.x."\n"
+    endfor
+    return cmd_keys
+    endfunction
 
-      command! CRFiletype lua require('code_runner').open_filetype_suported()
-      command! CRProjects lua require('code_runner').open_project_manager()
-      command! CRFiletype lua require('code_runner').open_filetype_suported()
-      command! CRProjects lua require('code_runner').open_project_manager()
-      command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
-      command! RunFile lua require('code_runner').run_filetype()
-      command! RunProject lua require('code_runner').run_project()
+    command! CRFiletype lua require('code_runner').open_filetype_suported()
+    command! CRProjects lua require('code_runner').open_project_manager()
+    command! CRFiletype lua require('code_runner').open_filetype_suported()
+    command! CRProjects lua require('code_runner').open_project_manager()
+    command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
+    command! RunFile lua require('code_runner').run_filetype()
+    command! RunProject lua require('code_runner').run_project()
     ]],
     false
   )
@@ -51,7 +51,7 @@ M.load_json_files = function()
 
   -- Message if json file not exist
   if not vim.g.fileCommands then
-      print("Not exist command for filetypes or format invalid, if use json please execute :CRFiletype")
+    print("Not exist command for filetypes or format invalid, if use json please execute :CRFiletype")
   end
 end
 

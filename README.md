@@ -51,7 +51,7 @@ The things to do are listed below:
 ### Functions
 
 -   `:RunCode` - Runs based on file type, first checking if belongs to project, then if filetype mapping exists
--   `:RunCode <A_key_here>` - Runs command with key of cool in the current directory.
+-   `:RunCode <A_key_here>` - Execute command from its key in current directory.
 -   `:RunFile`    - Run the current file
 -   `:RunProject` - Run the current project(If you are in a project otherwise you will not do anything)
 -   `:CRFiletype` - Open json  with supported files(Use only if you configured with json files).
@@ -168,9 +168,9 @@ The file should look like this(the default file does not exist create it with th
 }
 ```
 
-In the code_runner.json a series of commands associated with file type (chek file type in vim/neovim) is specified, if you want to add some other language follow this structure "file_type": "commans"
+if you want to add some other language or some other command follow this structure "key": "commans"
 
-#### Variable
+#### Variables
 
 The available variables are the following:
 
@@ -187,6 +187,8 @@ absolute path: /home/anyuser/current/file.py
 - fileName = file.py
 - fileNameWithoutExt = file
 - dir = /home/anyuser/current
+
+Remember that if you don't want to use variables you can use vim [filename-modifiers](http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers)
 
 ##### Example
 
