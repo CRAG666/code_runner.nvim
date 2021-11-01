@@ -57,8 +57,18 @@ The things to do are listed below:
 -   `:CRFiletype` - Open json  with supported files(Use only if you configured with json files).
 -   `:CRProjects` - Open json with list of projects(Use only if you configured with json files).
 
+
 This plugin stopped creating mappings, in favor of you creating your own
 
+Recomended:
+
+``` lua
+vim.api.nvim_set_keymap('n', '<leader>r', ':RunCode<CR>', { noremap = true, silent = false })
+vim.api.nvim_set_keymap('n', '<leader>rf', ':RunFile<CR>', { noremap = true, silent = false })
+vim.api.nvim_set_keymap('n', '<leader>rp', ':RunProject<CR>', { noremap = true, silent = false })
+vim.api.nvim_set_keymap('n', '<leader>crf', ':CRFiletype<CR>', { noremap = true, silent = false })
+vim.api.nvim_set_keymap('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent = false })
+```
 
 ### Options
 
