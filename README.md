@@ -16,10 +16,15 @@ When I was still going to university, it was common to try multiple programming 
 
 -   With [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
-
 ```lua
 use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' }
 ```
+-   With [paq-nvim](https://github.com/savq/paq-nvim)
+
+```lua
+require "paq"{'CRAG666/code_runner.nvim'; 'nvim-lua/plenary.nvim';}
+```
+
 ### Quick start
 
 Add the following line to your init.vim
