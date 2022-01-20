@@ -48,14 +48,14 @@ M.load_json_files = function()
   local next = next
 
   -- load filetype config
-  if next(opt.filetype) == nil then
+  if opt.filetype == nil then
     vim.g.fileCommands = load_json_as_table(opt.filetype_path)
   else
     vim.g.fileCommands = get_conf_runners(opt.filetype)
   end
 
   -- load projects
-  if next(opt.projects) == nil then
+  if not opt.projects == nil then
     vim.g.projectManager = load_json_as_table(opt.project_path)
   else
     vim.g.projectManager = get_conf_runners(opt.projects)
