@@ -5,7 +5,7 @@ local o = require("code_runner.options")
 
 M.setup = function(user_options)
   o.set(user_options)
-  M.load_json_files()
+  M.load_json_files(o.get())
   vim.api.nvim_exec(
     [[
     function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
@@ -41,11 +41,9 @@ local function get_conf_runners(option)
   return nil
 end
 
-M.load_json_files = function()
+M.load_json_files = function(opt)
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
-  local opt = o.get()
-  local next = next
 
   -- load filetype config
   if opt.filetype == nil then
