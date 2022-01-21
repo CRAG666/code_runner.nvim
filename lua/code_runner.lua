@@ -53,6 +53,7 @@ M.load_json_files = function(opt)
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
 
+  print(table.maxn(opt.filetype))
   -- load filetype config
   if is_empty(opt.filetype) then
     vim.g.fileCommands = load_json_as_table(opt.filetype_path)
