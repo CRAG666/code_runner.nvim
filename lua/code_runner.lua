@@ -46,8 +46,8 @@ M.load_json_files = function(opt)
   local load_json_as_table = require("code_runner.load_json")
 
   -- load filetype config
+  print(vim.inspect(opt.filetype))
   if next(opt.filetype) == nil then
-    print(vim.inspect(opt.filetype))
     vim.g.fileCommands = load_json_as_table(opt.filetype_path)
   else
     vim.g.fileCommands = get_conf_runners(opt.filetype)
