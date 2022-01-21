@@ -5,7 +5,7 @@ local o = require("code_runner.options")
 
 M.setup = function(user_options)
   o.set(user_options)
-  M.load_json_files(o.get(), user_options)
+  M.load_json_files(o.get())
   vim.api.nvim_exec(
     [[
     function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
@@ -40,19 +40,31 @@ local function get_conf_runners(option)
   return nil
 end
 
-M.load_json_files = function(opt, o_opt)
+
+local function countTable(tbl)
+  local count = 0
+  for _ in pairs(tbl) do
+    count = count + 1
+    if count == 2 then
+      break
+    end
+    return count
+  end
+end
+
+M.load_json_files = function(opt)
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
 
   -- load filetype config
-  if o_opt.filetype == nil then
+  if countTable(opt.filetype) == 1 then
     vim.g.fileCommands = load_json_as_table(opt.filetype_path)
   else
     vim.g.fileCommands = get_conf_runners(opt.filetype)
   end
 
   -- load projects
-  if o_opt.projects == nil then
+  if countTable(opt.projects) == 1 then
     vim.g.projectManager = load_json_as_table(opt.project_path)
   else
     vim.g.projectManager = get_conf_runners(opt.projects)
