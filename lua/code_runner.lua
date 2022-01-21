@@ -40,8 +40,8 @@ local function get_conf_runners(option)
   return nil
 end
 
-function table.IsEmpty( tab )
-	return next( tab ) == nil
+local function tableHasKey(table,key)
+    return table[key] ~= nil
 end
 
 
@@ -50,14 +50,14 @@ M.load_json_files = function(opt, o_opt)
   local load_json_as_table = require("code_runner.load_json")
 
   -- load filetype config
-  if not o_opt.filetype then
+  if not tableHasKey(o_opt, "filetype") then
     vim.g.fileCommands = load_json_as_table(opt.filetype_path)
   else
     vim.g.fileCommands = get_conf_runners(opt.filetype)
   end
 
   -- load projects
-  if not o_opt.projects then
+  if not tableHasKey(o_opt, "projects") then
     vim.g.projectManager = load_json_as_table(opt.project_path)
   else
     vim.g.projectManager = get_conf_runners(opt.projects)
