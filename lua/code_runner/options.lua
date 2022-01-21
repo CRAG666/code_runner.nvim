@@ -4,13 +4,9 @@ local options = {
     size = 8,
   },
   filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
-  filetype = {
-    nobody = ""
-  },
+  filetype = {},
   project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
-  project = {
-    nobody = ""
-  },
+  project = {},
 }
 
 local M = {}

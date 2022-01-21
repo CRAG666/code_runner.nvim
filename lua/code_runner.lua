@@ -5,7 +5,7 @@ local o = require("code_runner.options")
 
 M.setup = function(user_options)
   o.set(user_options)
-  M.load_json_files(o.get())
+  M.load_json_files()
   vim.api.nvim_exec(
     [[
     function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
@@ -33,43 +33,18 @@ local function open_json(json_path)
   vim.cmd(command)
 end
 
-local function get_conf_runners(option)
-  if option and #option > 0 then
-    return vim.deepcopy(option)
-  end
-  return nil
-end
-
-
-local function countTable(tbl)
-  local count = 0
-  for _ in pairs(tbl) do
-    count = count + 1
-    if count == 2 then
-      break
-    end
-    return count
-  end
-end
-
-M.load_json_files = function(opt)
+M.load_json_files = function()
   -- Load json config and convert to table
+  local opt = o.get()
   local load_json_as_table = require("code_runner.load_json")
 
   -- load filetype config
-  if countTable(opt.filetype) == 1 then
-    vim.g.fileCommands = load_json_as_table(opt.filetype_path)
-  else
-    vim.g.fileCommands = get_conf_runners(opt.filetype)
-  end
+  vim.g.fileCommands = opt.filetype or load_json_as_table(opt.filetype_path)
 
   -- load projects
-  if countTable(opt.projects) == 1 then
-    vim.g.projectManager = load_json_as_table(opt.project_path)
-  else
-    vim.g.projectManager = get_conf_runners(opt.projects)
-  end
+  vim.g.projectManager = opt.projects or load_json_as_table(opt.project_path)
 
+  -- Add prefix for run commands
   vim.g.crPrefix = string.format("%s %dsplit term://", opt.term.position, opt.term.size)
 
   -- Message if json file not exist
