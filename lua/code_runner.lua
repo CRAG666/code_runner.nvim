@@ -28,7 +28,6 @@ M.setup = function(user_options)
   )
 end
 
-
 local function open_json(json_path)
   local command = "tabnew " .. json_path
   vim.cmd(command)
@@ -41,28 +40,19 @@ local function get_conf_runners(option)
   return nil
 end
 
-
-local function is_empty(t)
-    for _,_ in pairs(t) do
-        return false
-    end
-    return true
-end
-
 M.load_json_files = function(opt)
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
 
-  print(table.maxn(opt.filetype))
   -- load filetype config
-  if is_empty(opt.filetype) then
+  if (next(opt.filetype) == nil) then
     vim.g.fileCommands = load_json_as_table(opt.filetype_path)
   else
     vim.g.fileCommands = get_conf_runners(opt.filetype)
   end
 
   -- load projects
-  if is_empty(opt.projects) then
+  if (next(opt.projects)) then
     vim.g.projectManager = load_json_as_table(opt.project_path)
   else
     vim.g.projectManager = get_conf_runners(opt.projects)
