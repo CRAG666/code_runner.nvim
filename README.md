@@ -34,9 +34,10 @@ lua require('code_runner').setup({})
 ```
 
 ### Chek new features
-check out the new_features branch(Unstable)
+check out the new_features branch(Unstable, do not use in production)
 
 ```lua
+-- unstable
 use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim', branch = "new_features" }
 ```
 #### Features
@@ -122,7 +123,7 @@ require('code_runner').setup {
 }
 ```
 
-It is important that you know that the configuration in json is given priority, but if you prefer to configure everything in lua, do not add the filetype_path and project_path options, and configure over the filetype and project options, below is a configuration in pure lua:
+It is important that you know that configuration is given priority in pure lua, but if you prefer to configure in json, do not add the options filetype and project, and configure over the options filetype_path and project_path (these are paths of the os where your file is json), then you have a configuration in pure lua:
 
 ```lua
 require('code_runner').setup {
@@ -209,11 +210,23 @@ Remember that if you don't want to use variables you can use vim [filename-modif
 
 Add support to javascript and objective c:
 
+json:
+
 ```json
 {
 ....... more ........
 "javascript": "node",
 "objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
+}
+```
+
+lua:
+
+```lua
+{
+....... more ........
+javascript = "node",
+["objective-c"] = "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
 }
 ```
 
