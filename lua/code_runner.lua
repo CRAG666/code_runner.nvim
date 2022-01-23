@@ -39,14 +39,23 @@ M.load_json_files = function()
   local load_json_as_table = require("code_runner.load_json")
 
   -- load filetype config
-  vim.g.fileCommands = opt.filetype or load_json_as_table(opt.filetype_path)
+  if next(opt.filetype or {}) == nil then
+    vim.g.fileCommands = load_json_as_table(opt.filetype_path)
+  else
+    vim.g.fileCommands = opt.filetype
+  end
 
   -- load projects
-  vim.g.projectManager = opt.projects or load_json_as_table(opt.project_path)
+  if next(opt.projects or {}) == nil then
+    vim.g.projectManager = load_json_as_table(opt.project_path)
+  else
+    vim.g.projectManager = opt.projects
+  end
 
   -- Add prefix for run commands
   vim.g.crPrefix = string.format("%s %dsplit term://", opt.term.position, opt.term.size)
 
+  print(vim.inspect(vim.g.fileCommands))
   -- Message if json file not exist
   if not vim.g.fileCommands then
     print("Not exist command for filetypes or format invalid, if use json please execute :CRFiletype")
