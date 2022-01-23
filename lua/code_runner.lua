@@ -55,7 +55,6 @@ M.load_json_files = function()
   -- Add prefix for run commands
   vim.g.crPrefix = string.format("%s %dsplit term://", opt.term.position, opt.term.size)
 
-  print(vim.inspect(vim.g.fileCommands))
   -- Message if json file not exist
   if not vim.g.fileCommands then
     print("Not exist command for filetypes or format invalid, if use json please execute :CRFiletype")
