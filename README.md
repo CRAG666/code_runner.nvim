@@ -103,7 +103,7 @@ require('code_runner').setup {
     position = "vert",
     size = 8
   },
-  filetype_path = "/home/myuser/.config/nvim/code_runner.json"
+  filetype_path = "/home/myuser/.config/nvim/code_runner.json",
   project_path = "/home/myuser/.config/nvim/projects.json"
 }
 ```
@@ -120,7 +120,7 @@ require('code_runner').setup {
   filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
   filetype = {},
   project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
-  project = {},
+  project = {}
 }
 ```
 
@@ -140,13 +140,13 @@ require('code_runner').setup {
   },
   project = {
     ["~/deno/example"] = {
-        name = "ExapleDeno"
+        name = "ExapleDeno",
         description = "Project with deno using other command",
         file_name = "http/main.ts",
         command = "deno run --allow-net"
     },
     ["~/cpp/example"] = {
-        name = "ExapleCpp"
+        name = "ExapleCpp",
         description = "Project with make file",
         command = "make buid & cd buid/ & ./compiled_file"
     }
@@ -244,18 +244,18 @@ The file should look like this(the default file does not exist create it with th
 ```json
 {
     "~/python/intel_2021_1": {
-        "name": "Intel Course 2021"
+        "name": "Intel Course 2021",
         "description": "Simple python project",
         "file_name": "POO/main.py"
     },
     "~/deno/example": {
-        "name": "ExapleDeno"
+        "name": "ExapleDeno",
         "description": "Project with deno using other command",
         "file_name": "http/main.ts",
         "command": "deno run --allow-net"
     },
     "~/cpp/example": {
-        "name": "ExapleCpp"
+        "name": "ExapleCpp",
         "description": "Project with make file",
         "command": "make buid & cd buid/ & ./compiled_file"
     }
@@ -268,18 +268,18 @@ The file should look like this(the default file does not exist create it with th
 ..... more config .....
   project = {
     ["~/python/intel_2021_1"] = {
-        name = "Intel Course 2021"
+        name = "Intel Course 2021",
         description = "Simple python project",
         file_name = "POO/main.py"
     },
     ["~/deno/example"] = {
-        name = "ExapleDeno"
+        name = "ExapleDeno",
         description = "Project with deno using other command",
         file_name = "http/main.ts",
         command = "deno run --allow-net"
     },
     ["~/cpp/example"] = {
-        name = "ExapleCpp"
+        name = "ExapleCpp",
         description = "Project with make file",
         command = "make buid & cd buid/ & ./compiled_file"
     }
