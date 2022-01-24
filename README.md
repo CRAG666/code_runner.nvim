@@ -6,7 +6,7 @@
 
 # Introduction
 
-When I was still going to university, it was common to try multiple programming languages, at that time I used vscode which with a single complement allowed me to execute many programming languages, I left the ballast that electron apps are and I switched to neovim, I searched the internet and eventually I found a lot of plugins but none of them I liked (maybe I don't search well) so I started adding autocmds like I didn't would have a tomorrow, this was working fine but I'm lazy to do it (it might work for ti, if you only program in one or three languages at most). So I decided to make this add-on and since the migration of my commands was very fast, it was just copy and paste and everything was working. Currently I no longer test many languages, and I work in the professional environment, this plugin is still my Swiss army knife.
+When I was still in college it was common to try multiple programming languages, at that time I used vscode that with a single plugin allowed me to run many programming languages, I left the ballast that are electron apps and switched to neovim, I searched the Internet and finally i found a lot of plugins, but none of them i liked (maybe i didn't search well), so i started adding autocmds like i don't have a tomorrow, this worked fine but this is lazy (maybe it will work for you, if you only programs in one or three languages maximum). So I decided to make this plugin and since the migration of my commands was very fast, it was just copy and paste and everything worked. Currently I don't test many languages anymore and work in the professional environment, but this plugin is still my swiss army knife.
 
 ### Requirements
 
@@ -85,11 +85,11 @@ vim.api.nvim_set_keymap('n', '<leader>crp', ':CRProjects<CR>', { noremap = true,
     - `position`: integrated terminal position(for option :h windows) default: `belowright`
     - `size`: size of the terminal window (default: `8`)
 
-- `filetype_path`: absolute path to json file config (default: packer module path)
+- `filetype_path`: absolute path to json file config (default: packer module path, use absolute paths)
 
 - `filetype`: If you prefer to use lua instead of json files, you can add your settings by file type here(type table)
 
-- `project_path`: absolute path to json file config (default: packer module path)
+- `project_path`: absolute path to json file config (default: packer module path, use absolute paths)
 
 - `project`: If you prefer to use lua instead of json files, you can add your settings by project here(type table)
 
@@ -107,6 +107,7 @@ require('code_runner').setup {
   project_path = "/home/myuser/.config/nvim/projects.json"
 }
 ```
+note: A common mistake code runners make is using relative paths and not absolute ones. Use absolute paths in configurations or else the plugin won't work, in case you like to use short or relative paths you can use something like this `vim.fn.expand('~/.config/nvim/project_manager.json')`
 
 #### Default values
 
