@@ -43,6 +43,7 @@ end
 local function get_command(filetype, path)
   path = path or vim.fn.expand("%:p")
 	local opt = o.get()
+	print("Estoy inprimiendo la configuracion")
 	print(vim.inspect(opt))
   local command = vim.g.fileCommands[filetype]
   if command then
