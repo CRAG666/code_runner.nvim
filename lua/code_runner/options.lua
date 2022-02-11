@@ -7,7 +7,7 @@ local options = {
   filetype = {},
   project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
   project = {},
-	mode = nil
+	mode = ""
 }
 
 local M = {}

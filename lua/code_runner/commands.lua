@@ -1,3 +1,5 @@
+local o = require("code_runner.options")
+
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path
 -- @param command command to run the path
@@ -40,6 +42,8 @@ end
 -- @return command
 local function get_command(filetype, path)
   path = path or vim.fn.expand("%:p")
+	local opt = o.get()
+	print(vim.inspect(opt))
   local command = vim.g.fileCommands[filetype]
   if command then
     local command_vim = re_jsonvar_with_vimvar(command, path)
