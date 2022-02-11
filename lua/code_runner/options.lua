@@ -7,11 +7,15 @@ local options = {
   filetype = {},
   project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
   project = {},
+	mode = ""
 }
 
 local M = {}
 -- set user config
 M.set = function(user_options)
+	if options.mode ~= "" then
+		options.mode = "&& :" .. options.mode
+	end
   options = vim.tbl_deep_extend("force", options, user_options)
 end
 
