@@ -104,7 +104,7 @@ function M.get_project_command()
 	local opt = o.get()
 	local context = nil
 	local next = next
-	if next(opt.project or {}) == nil then
+	if next(opt.project or {}) ~= nil then
 		context = get_project_rootpath()
 	end
 	if context then

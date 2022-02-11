@@ -53,8 +53,6 @@ M.load_json_files = function()
 	if next(opt.filetype or {}) == nil then
 		print("Not exist command for filetypes or format invalid, if use json please execute :CRFiletype or if use lua edit setup")
 	end
-
-	print(vim.inspect(opt))
 end
 
 M.run_code = commands.run
