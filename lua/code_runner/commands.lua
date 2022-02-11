@@ -72,7 +72,7 @@ end
 
 local function execute(command)
 	local opt = o.get()
-	vim.cmd(opt.prefix .. command)
+	vim.cmd(opt.prefix .. command .. opt.mode)
 end
 
 
