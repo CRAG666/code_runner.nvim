@@ -45,7 +45,7 @@ local function get_command(filetype, path)
 	local opt = o.get()
 	print("Estoy inprimiendo la configuracion")
 	print(vim.inspect(opt))
-  local command = opt.project[filetype]
+  local command = opt.filetype[filetype]
   if command then
     local command_vim = re_jsonvar_with_vimvar(command, path)
     return command_vim

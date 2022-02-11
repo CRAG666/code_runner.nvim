@@ -42,6 +42,7 @@ M.load_json_files = function()
 	-- load filetype config
 	if next(opt.filetype or {}) == nil then
 		vim.g.fileCommands = load_json_as_table(opt.filetype_path)
+		opt.filetype = load_json_as_table(opt.filetype_path)
 	else
 		vim.g.fileCommands = opt.filetype
 	end
