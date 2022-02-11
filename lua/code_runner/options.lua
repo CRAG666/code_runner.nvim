@@ -7,13 +7,13 @@ local options = {
   filetype = {},
   project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
   project = {},
-	mode = ""
+	mode = nil
 }
 
 local M = {}
 -- set user config
 M.set = function(user_options)
-	if options.mode ~= "" then
+	if options.mode then
 		options.mode = "&& :" .. options.mode
 		print(vim.inspect("Entre"))
 	end
