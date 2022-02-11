@@ -15,6 +15,7 @@ local M = {}
 M.set = function(user_options)
 	if options.mode ~= "" then
 		options.mode = "&& :" .. options.mode
+		print(vim.inspect("Entre"))
 	end
   options = vim.tbl_deep_extend("force", options, user_options)
 end
