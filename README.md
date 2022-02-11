@@ -78,18 +78,19 @@ vim.api.nvim_set_keymap('n', '<leader>crp', ':CRProjects<CR>', { noremap = true,
 
 ### Options
 
-- `term`: configurations for the integrated terminal
+- `term`: Configurations for the integrated terminal
 
   Fields:
 
-    - `position`: integrated terminal position(for option :h windows) default: `belowright`
-    - `size`: size of the terminal window (default: `8`)
+    - `position`: Integrated terminal position(for option :h windows) default: `belowright`
+    - `size`: Size of the terminal window (default: `8`)
+		- `mode`: Mode in which you want to start the terminal(default: "")
 
-- `filetype_path`: absolute path to json file config (default: packer module path, use absolute paths)
+- `filetype_path`: Absolute path to json file config (default: packer module path, use absolute paths)
 
 - `filetype`: If you prefer to use lua instead of json files, you can add your settings by file type here(type table)
 
-- `project_path`: absolute path to json file config (default: packer module path, use absolute paths)
+- `project_path`: Absolute path to json file config (default: packer module path, use absolute paths)
 
 - `project`: If you prefer to use lua instead of json files, you can add your settings by project here(type table)
 
@@ -101,7 +102,8 @@ vim.api.nvim_set_keymap('n', '<leader>crp', ':CRProjects<CR>', { noremap = true,
 require('code_runner').setup {
   term = {
     position = "vert",
-    size = 8
+    size = 8,
+		mode = "startinsert"
   },
   filetype_path = "/home/myuser/.config/nvim/code_runner.json",
   project_path = "/home/myuser/.config/nvim/projects.json"
@@ -116,6 +118,7 @@ require('code_runner').setup {
   term = {
     position = "belowright",
     size = 8,
+		mode = ""
   },
   filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
   filetype = {},
@@ -131,6 +134,7 @@ require('code_runner').setup {
   term = {
     position = "vert",
     size = 15,
+		mode = "startinsert"
   },
   filetype = {
     java = "cd $dir && javac $fileName && java $fileNameWithoutExt",

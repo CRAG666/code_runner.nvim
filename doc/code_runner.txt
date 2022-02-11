@@ -47,6 +47,7 @@ default value: >
         term = {
             position = "belowright",
             size = 8,
+            mode = ""
         },
         filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
         filetype = {},
@@ -70,6 +71,7 @@ Example: >
         term = {
             position = "vert",
             size = 8
+            mode = "startinsert"
         },
         filetype_path = "/home/myuser/.config/nvim/code_runner.json"
         project_path = "/home/myuser/.config/nvim/projects.json"
