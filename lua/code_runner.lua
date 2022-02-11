@@ -8,21 +8,21 @@ M.setup = function(user_options)
 	M.load_json_files()
 	vim.api.nvim_exec(
 		[[
-		function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
-			let cmd_keys = ""
-			for x in keys(g:fileCommands)
-				let cmd_keys = cmd_keys.x."\n"
-			endfor
-			return cmd_keys
-		endfunction
+			function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
+				let cmd_keys = ""
+				for x in keys(g:fileCommands)
+					let cmd_keys = cmd_keys.x."\n"
+				endfor
+				return cmd_keys
+			endfunction
 
-		command! CRFiletype lua require('code_runner').open_filetype_suported()
-		command! CRProjects lua require('code_runner').open_project_manager()
-		command! CRFiletype lua require('code_runner').open_filetype_suported()
-		command! CRProjects lua require('code_runner').open_project_manager()
-		command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
-		command! RunFile lua require('code_runner').run_filetype()
-		command! RunProject lua require('code_runner').run_project()
+			command! CRFiletype lua require('code_runner').open_filetype_suported()
+			command! CRProjects lua require('code_runner').open_project_manager()
+			command! CRFiletype lua require('code_runner').open_filetype_suported()
+			command! CRProjects lua require('code_runner').open_project_manager()
+			command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
+			command! RunFile lua require('code_runner').run_filetype()
+			command! RunProject lua require('code_runner').run_project()
 		]],
 		false
 	)
@@ -39,26 +39,19 @@ M.load_json_files = function()
 	local load_json_as_table = require("code_runner.load_json")
 	local next = next
 
-	-- load filetype config
+	-- convert json filetype as table lua
 	if next(opt.filetype or {}) == nil then
-		vim.g.fileCommands = load_json_as_table(opt.filetype_path)
-	else
-		vim.g.fileCommands = opt.filetype
+		opt.filetype = load_json_as_table(opt.filetype_path)
 	end
 
-	-- load projects
+	-- convert json project as table lua
 	if next(opt.project or {}) == nil then
-		vim.g.projectManager = load_json_as_table(opt.project_path)
-	else
-		vim.g.projectManager = opt.project
+		opt.project = load_json_as_table(opt.project_path)
 	end
-
-	-- Add prefix for run commands
-	vim.g.crPrefix = string.format("%s %dsplit term://", opt.term.position, opt.term.size)
 
 	-- Message if json file not exist
-	if not vim.g.fileCommands then
-		print("Not exist command for filetypes or format invalid, if use json please execute :CRFiletype")
+	if next(opt.filetype or {}) == nil then
+		print("Not exist command for filetypes or format invalid, if use json please execute :CRFiletype or if use lua edit setup")
 	end
 end
 
