@@ -49,6 +49,7 @@ M.load_json_files = function()
 	-- load projects
 	if next(opt.project or {}) == nil then
 		vim.g.projectManager = load_json_as_table(opt.project_path)
+		opt.project = load_json_as_table(opt.project_path)
 	else
 		vim.g.projectManager = opt.project
 	end
