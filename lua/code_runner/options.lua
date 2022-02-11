@@ -13,9 +13,8 @@ local options = {
 local M = {}
 -- set user config
 M.set = function(user_options)
-	if options.mode then
-		options.mode = "&& :" .. options.mode
-		print(vim.inspect("Entre"))
+	if user_options.mode then
+		user_options.mode = "&& :" .. user_options.mode
 	end
   options = vim.tbl_deep_extend("force", options, user_options)
 end
