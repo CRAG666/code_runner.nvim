@@ -38,7 +38,7 @@ M.load_json_files = function()
 	local opt = o.get()
 	local load_json_as_table = require("code_runner.load_json")
 	local next = next
-	print(vim.inspect(opt.mode))
+
 	-- load filetype config
 	if next(opt.filetype or {}) == nil then
 		vim.g.fileCommands = load_json_as_table(opt.filetype_path)
