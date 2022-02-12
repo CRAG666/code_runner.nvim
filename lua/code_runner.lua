@@ -23,7 +23,7 @@ M.setup = function(user_options)
 			command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
 			command! RunFile lua require('code_runner').run_filetype()
 			command! RunProject lua require('code_runner').run_project()
-			command! RunReload lua require('code_runner').run_reload()
+			" command! RunReload lua require('code_runner').run_reload()
 		]],
 		false
 	)
@@ -59,7 +59,7 @@ end
 M.run_code = commands.run
 M.run_filetype = commands.run_filetype
 M.run_project = commands.run_project
-M.run_reload = commands.run_reload
+-- M.run_reload = commands.run_reload
 M.get_filetype_command = commands.get_filetype_command
 M.get_project_command = commands.get_project_command
 

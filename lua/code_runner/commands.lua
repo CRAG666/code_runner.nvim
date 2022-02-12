@@ -92,8 +92,8 @@ local function execute(command, project)
 	project = project or false
 	local opt = o.get()
 	local bufname = "| :file ".. pattern .. vim.fn.expand("%:t:r")
+	close_runner()
 	if opt.term.tab then
-		-- close_runner()
 		vim.cmd("tabnew" .. opt.term.mode .. opt.prefix .. command)
 		vim.cmd(bufname)
 	else
@@ -176,11 +176,10 @@ function M.run(...)
 	end
 end
 
---- Reload commands
-function M.run_reload()
-	close_runner()
-	print("reload runner" .. vim.fn.expand("%:t"))
-	vim.cmd(":RunCode")
-end
+-- --- Reload commands
+-- function M.run_reload()
+-- 	print("reload runner" .. vim.fn.expand("%:t"))
+-- 	vim.cmd(":RunCode")
+-- end
 
 return M
