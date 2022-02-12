@@ -89,6 +89,7 @@ local function close_runner(project_name_or_file)
 	end
 end
 
+--- Execute comanda and create name buffer
 local function execute(command, project_name_or_file)
 	project_name_or_file = project_name_or_file or vim.fn.expand("%:t:r")
 	local opt = o.get()
@@ -168,6 +169,15 @@ function M.run(...)
 		execute(project.command, project.name)
 	else
 		M.run_filetype()
+	end
+end
+
+function M.run_close()
+	local context = get_project_rootpath()
+	if context then
+		close_runner(context.name)
+	else
+		close_runner()
 	end
 end
 
