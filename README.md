@@ -34,7 +34,8 @@ lua require('code_runner').setup({})
 ```
 
 ### Chek new features
-check out the new_features branch(Unstable, do not use in production)
+
+Check out the new_features branch(Unstable, do not use in production)
 
 ```lua
 -- unstable
@@ -47,18 +48,23 @@ use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim', branch = "
 Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas
 
 ##### Help build this feature
+
 The things to do are listed below:
-* toggle window
-* improve setup function
-* improve the way you switch between normal terminal and floating terminal(is currently filled with if else)
-* handling buffers and windows in a better way (I still don't know how it works exactly)
-* open an issue to know if it is worth implementing this function and if there are people interested in its existence
+
+* Toggle window
+* Improve setup function
+* Improve the way you switch between normal terminal and floating terminal(is currently filled with if else)
+* Handling buffers and windows in a better way (I still don't know how it works exactly)
+* Open an issue to know if it is worth implementing this function and if there are people interested in its existence
 
 ### Functions
+
+All run commands allow restart. So, for example, if you use a command that does not have hot reload, you can call a command again and it will close the previous one and start again.
 
 -   `:RunCode` - Runs based on file type, first checking if belongs to project, then if filetype mapping exists
 -   `:RunCode <A_key_here>` - Execute command from its key in current directory.
 -   `:RunFile`    - Run the current file
+-   `:RunClose`   - Close runner
 -   `:RunProject` - Run the current project(If you are in a project otherwise you will not do anything)
 -   `:CRFiletype` - Open json  with supported files(Use only if you configured with json files).
 -   `:CRProjects` - Open json with list of projects(Use only if you configured with json files).
@@ -72,6 +78,7 @@ Recomended:
 vim.api.nvim_set_keymap('n', '<leader>r', ':RunCode<CR>', { noremap = true, silent = false })
 vim.api.nvim_set_keymap('n', '<leader>rf', ':RunFile<CR>', { noremap = true, silent = false })
 vim.api.nvim_set_keymap('n', '<leader>rp', ':RunProject<CR>', { noremap = true, silent = false })
+vim.api.nvim_set_keymap('n', '<leader>rc', ':RunClose<CR>', { noremap = true, silent = false })
 vim.api.nvim_set_keymap('n', '<leader>crf', ':CRFiletype<CR>', { noremap = true, silent = false })
 vim.api.nvim_set_keymap('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent = false })
 ```
@@ -80,11 +87,14 @@ vim.api.nvim_set_keymap('n', '<leader>crp', ':CRProjects<CR>', { noremap = true,
 
 - `term`: Configurations for the integrated terminal
 
+If you use tab then the key position and size is not overridden as it doesn't make sense in the context.
+
 Fields:
 
-	- `position`: Integrated terminal position(for option :h windows) default: `belowright`
-	- `size`: Size of the terminal window (default: `8`)
 	- `mode`: Mode in which you want to start the terminal(default: "")
+	- `tab`: Open code runner en new tab(default: false)
+	- `position`: Integrated terminal position(for option :h windows, default: `belowright`)
+	- `size`: Size of the terminal window (default: `8`)
 
 - `filetype_path`: Absolute path to json file config (default: packer module path, use absolute paths)
 
@@ -109,16 +119,17 @@ require('code_runner').setup {
 	project_path = vim.fn.expand('~/.config/nvim/project_manager.json')
 }
 ```
-note: A common mistake code runners make is using relative paths and not absolute ones. Use absolute paths in configurations or else the plugin won't work, in case you like to use short or relative paths you can use something like this `vim.fn.expand('~/.config/nvim/project_manager.json')`
+Note: A common mistake code runners make is using relative paths and not absolute ones. Use absolute paths in configurations or else the plugin won't work, in case you like to use short or relative paths you can use something like this `vim.fn.expand('~/.config/nvim/project_manager.json')`
 
 #### Default values
 
 ```lua
 require('code_runner').setup {
 	term = {
+		mode = "",
+		tab = false,
 		position = "belowright",
-		size = 8,
-		mode = ""
+		size = 8
 	},
 	filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
 	filetype = {},
@@ -161,6 +172,7 @@ require('code_runner').setup {
 ### Add support for more file types
 
 #### Configure with json files
+
 Run `CRFiletype` , Open the configuration file.
 
 The file should look like this(the default file does not exist create it with the `CRFiletype` command):
@@ -177,6 +189,7 @@ The file should look like this(the default file does not exist create it with th
 ```
 
 #### Configure with lua files
+
 ```lua
 ..... more config .....
 	filetype = {
@@ -241,6 +254,7 @@ In this example, there are two file types, one uses variables and the other does
 ### Add projects
 
 #### Configure with json files
+
 Run `CRProjects` , Open the project list.
 
 The file should look like this(the default file does not exist create it with the `CRProjects` command):
@@ -300,6 +314,8 @@ There are 3 main ways to configure the execution of a project (found in the exam
 
 3. Use a command to run the project. It is only necessary to define command(You do not need to write navigate to the root of the project, because automatically the plugin is located in the root of the project).
 
+Note: Don't forget to name your projects because if you don't do so code runner will fail as it uses the name for the buffer name
+
 #### Projects parameters
 
 -  `name`: Project name
@@ -310,6 +326,7 @@ There are 3 main ways to configure the execution of a project (found in the exam
 warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described above.
 
 ### Queries
+
 These functions could be useful if you intend to create plugins around code_runner, currently only the file type and current project commands can be accessed respectively
 
 ```lua
@@ -328,6 +345,7 @@ you can directly integrate this plugin with [ThePrimeagen/harpoon](https://githu
 ```
 
 # Tip
+
 For unknown reasons, leaving a comma in the trailing element in any json file causes an error when loading into lua, so you have to remove the trailing comma in the last item.
 
 
@@ -352,4 +370,5 @@ For unknown reasons, leaving a comma in the trailing element in any json file ca
 
 
 # Important!
+
 If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon
