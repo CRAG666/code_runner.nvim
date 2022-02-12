@@ -54,7 +54,6 @@ The things to do are listed below:
 * Toggle window
 * Improve setup function
 * Improve the way you switch between normal terminal and floating terminal(is currently filled with if else)
-* Handling buffers and windows in a better way (I still don't know how it works exactly)
 * Open an issue to know if it is worth implementing this function and if there are people interested in its existence
 
 ### Functions
