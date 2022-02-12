@@ -73,7 +73,7 @@ end
 local function execute(command, project)
 	project = project or false
 	local opt = o.get()
-	local bufname = ":file code_runner-%:t"
+	local bufname = "| :file code_runner-%:t"
 	vim.cmd(opt.prefix .. command .. bufname .. opt.term.mode)
 end
 
