@@ -1,5 +1,8 @@
 local o = require("code_runner.options")
 
+local buftype =  " | :bufdo setlocal filetype=code_runner"
+
+
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path
 -- @param command command to run the path
@@ -70,14 +73,29 @@ local function get_project_command(context)
 	return command
 end
 
-local function execute(command)
+local function execute(command, project)
+	project = project or false
 	local opt = o.get()
-	vim.cmd(opt.prefix .. command .. opt.term.mode)
+	local bufname = " | :f code_runner-" .. vim.fn.fnamemodify("%", ":t")
+	vim.cmd(opt.prefix .. command .. opt.term.mode .. buftype .. bufname)
 end
 
 
 -- Create prefix for run commands
 local M = {}
+
+function M.run_reload()
+	local i = vim.fn.bufnr("$")
+	while (i >= 1)
+	do
+		if (vim.fn.getbufvar(i, "&filetype") == "code_runner") then
+			print("lo encontre")
+			-- vim.cmd("bwipeout" .. i .. "!")
+			break
+		end
+		i = i - 1
+	end
+end
 
 -- Get command for the current filetype
 function M.get_filetype_command()
@@ -126,7 +144,7 @@ end
 function M.run_project()
 	local command = is_a_project()
 	if command then
-		execute(command)
+		execute(command, true)
 	end
 end
 
@@ -144,7 +162,7 @@ function M.run(...)
 	--  procede here if no input arguments
 	local project = is_a_project()
 	if project then
-		execute(project)
+		execute(project, true)
 	else
 		M.run_filetype()
 	end
