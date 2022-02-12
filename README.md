@@ -80,11 +80,11 @@ vim.api.nvim_set_keymap('n', '<leader>crp', ':CRProjects<CR>', { noremap = true,
 
 - `term`: Configurations for the integrated terminal
 
-  Fields:
+Fields:
 
-    - `position`: Integrated terminal position(for option :h windows) default: `belowright`
-    - `size`: Size of the terminal window (default: `8`)
-		- `mode`: Mode in which you want to start the terminal(default: "")
+	- `position`: Integrated terminal position(for option :h windows) default: `belowright`
+	- `size`: Size of the terminal window (default: `8`)
+	- `mode`: Mode in which you want to start the terminal(default: "")
 
 - `filetype_path`: Absolute path to json file config (default: packer module path, use absolute paths)
 
@@ -100,13 +100,13 @@ vim.api.nvim_set_keymap('n', '<leader>crp', ':CRProjects<CR>', { noremap = true,
 ```lua
 -- this is a config example
 require('code_runner').setup {
-  term = {
-    position = "vert",
-    size = 8,
+	term = {
+		position = "vert",
+		size = 8,
 		mode = "startinsert"
-  },
-  filetype_path = "/home/myuser/.config/nvim/code_runner.json",
-  project_path = "/home/myuser/.config/nvim/projects.json"
+	},
+	filetype_path = vim.fn.expand('~/.config/nvim/code_runner.json'),
+	project_path = vim.fn.expand('~/.config/nvim/project_manager.json')
 }
 ```
 note: A common mistake code runners make is using relative paths and not absolute ones. Use absolute paths in configurations or else the plugin won't work, in case you like to use short or relative paths you can use something like this `vim.fn.expand('~/.config/nvim/project_manager.json')`
@@ -115,15 +115,15 @@ note: A common mistake code runners make is using relative paths and not absolut
 
 ```lua
 require('code_runner').setup {
-  term = {
-    position = "belowright",
-    size = 8,
+	term = {
+		position = "belowright",
+		size = 8,
 		mode = ""
-  },
-  filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
-  filetype = {},
-  project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
-  project = {}
+	},
+	filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
+	filetype = {},
+	project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+	project = {}
 }
 ```
 
@@ -131,30 +131,30 @@ It is important that you know that configuration is given priority in pure lua, 
 
 ```lua
 require('code_runner').setup {
-  term = {
-    position = "vert",
-    size = 15,
+	term = {
+		position = "vert",
+		size = 15,
 		mode = "startinsert"
-  },
-  filetype = {
-    java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
-    python = "python -U",
-    typescript = "deno run",
-    rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
-  },
-  project = {
-    ["~/deno/example"] = {
-        name = "ExapleDeno",
-        description = "Project with deno using other command",
-        file_name = "http/main.ts",
-        command = "deno run --allow-net"
-    },
-    ["~/cpp/example"] = {
-        name = "ExapleCpp",
-        description = "Project with make file",
-        command = "make buid & cd buid/ & ./compiled_file"
-    }
-  },
+	},
+	filetype = {
+		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+		python = "python -U",
+		typescript = "deno run",
+		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+	},
+	project = {
+		["~/deno/example"] = {
+			name = "ExapleDeno",
+			description = "Project with deno using other command",
+			file_name = "http/main.ts",
+			command = "deno run --allow-net"
+		},
+		["~/cpp/example"] = {
+			name = "ExapleCpp",
+			description = "Project with make file",
+			command = "make buid & cd buid/ & ./compiled_file"
+		}
+	},
 }
 ```
 
@@ -168,10 +168,10 @@ The file should look like this(the default file does not exist create it with th
 ```json
 
 {
-    "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
-    "python": "python -U",
-    "typescript": "deno run",
-    "rust": "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+	"java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
+	"python": "python -U",
+	"typescript": "deno run",
+	"rust": "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
 }
 
 ```
@@ -179,12 +179,12 @@ The file should look like this(the default file does not exist create it with th
 #### Configure with lua files
 ```lua
 ..... more config .....
-  filetype = {
-    java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
-    python = "python -U",
-    typescript = "deno run",
-    rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
-  },
+	filetype = {
+	java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+	python = "python -U",
+	typescript = "deno run",
+	rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+},
 ..... more config .....
 }
 ```
@@ -195,10 +195,10 @@ if you want to add some other language or some other command follow this structu
 
 The available variables are the following:
 
-  * file  -- file path to currend file opened
-  * fileName  -- file name to curren file opened
-  * fileNameWithoutExt  -- file without extension file opened
-  * dir  -- path of directory to file opened
+* file  -- file path to currend file opened
+	* fileName  -- file name to curren file opened
+	* fileNameWithoutExt  -- file without extension file opened
+	* dir  -- path of directory to file opened
 
 Below is an example of an absolute path and how it behaves depending on the variable:
 
@@ -220,8 +220,8 @@ json:
 ```json
 {
 ....... more ........
-"javascript": "node",
-"objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
+	"javascript": "node",
+	"objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
 }
 ```
 
@@ -229,9 +229,9 @@ lua:
 
 ```lua
 {
-....... more ........
-javascript = "node",
-["objective-c"] = "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
+	....... more ........
+		javascript = "node",
+	["objective-c"] = "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
 }
 ```
 
@@ -247,22 +247,22 @@ The file should look like this(the default file does not exist create it with th
 
 ```json
 {
-    "~/python/intel_2021_1": {
-        "name": "Intel Course 2021",
-        "description": "Simple python project",
-        "file_name": "POO/main.py"
-    },
-    "~/deno/example": {
-        "name": "ExapleDeno",
-        "description": "Project with deno using other command",
-        "file_name": "http/main.ts",
-        "command": "deno run --allow-net"
-    },
-    "~/cpp/example": {
-        "name": "ExapleCpp",
-        "description": "Project with make file",
-        "command": "make buid & cd buid/ & ./compiled_file"
-    }
+	"~/python/intel_2021_1": {
+		"name": "Intel Course 2021",
+		"description": "Simple python project",
+		"file_name": "POO/main.py"
+	},
+	"~/deno/example": {
+		"name": "ExapleDeno",
+		"description": "Project with deno using other command",
+		"file_name": "http/main.ts",
+		"command": "deno run --allow-net"
+	},
+	"~/cpp/example": {
+		"name": "ExapleCpp",
+		"description": "Project with make file",
+		"command": "make buid & cd buid/ & ./compiled_file"
+	}
 }
 ```
 
@@ -270,24 +270,24 @@ The file should look like this(the default file does not exist create it with th
 
 ```lua
 ..... more config .....
-  project = {
-    ["~/python/intel_2021_1"] = {
-        name = "Intel Course 2021",
-        description = "Simple python project",
-        file_name = "POO/main.py"
-    },
-    ["~/deno/example"] = {
-        name = "ExapleDeno",
-        description = "Project with deno using other command",
-        file_name = "http/main.ts",
-        command = "deno run --allow-net"
-    },
-    ["~/cpp/example"] = {
-        name = "ExapleCpp",
-        description = "Project with make file",
-        command = "make buid & cd buid/ & ./compiled_file"
-    }
-  },
+	project = {
+	["~/python/intel_2021_1"] = {
+		name = "Intel Course 2021",
+		description = "Simple python project",
+		file_name = "POO/main.py"
+	},
+	["~/deno/example"] = {
+		name = "ExapleDeno",
+		description = "Project with deno using other command",
+		file_name = "http/main.ts",
+		command = "deno run --allow-net"
+	},
+	["~/cpp/example"] = {
+		name = "ExapleCpp",
+		description = "Project with make file",
+		command = "make buid & cd buid/ & ./compiled_file"
+	}
+},
 ..... more config .....
 }
 ```
