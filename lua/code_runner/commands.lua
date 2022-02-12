@@ -154,22 +154,16 @@ end
 
 function M.run_reload()
 	local bufname = "code_runner-" .. vim.fn.fnamemodify("%", ":t")
-	if vim.bo.bufname == bufname then
-		-- vim.cmd("bwipeout" .. "!")
-		print("reload current runner")
-		-- M.run()
-	else
-		local i = vim.fn.bufnr("$")
-		while (i >= 1)
-		do
-			if (vim.fn.getbufvar(i, "&bufname") == bufname) then
-				-- vim.cmd("bwipeout" .. i .. "!")
-				print("reload runner" .. bufname)
-				-- M.run()
-				break
-			end
-			i = i - 1
+	local i = vim.fn.bufnr("$")
+	while (i >= 1)
+	do
+		if (vim.fn.getbufvar(i, "&bufname") == bufname) then
+			-- vim.cmd("bwipeout" .. i .. "!")
+			print("reload runner" .. bufname)
+			-- M.run()
+			break
 		end
+		i = i - 1
 	end
 end
 
