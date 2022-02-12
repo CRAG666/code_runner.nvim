@@ -15,7 +15,7 @@ local M = {}
 -- set user config
 M.set = function(user_options)
 	if user_options.term.mode then
-		user_options.term.mode = "| :" .. user_options.term.mode .. " | :f code_runner"
+		user_options.term.mode = "| :" .. user_options.term.mode .. " | :bufdo setlocal filetype=code_runner"
 	end
 	options = vim.tbl_deep_extend("force", options, user_options)
 	options.prefix = string.format("%s %dsplit term://", options.term.position, options.term.size)
