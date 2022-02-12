@@ -1,8 +1,5 @@
 local o = require("code_runner.options")
 
-local buftype =  " | :bufdo setlocal filetype=code_runner"
-
-
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path
 -- @param command command to run the path
@@ -77,7 +74,7 @@ local function execute(command, project)
 	project = project or false
 	local opt = o.get()
 	local bufname = " | :f code_runner-" .. vim.fn.fnamemodify("%", ":t")
-	vim.cmd(opt.prefix .. command .. opt.term.mode .. buftype .. bufname)
+	vim.cmd(opt.prefix .. command .. opt.term.mode .. bufname)
 end
 
 
@@ -156,7 +153,7 @@ function M.run(...)
 end
 
 function M.run_reload()
-	if vim.bo.filetype == "code_runner" then
+	if vim.bo.name == "code_runner" then
 		-- vim.cmd("bwipeout" .. "!")
 		print("reload current runner")
 		-- M.run()
@@ -165,7 +162,7 @@ function M.run_reload()
 		while (i >= 1)
 		do
 			local bufname = "code_runner-" .. vim.fn.fnamemodify("%", ":t")
-			if (vim.fn.getbufvar(i, "&filetype") == "code_runner") and (vim.fn.getbufvar(i, "&bufname") == bufname) then
+			if (vim.fn.getbufvar(i, "&bufname") == bufname) then
 				-- vim.cmd("bwipeout" .. i .. "!")
 				print("reload runner" .. bufname)
 				-- M.run()
