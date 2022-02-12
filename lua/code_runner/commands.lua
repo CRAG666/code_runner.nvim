@@ -74,7 +74,11 @@ local function execute(command, project)
 	project = project or false
 	local opt = o.get()
 	local bufname = "| :file code_runner-%:t"
-	vim.cmd(opt.prefix .. command .. bufname .. opt.term.mode)
+	local tabcmd = ""
+	if opt.term.tab then
+		tabcmd = "| :tab sb %"
+	end
+	vim.cmd(opt.prefix .. command .. bufname .. opt.term.mode .. tabcmd)
 end
 
 
