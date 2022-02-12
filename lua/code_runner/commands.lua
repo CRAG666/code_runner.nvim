@@ -164,7 +164,7 @@ function M.run_reload()
 		while (i >= 1)
 		do
 			if (vim.fn.bufname(i) == bufname) then
-				vim.cmd("bwipeout!" .. i | ":RunCode" )
+				vim.cmd("bwipeout!" .. i)
 				print("reload runner" .. bufname)
 				break
 			end
