@@ -88,10 +88,10 @@ local function close_runner()
 	end
 end
 
-local function execute(command, project)
-	project = project or false
+local function execute(command, project_name_or_file)
+	project_name_or_file = project_name_or_file or vim.fn.expand("%:t:r")
 	local opt = o.get()
-	local bufname = "| :file ".. pattern .. vim.fn.expand("%:t:r")
+	local bufname = "| :file ".. pattern .. project_name_or_file
 	close_runner()
 	if opt.term.tab then
 		vim.cmd("tabnew" .. opt.term.mode .. opt.prefix .. command)
@@ -127,6 +127,7 @@ end
 
 -- Get command for this current project
 function M.get_project_command()
+	local project_context = {}
 	local opt = o.get()
 	local context = nil
 	local next = next
@@ -134,25 +135,18 @@ function M.get_project_command()
 		context = get_project_rootpath()
 	end
 	if context then
-		return get_project_command(context) or ""
-	end
-	return ""
-end
-
--- Check if is a project
-local function is_a_project()
-	local command = M.get_project_command()
-	if command ~= "" then
-		return command
+		project_context.command = get_project_command(context) or ""
+		project_context.name = context.name
+		return project_context
 	end
 	return nil
 end
 
 -- Execute project
 function M.run_project()
-	local command = is_a_project()
-	if command then
-		execute(command, true)
+	local project = M.get_project_command()
+	if project then
+		execute(project.command, project.name)
 	end
 end
 
@@ -168,9 +162,9 @@ function M.run(...)
 		return
 	end
 	--  procede here if no input arguments
-	local project = is_a_project()
+	local project = M.get_project_command()
 	if project then
-		execute(project, true)
+		execute(project.command, project.name)
 	else
 		M.run_filetype()
 	end
