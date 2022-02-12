@@ -70,15 +70,34 @@ local function get_project_command(context)
 	return command
 end
 
+local function close_runner()
+	local pattern = "code_runner-"
+	if string.find(vim.fn.bufname("%"), pattern) then
+		vim.cmd("bwipeout!")
+	else
+		local bufname = pattern .. vim.fn.expand("%:t")
+		local i = vim.fn.bufnr("$")
+		while (i >= 1)
+		do
+			if (vim.fn.bufname(i) == bufname) then
+				vim.cmd("bwipeout!" .. i)
+				break
+			end
+			i = i - 1
+		end
+	end
+end
+
 local function execute(command, project)
 	project = project or false
 	local opt = o.get()
 	local bufname = "| :file code_runner-%:t"
-	local tabcmd = ""
 	if opt.term.tab then
-		tabcmd = "| :tab sb %"
+		close_runner()
+		vim.cmd("tabnew" .. bufname .. opt.term.mode .. opt.prefix .. command)
+	else
+		vim.cmd(opt.prefix .. command .. bufname .. opt.term.mode)
 	end
-	vim.cmd(opt.prefix .. command .. bufname .. opt.term.mode .. tabcmd)
 end
 
 
@@ -158,23 +177,8 @@ end
 
 --- Reload commands
 function M.run_reload()
-	local pattern = "code_runner-"
-	if string.find(vim.fn.bufname("%"), pattern) then
-		vim.cmd("bwipeout!")
-		print("reload current runner")
-	else
-		local bufname = pattern .. vim.fn.expand("%:t")
-		local i = vim.fn.bufnr("$")
-		while (i >= 1)
-		do
-			if (vim.fn.bufname(i) == bufname) then
-				vim.cmd("bwipeout!" .. i)
-				print("reload runner" .. bufname)
-				break
-			end
-			i = i - 1
-		end
-	end
+	close_runner()
+	print("reload runner" .. vim.fn.expand("%:t"))
 	vim.cmd(":RunCode")
 end
 

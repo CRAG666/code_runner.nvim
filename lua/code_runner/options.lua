@@ -19,7 +19,11 @@ M.set = function(user_options)
 		user_options.term.mode = "| :" .. user_options.term.mode
 	end
 	options = vim.tbl_deep_extend("force", options, user_options)
-	options.prefix = string.format("%s %dsplit term://", options.term.position, options.term.size)
+	if opt.term.tab then
+		options.prefix = ":terminal "
+	else
+		options.prefix = string.format("%s %dsplit term://", options.term.position, options.term.size)
+	end
 end
 
 M.get = function()
