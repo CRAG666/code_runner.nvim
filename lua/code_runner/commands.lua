@@ -1,5 +1,5 @@
 local o = require("code_runner.options")
-local pattern = "code_runner-"
+local pattern = "current_runner-"
 
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path
@@ -75,7 +75,7 @@ local function close_runner()
 	if string.find(vim.fn.bufname("%"), pattern) then
 		vim.cmd("bwipeout!")
 	else
-		local bufname = pattern .. vim.fn.expand("%:t")
+		local bufname = pattern .. vim.fn.expand("%:t:r")
 		local i = vim.fn.bufnr("$")
 		while (i >= 1)
 		do
@@ -91,9 +91,9 @@ end
 local function execute(command, project)
 	project = project or false
 	local opt = o.get()
-	local bufname = "| :file ".. pattern .. vim.fn.expand("%:t")
+	local bufname = "| :file ".. pattern .. vim.fn.expand("%:t:r")
 	if opt.term.tab then
-		close_runner()
+		-- close_runner()
 		vim.cmd("tabnew" .. opt.term.mode .. opt.prefix .. command)
 		vim.cmd(bufname)
 	else
