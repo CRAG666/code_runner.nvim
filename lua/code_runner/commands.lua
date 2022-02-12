@@ -71,11 +71,12 @@ local function get_project_command(context)
 	return command
 end
 
-local function close_runner()
+local function close_runner(project_name_or_file)
+	project_name_or_file = project_name_or_file or vim.fn.expand("%:t:r")
 	if string.find(vim.fn.bufname("%"), pattern) then
 		vim.cmd("bwipeout!")
 	else
-		local bufname = pattern .. vim.fn.expand("%:t:r")
+		local bufname = pattern .. project_name_or_file
 		local i = vim.fn.bufnr("$")
 		while (i >= 1)
 		do
@@ -92,7 +93,7 @@ local function execute(command, project_name_or_file)
 	project_name_or_file = project_name_or_file or vim.fn.expand("%:t:r")
 	local opt = o.get()
 	local bufname = "| :file ".. pattern .. project_name_or_file
-	close_runner()
+	close_runner(project_name_or_file)
 	if opt.term.tab then
 		vim.cmd("tabnew" .. opt.term.mode .. opt.prefix .. command)
 		vim.cmd(bufname)
