@@ -73,8 +73,10 @@ end
 local function execute(command, project)
 	project = project or false
 	local opt = o.get()
-	local bufname = ":file code_runner-" .. vim.fn.fnamemodify("%", ":t")
+	local bufname = ":file code_runner-%:t"
+	local buftype = ":bufdo setlocal filetype=code_runner"
 	vim.cmd(opt.prefix .. command)
+	vim.cmd(buftype)
 	vim.cmd(bufname)
 	vim.cmd(opt.term.mode)
 end
