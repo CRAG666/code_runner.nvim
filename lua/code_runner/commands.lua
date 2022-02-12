@@ -159,7 +159,7 @@ function M.run(...)
 		-- since we have reached here, means we have our command key
 		local cmd_to_execute = get_command(json_key_select)
 		if cmd_to_execute then
-			execute(cmd_to_execute)
+			execute(cmd_to_execute, json_key_select)
 		end
 		return
 	end
