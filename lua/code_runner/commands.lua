@@ -94,7 +94,8 @@ local function execute(command, project)
 	local bufname = "| :file ".. pattern .. vim.fn.expand("%:t")
 	if opt.term.tab then
 		close_runner()
-		vim.cmd("tabnew" .. bufname .. opt.term.mode .. opt.prefix .. command)
+		vim.cmd("tabnew" .. opt.term.mode .. opt.prefix .. command)
+		vim.cmd(bufname)
 	else
 		vim.cmd(opt.prefix .. command .. bufname .. opt.term.mode)
 	end
