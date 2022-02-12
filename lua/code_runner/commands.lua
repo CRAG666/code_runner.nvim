@@ -74,11 +74,7 @@ local function execute(command, project)
 	project = project or false
 	local opt = o.get()
 	local bufname = ":file code_runner-%:t"
-	local buftype = ":bufdo setlocal filetype=code_runner"
-	vim.cmd(opt.prefix .. command)
-	vim.cmd(buftype)
-	vim.cmd(bufname)
-	vim.cmd(opt.term.mode)
+	vim.cmd(opt.prefix .. command .. bufname .. opt.term.mode)
 end
 
 
@@ -157,7 +153,8 @@ function M.run(...)
 end
 
 function M.run_reload()
-	if vim.bo.bufname == "code_runner" then
+	local bufname = "code_runner-" .. vim.fn.fnamemodify("%", ":t")
+	if vim.bo.bufname == bufname then
 		-- vim.cmd("bwipeout" .. "!")
 		print("reload current runner")
 		-- M.run()
@@ -165,7 +162,6 @@ function M.run_reload()
 		local i = vim.fn.bufnr("$")
 		while (i >= 1)
 		do
-			local bufname = "code_runner-" .. vim.fn.fnamemodify("%", ":t")
 			if (vim.fn.getbufvar(i, "&bufname") == bufname) then
 				-- vim.cmd("bwipeout" .. i .. "!")
 				print("reload runner" .. bufname)
