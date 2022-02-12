@@ -20,7 +20,7 @@ M.set = function(user_options)
 	end
 	options = vim.tbl_deep_extend("force", options, user_options)
 	if options.term.tab then
-		options.prefix = ":tabnew | term://"
+		options.prefix = "term:// | :tab sb %"
 	else
 		options.prefix = string.format("%s %dsplit term://", options.term.position, options.term.size)
 	end
