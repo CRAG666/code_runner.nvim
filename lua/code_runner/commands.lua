@@ -152,21 +152,22 @@ function M.run(...)
 	end
 end
 
+--- Reload commands
 function M.run_reload()
 	local pattern = "code_runner-"
 	if string.find(vim.fn.bufname("%"), pattern) then
-			-- vim.cmd("bwipeout" .. i .. "!")
-			print("reload runner current runner")
-			-- M.run()
+		vim.cmd("bwipeout" .. "!")
+		print("reload current runner")
+		M.run()
 	else
 		local bufname = pattern .. vim.fn.expand("%:t")
 		local i = vim.fn.bufnr("$")
 		while (i >= 1)
 		do
 			if (vim.fn.bufname(i) == bufname) then
-				-- vim.cmd("bwipeout" .. i .. "!")
+				vim.cmd("bwipeout" .. i .. "!")
 				print("reload runner" .. bufname)
-				-- M.run()
+				M.run()
 				break
 			end
 			i = i - 1
