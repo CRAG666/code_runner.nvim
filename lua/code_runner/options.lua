@@ -1,9 +1,9 @@
 local options = {
 	term = {
-		position = "belowright",
-		size = 8,
+		tab = false,
 		mode = "",
-		tab = false
+		position = "belowright",
+		size = 8
 	},
 	filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
 	filetype = {},
@@ -20,7 +20,7 @@ M.set = function(user_options)
 	end
 	options = vim.tbl_deep_extend("force", options, user_options)
 	if options.term.tab then
-		options.prefix = "tabnew | term://"
+		options.prefix = "tabnew | :term://"
 	else
 		options.prefix = string.format("%s %dsplit term://", options.term.position, options.term.size)
 	end
