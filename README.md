@@ -35,7 +35,7 @@ lua require('code_runner').setup({})
 
 ### Chek new features
 
-Check out the new_features branch(Unstable, do not use in production)
+Check out the `new_features` branch(:warning: Unstable, do not use in production)
 
 ```lua
 -- unstable
@@ -45,7 +45,6 @@ use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim', branch = "
 
 * Run in a Float window(unstable)
 
-Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas
 
 ##### Help build this feature
 
@@ -367,7 +366,13 @@ For unknown reasons, leaving a comma in the trailing element in any json file ca
 
 ![Code_Runner](https://i.ibb.co/gFRhLgr/screen-1628272271.png "Code Runner with python")
 
+# Contributing
 
-# Important!
+Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas
+## :warning: Important!
 
 If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon
+
+# LICENCE
+------
+[MIT](https://github.com/CRAG666/code_runner.nvim/blob/main/LICENSE)
