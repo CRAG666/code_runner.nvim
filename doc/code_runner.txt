@@ -4,7 +4,7 @@
 ==============================================================================
 INTRODUCTION                                               *code_runner-instroduction*
 
-The best code runner you could have, it is like the one in vscode but with super powers.
+The best code runner you could have,like the one in vscode but with super powers.
 
 
 ==============================================================================
