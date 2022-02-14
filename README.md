@@ -375,3 +375,4 @@ If you have any ideas to improve this project, do not hesitate to make a request
 
 # LICENCE
 ------
+(MIT)[LICENCE.md]
