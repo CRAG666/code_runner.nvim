@@ -119,7 +119,8 @@ function M.run_filetype()
       lua = "luafile %",
       vim = "source %",
     }
-    vim.cmd(nvim_files[vim.bo.filetype])
+    local cmd = nvim_files[vim.bo.filetype] or ""
+    vim.cmd(cmd)
   end
 end
 
