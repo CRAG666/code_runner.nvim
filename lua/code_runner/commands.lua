@@ -119,7 +119,8 @@ function M.run_filetype()
       lua = "luafile %",
       vim = "source %",
     }
-    local cmd = nvim_files[vim.bo.filetype] or ""
+    local cmd = nvim_files[vim.bo.filetype] or [[vim.notify(
+    "Just run files or projects", vim.log.levels.WARN, { title = "Execution Error" })]]
     vim.cmd(cmd)
   end
 end
