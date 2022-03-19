@@ -15,15 +15,12 @@ M.setup = function(user_options)
 				return cmd_keys
 			endfunction
 
-			command! CRFiletype lua require('code_runner').open_filetype_suported()
 			command! CRProjects lua require('code_runner').open_project_manager()
-			command! CRFiletype lua require('code_runner').open_filetype_suported()
-			command! CRProjects lua require('code_runner').open_project_manager()
+      command! CRFiletype lua require('code_runner').open_filetype_suported()
 			command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
 			command! RunFile lua require('code_runner').run_filetype()
 			command! RunProject lua require('code_runner').run_project()
 			command! RunClose lua require('code_runner').run_close()
-			" command! RunReload lua require('code_runner').run_reload()
 		]],
     false
   )
@@ -63,7 +60,6 @@ M.run_code = commands.run
 M.run_filetype = commands.run_filetype
 M.run_project = commands.run_project
 M.run_close = commands.run_close
--- M.run_reload = commands.run_reload
 M.get_filetype_command = commands.get_filetype_command
 M.get_project_command = commands.get_project_command
 

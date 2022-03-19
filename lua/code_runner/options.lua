@@ -21,9 +21,9 @@ M.set = function(user_options)
   end
   options = vim.tbl_deep_extend("force", options, user_options)
   if options.term.tab then
-    options.prefix = "| :terminal "
+    options.prefix = "tabnew | term "
   else
-    options.prefix = string.format("%s %dsplit term://", options.term.position, options.term.size)
+    options.prefix = string.format("%s %d new | term ", options.term.position, options.term.size)
   end
 end
 

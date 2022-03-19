@@ -1,12 +1,12 @@
 local o = require("code_runner.options")
-local pattern = "current_runner-"
+local pattern = "crunner_"
 
 -- Replace json variables with vim variables in command.
 -- If a command has no arguments, one is added with the current file path
 -- @param command command to run the path
 -- @param path absolute path
 -- @return command with variables replaced by modifiers
-local function re_jsonvar_with_vimvar(command, path)
+local function jsonVars_to_vimVars(command, path)
   local no_sub_command = command
 
   command = command:gsub("$fileNameWithoutExt", vim.fn.fnamemodify(path, ":t:r"))
@@ -24,16 +24,15 @@ end
 -- if a project return table of project
 local function get_project_rootpath()
   local opt = o.get()
-  local path = "%:p:~:h"
-  local expand = ""
-  while expand ~= "~" do
-    expand = vim.fn.expand(path)
-    local project = opt.project[expand]
+  local path = vim.loop.cwd()
+  local home_path = vim.fn.expand("~")
+  while path ~= home_path do
+    local project = opt.project[path] or opt.project[vim.fn.fnamemodify(path, ":~")]
     if project then
-      project["path"] = expand
+      project["path"] = path
       return project
     end
-    path = path .. ":h"
+    path = vim.fn.fnamemodify(path, ":h")
   end
   return nil
 end
@@ -47,7 +46,7 @@ local function get_command(filetype, path)
   path = path or vim.fn.expand("%:p")
   local command = opt.filetype[filetype]
   if command then
-    local command_vim = re_jsonvar_with_vimvar(command, path)
+    local command_vim = jsonVars_to_vimVars(command, path)
     return command_vim
   end
   return nil
@@ -59,7 +58,7 @@ local function get_project_command(context)
   if context.file_name then
     local file = context.path .. "/" .. context.file_name
     if context.command then
-      command = re_jsonvar_with_vimvar(context.command, file)
+      command = jsonVars_to_vimVars(context.command, file)
     else
       local filetype = require("plenary.filetype")
       local current_filetype = filetype.detect_from_extension(file)
@@ -71,12 +70,12 @@ local function get_project_command(context)
   return command
 end
 
-local function close_runner(project_name_or_file)
-  project_name_or_file = project_name_or_file or vim.fn.expand("%:t:r")
+local function close_runner(bufname)
+  bufname = bufname or vim.fn.expand("%:t:r")
   if string.find(vim.fn.bufname("%"), pattern) then
     vim.cmd("bwipeout!")
   else
-    local bufname = pattern .. project_name_or_file
+    local bufname = pattern .. bufname
     local i = vim.fn.bufnr("$")
     while i >= 1 do
       if vim.fn.bufname(i) == bufname then
@@ -89,17 +88,16 @@ local function close_runner(project_name_or_file)
 end
 
 --- Execute comanda and create name buffer
-local function execute(command, project_name_or_file)
-  project_name_or_file = project_name_or_file or vim.fn.expand("%:t:r")
+---@param command comando a ejecutar
+---@param bufname buffer name
+local function execute(command, bufname)
+  bufname = bufname or vim.fn.expand("%:t:r")
   local opt = o.get()
-  local bufname = "| :file " .. pattern .. project_name_or_file
-  close_runner(project_name_or_file)
-  if opt.term.tab then
-    vim.cmd("tabnew" .. opt.term.mode .. opt.prefix .. command)
-    vim.cmd(bufname)
-  else
-    vim.cmd(opt.prefix .. command .. bufname .. opt.term.mode)
-  end
+  local set_bufname = "file " .. pattern .. bufname
+  close_runner(bufname)
+  vim.cmd(opt.prefix .. command)
+  vim.cmd(set_bufname)
+  vim.cmd(opt.term.mode)
 end
 
 -- Create prefix for run commands
@@ -126,12 +124,12 @@ function M.run_filetype()
 end
 
 -- Get command for this current project
+---@return project_context or nil
 function M.get_project_command()
   local project_context = {}
   local opt = o.get()
   local context = nil
-  local next = next
-  if next(opt.project or {}) ~= nil then
+  if vim.tbl_isempty(opt.project) then
     context = get_project_rootpath()
   end
   if context then
@@ -159,8 +157,8 @@ function M.run(...)
     if cmd_to_execute then
       execute(cmd_to_execute, json_key_select)
     end
-    return
   end
+
   --  procede here if no input arguments
   local project = M.get_project_command()
   if project then
@@ -178,11 +176,5 @@ function M.run_close()
     close_runner()
   end
 end
-
--- --- Reload commands
--- function M.run_reload()
--- 	print("reload runner" .. vim.fn.expand("%:t"))
--- 	vim.cmd(":RunCode")
--- end
 
 return M
