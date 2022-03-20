@@ -10,7 +10,7 @@ When I was still in college it was common to try multiple programming languages,
 
 ### Requirements
 
--   Neovim (0.5)
+-   Neovim (>=0.5)
 
 ### Install
 
