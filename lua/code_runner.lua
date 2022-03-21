@@ -59,7 +59,6 @@ M.load_json_files = function()
     opt.project = load_json_as_table(opt.project_path)
   end
 
-  vim.g.runners = {}
   -- Message if json file not exist
   if vim.tbl_isempty(opt.filetype) then
     vim.notify(
