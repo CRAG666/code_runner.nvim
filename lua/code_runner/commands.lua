@@ -1,4 +1,5 @@
 local o = require("code_runner.options")
+local window = require("code_runner.floats")
 local pattern = "crunner_"
 
 -- Replace json variables with vim variables in command.
@@ -72,33 +73,56 @@ end
 
 local function close_runner(bufname)
   bufname = bufname or vim.fn.expand("%:t:r")
-  if string.find(vim.fn.bufname("%"), pattern) then
+  local current_buf = vim.fn.bufname("%")
+  if string.find(current_buf, pattern) then
+    vim.g.runners[current_buf] = nil
     vim.cmd("bwipeout!")
   else
-    bufname = pattern .. bufname
-    local i = vim.fn.bufnr("$")
-    while i >= 1 do
-      if vim.fn.bufname(i) == bufname then
-        vim.cmd("bwipeout!" .. i)
-        break
-      end
-      i = i - 1
-    end
+    vim.cmd("bwipeout!" .. vim.g.runners[bufname]["buffer"])
+    vim.g.runners[bufname] = nil
   end
 end
 
 --- Execute comanda and create name buffer
 ---@param command comando a ejecutar
 ---@param bufname buffer name
-local function execute(command, bufname, prefix)
-  bufname = bufname or vim.fn.expand("%:t:r")
-  prefix = prefix or opt.prefix
+-- @param hide not show output
+local function execute(command, bufname, hide)
+  hide = hide or false
   local opt = o.get()
   local set_bufname = "file " .. pattern .. bufname
   close_runner(bufname)
-  vim.cmd(prefix .. command)
+  vim.cmd(opt.prefix .. command)
   vim.cmd(set_bufname)
+  vim.g.runners[bufname] = {
+    ["id"] = vim.fn.win_getid(),
+    ["buffer"] = vim.fn.bufnr("%"),
+    ["hide"] = hide,
+  }
   vim.cmd(opt.insert_prefix)
+  vim.cmd(hide and "hide" or "")
+end
+
+local function toggle(command, bufname)
+  local opt = o.get()
+  local exits = vim.g.runners[bufname]
+  local hide = vim.g.runners[bufname]["hide"]
+  if exits then
+    if hide then
+      local prefix = string.format("%s %d new | ", opt.term.position, opt.term.size)
+      if opt.term.tab then
+        prefix = "tabnew | "
+      end
+      vim.g.runners[bufname]["hide"] = false
+      vim.cmd(prefix .. "buffer " .. pattern .. vim.g.runners[bufname]["id"])
+    else
+      vim.g.runners[bufname]["hide"] = true
+      vim.fn.win_gotoid(vim.g.runners[bufname]["id"])
+      vim.cmd("hide")
+    end
+  else
+    execute(command, bufname)
+  end
 end
 
 -- Create prefix for run commands
@@ -129,11 +153,17 @@ end
 
 -- Execute filetype
 function M.run_filetype(mode)
-  local opt = o.get()
-  mode = mode or opt.mode
+  mode = mode or ""
   local command = M.get_filetype_command()
+  local bufname = vim.fn.expand("%:t:r")
   if command ~= "" then
-    execute(command)
+    if mode == "float" then
+      window.float(command)
+    elseif mode == "toggle" then
+      toggle(command, bufname)
+    else
+      execute(command, bufname)
+    end
   else
     local nvim_files = {
       lua = "luafile %",
@@ -146,11 +176,16 @@ end
 
 -- Execute project
 function M.run_project(mode)
-  local opt = o.get()
-  mode = mode or opt.mode
+  mode = mode or ""
   local project = M.get_project_command()
   if project then
-    execute(project.command, project.name)
+    if mode == "float" then
+      window.float(project.command)
+    elseif mode == "toggle" then
+      toggle(project.command, project.name)
+    else
+      execute(project.command, project.name)
+    end
   end
 end
 

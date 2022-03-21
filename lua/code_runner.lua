@@ -16,7 +16,7 @@ M.setup = function(user_options)
 			endfunction
 
       function! RunnerCompletion(lead, cmd, cursor)
-        let valid_args = ['term', 'float']
+        let valid_args = ['term', 'float', 'toggle']
         let l = len(a:lead) - 1
         if l >= 0
           let filtered_args = copy(valid_args)
@@ -59,6 +59,7 @@ M.load_json_files = function()
     opt.project = load_json_as_table(opt.project_path)
   end
 
+  vim.g.runners = {}
   -- Message if json file not exist
   if vim.tbl_isempty(opt.filetype) then
     vim.notify(
