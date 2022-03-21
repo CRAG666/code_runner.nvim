@@ -79,7 +79,10 @@ local function close_runner(bufname)
       require("code_runner.commands").runners[current_buf] = nil
       vim.cmd("bwipeout!")
     else
-      vim.cmd("bwipeout!" .. require("code_runner.commands").runners[bufname]["buffer"])
+      local temp_buf = require("code_runner.commands").runners[bufname]["buffer"]
+      if vim.fn.bufexists(temp_buf) then
+        vim.cmd("bwipeout!" .. temp_buf)
+      end
       require("code_runner.commands").runners[bufname] = nil
     end
   end
@@ -112,16 +115,16 @@ local function toggle(command, bufname)
   local hide = require("code_runner.commands").runners[bufname]["hide"]
   if exits then
     if hide then
+      require("code_runner.commands").runners[bufname]["hide"] = true
+      vim.fn.win_gotoid(require("code_runner.commands").runners[bufname]["id"])
+      vim.cmd("hide")
+    else
       local prefix = string.format("%s %d new | ", opt.term.position, opt.term.size)
       if opt.term.tab then
         prefix = "tabnew | "
       end
       require("code_runner.commands").runners[bufname]["hide"] = false
       vim.cmd(prefix .. "buffer " .. pattern .. require("code_runner.commands").runners[bufname]["id"])
-    else
-      require("code_runner.commands").runners[bufname]["hide"] = true
-      vim.fn.win_gotoid(require("code_runner.commands").runners[bufname]["id"])
-      vim.cmd("hide")
     end
   else
     execute(command, bufname)
