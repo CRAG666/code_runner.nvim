@@ -72,14 +72,16 @@ local function get_project_command(context)
 end
 
 local function close_runner(bufname)
-  bufname = bufname or vim.fn.expand("%:t:r")
-  local current_buf = vim.fn.bufname("%")
-  if string.find(current_buf, pattern) then
-    vim.g.runners[current_buf] = nil
-    vim.cmd("bwipeout!")
-  else
-    vim.cmd("bwipeout!" .. vim.g.runners[bufname]["buffer"])
-    vim.g.runners[bufname] = nil
+  if not vim.tbl_isempty(vim.g.runners) then
+    bufname = bufname or vim.fn.expand("%:t:r")
+    local current_buf = vim.fn.bufname("%")
+    if string.find(current_buf, pattern) then
+      vim.g.runners[current_buf] = nil
+      vim.cmd("bwipeout!")
+    else
+      vim.cmd("bwipeout!" .. vim.g.runners[bufname]["buffer"])
+      vim.g.runners[bufname] = nil
+    end
   end
 end
 
@@ -211,12 +213,10 @@ end
 
 function M.run_close()
   local context = get_project_rootpath()
-  if not vim.tbl_isempty(vim.g.runners) then
-    if context then
-      close_runner(context.name)
-    else
-      close_runner()
-    end
+  if context then
+    close_runner(context.name)
+  else
+    close_runner()
   end
 end
 
