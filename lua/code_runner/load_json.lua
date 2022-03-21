@@ -1,6 +1,6 @@
 -- @param json_path absolute path to json
 -- @return json as table or nil
-function LoadTable(json_path)
+function load_as_table(json_path)
 	local contents = ""
 	local file = io.open(json_path, "r")
 
@@ -18,4 +18,4 @@ function LoadTable(json_path)
 	return nil
 end
 
-return LoadTable
+return load_as_table

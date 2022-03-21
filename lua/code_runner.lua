@@ -15,11 +15,24 @@ M.setup = function(user_options)
 				return cmd_keys
 			endfunction
 
+      function! RunnerCompletion(lead, cmd, cursor)
+        let valid_args = ['term', 'float']
+        let l = len(a:lead) - 1
+        if l >= 0
+          let filtered_args = copy(valid_args)
+          call filter(filtered_args, {_, v -> v[:l] ==# a:lead})
+          if !empty(filtered_args)
+            return filtered_args
+          endif
+        endif
+        return valid_args
+      endfunction
+
 			command! CRProjects lua require('code_runner').open_project_manager()
       command! CRFiletype lua require('code_runner').open_filetype_suported()
 			command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
-			command! RunFile lua require('code_runner').run_filetype()
-			command! RunProject lua require('code_runner').run_project()
+      command! -nargs=? -complete=customlist,RunnerCompletion RunFile lua require('code_runner').run_filetype(<args>)
+      command! -nargs=? -complete=customlist,RunnerCompletion RunProject lua require('code_runner').run_project(<args>)
 			command! RunClose lua require('code_runner').run_close()
 		]],
     false

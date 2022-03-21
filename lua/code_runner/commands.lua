@@ -75,7 +75,7 @@ local function close_runner(bufname)
   if string.find(vim.fn.bufname("%"), pattern) then
     vim.cmd("bwipeout!")
   else
-    local bufname = pattern .. bufname
+    bufname = pattern .. bufname
     local i = vim.fn.bufnr("$")
     while i >= 1 do
       if vim.fn.bufname(i) == bufname then
@@ -90,14 +90,15 @@ end
 --- Execute comanda and create name buffer
 ---@param command comando a ejecutar
 ---@param bufname buffer name
-local function execute(command, bufname)
+local function execute(command, bufname, prefix)
   bufname = bufname or vim.fn.expand("%:t:r")
+  prefix = prefix or opt.prefix
   local opt = o.get()
   local set_bufname = "file " .. pattern .. bufname
   close_runner(bufname)
-  vim.cmd(opt.prefix .. command)
+  vim.cmd(prefix .. command)
   vim.cmd(set_bufname)
-  vim.cmd(opt.term.mode)
+  vim.cmd(opt.insert_prefix)
 end
 
 -- Create prefix for run commands
@@ -107,21 +108,6 @@ local M = {}
 function M.get_filetype_command()
   local filetype = vim.bo.filetype
   return get_command(filetype) or ""
-end
-
--- Execute filetype
-function M.run_filetype()
-  local command = M.get_filetype_command()
-  if command ~= "" then
-    execute(command)
-  else
-    local nvim_files = {
-      lua = "luafile %",
-      vim = "source %",
-    }
-    local cmd = nvim_files[vim.bo.filetype] or ""
-    vim.cmd(cmd)
-  end
 end
 
 -- Get command for this current project
@@ -141,8 +127,27 @@ function M.get_project_command()
   return nil
 end
 
+-- Execute filetype
+function M.run_filetype(mode)
+  local opt = o.get()
+  mode = mode or opt.mode
+  local command = M.get_filetype_command()
+  if command ~= "" then
+    execute(command)
+  else
+    local nvim_files = {
+      lua = "luafile %",
+      vim = "source %",
+    }
+    local cmd = nvim_files[vim.bo.filetype] or ""
+    vim.cmd(cmd)
+  end
+end
+
 -- Execute project
-function M.run_project()
+function M.run_project(mode)
+  local opt = o.get()
+  mode = mode or opt.mode
   local project = M.get_project_command()
   if project then
     execute(project.command, project.name)
