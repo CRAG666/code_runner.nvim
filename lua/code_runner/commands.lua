@@ -92,21 +92,18 @@ end
 ---@param command comando a ejecutar
 ---@param bufname buffer name
 -- @param hide not show output
-local function execute(command, bufname, hide)
-  hide = hide or false
+local function execute(command, bufname)
   local opt = o.get()
   local set_bufname = "file " .. pattern .. bufname
   close_runner(bufname)
-  vim.cmd(opt.prefix)
+  vim.cmd(opt.prefix .. " | term " .. command)
   require("code_runner.commands").runners[bufname] = {
     ["id"] = vim.fn.win_getid(),
     ["buffer"] = vim.fn.bufnr("%"),
-    ["hide"] = hide,
+    ["hide"] = false,
   }
-  vim.cmd("term " .. command)
   vim.cmd(set_bufname)
   vim.cmd(opt.insert_prefix)
-  vim.cmd(hide and "hide" or "")
 end
 
 local function toggle(command, bufname)
@@ -115,15 +112,15 @@ local function toggle(command, bufname)
   local hide = require("code_runner.commands").runners[bufname]["hide"]
   if exits then
     if hide then
-      require("code_runner.commands").runners[bufname]["hide"] = true
+      require("code_runner.commands").runners[bufname]["hide"] = false
       vim.fn.win_gotoid(require("code_runner.commands").runners[bufname]["id"])
-      vim.cmd("hide")
+      vim.cmd(":hide")
     else
       local prefix = string.format("%s %d new | ", opt.term.position, opt.term.size)
       if opt.term.tab then
         prefix = "tabnew | "
       end
-      require("code_runner.commands").runners[bufname]["hide"] = false
+      require("code_runner.commands").runners[bufname]["hide"] = true
       vim.cmd(prefix .. "buffer " .. pattern .. require("code_runner.commands").runners[bufname]["id"])
     end
   else
