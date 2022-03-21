@@ -211,10 +211,12 @@ end
 
 function M.run_close()
   local context = get_project_rootpath()
-  if context then
-    close_runner(context.name)
-  else
-    close_runner()
+  if not vim.tbl_isempty(vim.g.runners) then
+    if context then
+      close_runner(context.name)
+    else
+      close_runner()
+    end
   end
 end
 
