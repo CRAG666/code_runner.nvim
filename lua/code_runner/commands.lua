@@ -72,15 +72,15 @@ local function get_project_command(context)
 end
 
 local function close_runner(bufname)
-  if not vim.g.runners then
+  if not vim.tbl_isempty(require("code_runner.commands").runners) then
     bufname = bufname or vim.fn.expand("%:t:r")
     local current_buf = vim.fn.bufname("%")
     if string.find(current_buf, pattern) then
-      vim.g.runners[current_buf] = nil
+      require("code_runner.commands").runners[current_buf] = nil
       vim.cmd("bwipeout!")
     else
-      vim.cmd("bwipeout!" .. vim.g.runners[bufname]["buffer"])
-      vim.g.runners[bufname] = nil
+      vim.cmd("bwipeout!" .. require("code_runner.commands").runners[bufname]["buffer"])
+      require("code_runner.commands").runners[bufname] = nil
     end
   end
 end
@@ -95,7 +95,7 @@ local function execute(command, bufname, hide)
   local set_bufname = "file " .. pattern .. bufname
   close_runner(bufname)
   vim.cmd(opt.prefix)
-  vim.g.runners[bufname] = {
+  require("code_runner.commands").runners[bufname] = {
     ["id"] = vim.fn.win_getid(),
     ["buffer"] = vim.fn.bufnr("%"),
     ["hide"] = hide,
@@ -108,19 +108,19 @@ end
 
 local function toggle(command, bufname)
   local opt = o.get()
-  local exits = vim.g.runners[bufname]
-  local hide = vim.g.runners[bufname]["hide"]
+  local exits = require("code_runner.commands").runners[bufname]
+  local hide = require("code_runner.commands").runners[bufname]["hide"]
   if exits then
     if hide then
       local prefix = string.format("%s %d new | ", opt.term.position, opt.term.size)
       if opt.term.tab then
         prefix = "tabnew | "
       end
-      vim.g.runners[bufname]["hide"] = false
-      vim.cmd(prefix .. "buffer " .. pattern .. vim.g.runners[bufname]["id"])
+      require("code_runner.commands").runners[bufname]["hide"] = false
+      vim.cmd(prefix .. "buffer " .. pattern .. require("code_runner.commands").runners[bufname]["id"])
     else
-      vim.g.runners[bufname]["hide"] = true
-      vim.fn.win_gotoid(vim.g.runners[bufname]["id"])
+      require("code_runner.commands").runners[bufname]["hide"] = true
+      vim.fn.win_gotoid(require("code_runner.commands").runners[bufname]["id"])
       vim.cmd("hide")
     end
   else
@@ -130,6 +130,7 @@ end
 
 -- Create prefix for run commands
 local M = {}
+M.runners = {}
 
 -- Get command for the current filetype
 function M.get_filetype_command()
