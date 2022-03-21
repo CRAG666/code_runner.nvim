@@ -94,13 +94,14 @@ local function execute(command, bufname, hide)
   local opt = o.get()
   local set_bufname = "file " .. pattern .. bufname
   close_runner(bufname)
-  vim.cmd(opt.prefix .. command)
-  vim.cmd(set_bufname)
+  vim.cmd(opt.prefix)
   vim.g.runners[bufname] = {
     ["id"] = vim.fn.win_getid(),
     ["buffer"] = vim.fn.bufnr("%"),
     ["hide"] = hide,
   }
+  vim.cmd("term" .. command)
+  vim.cmd(set_bufname)
   vim.cmd(opt.insert_prefix)
   vim.cmd(hide and "hide" or "")
 end
