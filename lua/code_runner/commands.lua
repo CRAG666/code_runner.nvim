@@ -72,7 +72,7 @@ local function get_project_command(context)
 end
 
 local function close_runner(bufname)
-  if not vim.tbl_isempty(vim.g.runners) then
+  if not vim.g.runners then
     bufname = bufname or vim.fn.expand("%:t:r")
     local current_buf = vim.fn.bufname("%")
     if string.find(current_buf, pattern) then
