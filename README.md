@@ -28,10 +28,18 @@ require "paq"{'CRAG666/code_runner.nvim'; 'nvim-lua/plenary.nvim';}
 
 ### Quick start
 
-Add the following line to your init.vim
+Add the following line to your init.lua
 
-```vimscript
-lua require('code_runner').setup({})
+```lua
+require('code_runner').setup({
+  -- put here the commands by filetype
+  filetype = {
+		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+		python = "python3 -u",
+		typescript = "deno run",
+		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+	},
+})
 ```
 
 #### Features
@@ -161,7 +169,6 @@ require('code_runner').setup {
   filetype = {},
   project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
   project = {},
-  prefix = "",
 }
 ```
 
@@ -176,7 +183,7 @@ require('code_runner').setup {
 	},
 	filetype = {
 		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
-		python = "python -U",
+		python = "python3 -u",
 		typescript = "deno run",
 		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
 	},
@@ -207,7 +214,7 @@ The file should look like this(the default file does not exist create it with th
 ```json
 {
   "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
-  "python": "python -U",
+  "python": "python3 -u",
   "typescript": "deno run",
   "rust": "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
 }
@@ -219,7 +226,7 @@ The file should look like this(the default file does not exist create it with th
 ..... more config .....
 	filetype = {
 	java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
-	python = "python -U",
+	python = "python3 -u",
 	typescript = "deno run",
 	rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
 },

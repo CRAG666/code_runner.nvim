@@ -3,7 +3,7 @@ local M = {}
 local o = require("code_runner.options")
 
 M.setup = function(user_options)
-  o.set(user_options)
+  o.set(user_options or {})
   M.load_json_files()
   vim.api.nvim_exec(
     [[
