@@ -73,15 +73,18 @@ end
 
 local function close_runner(bufname)
   if not vim.tbl_isempty(require("code_runner.commands").runners) then
-    bufname = bufname or vim.fn.expand("%:t:r")
+    bufname = bufname or pattern .. vim.fn.expand("%:t:r")
     local current_buf = vim.fn.bufname("%")
     if string.find(current_buf, pattern) then
       require("code_runner.commands").runners[current_buf] = nil
       vim.cmd("bwipeout!")
     else
-      local temp_buf = require("code_runner.commands").runners[bufname]["buffer"]
-      if vim.fn.bufexists(temp_buf) == 1 then
-        vim.cmd("bwipeout!" .. temp_buf)
+      local exist = require("code_runner.commands").runners[bufname]
+      if exist then
+        local temp_buf = exist["buffer"]
+        if vim.fn.bufexists(temp_buf) == 1 then
+          vim.cmd("bwipeout!" .. temp_buf)
+        end
       end
       require("code_runner.commands").runners[bufname] = nil
     end
@@ -94,7 +97,7 @@ end
 -- @param hide not show output
 local function execute(command, bufname)
   local opt = o.get()
-  local set_bufname = "file " .. pattern .. bufname
+  local set_bufname = "file " .. bufname
   close_runner(bufname)
   vim.cmd(opt.prefix .. " | term " .. command)
   require("code_runner.commands").runners[bufname] = {
@@ -108,14 +111,16 @@ end
 
 local function toggle(command, bufname)
   local opt = o.get()
-  local exits = require("code_runner.commands").runners[bufname]
-  local hide = require("code_runner.commands").runners[bufname]["hide"]
-  if exits then
-    if hide then
+  local exist = require("code_runner.commands").runners[bufname]
+  if exist then
+    vim.pretty_print("Toggle " .. bufname .. "....")
+    local is_hide = exist["hide"]
+    if is_hide then
+      vim.cmd(opt.prefix .. " | buffer " .. bufname)
+      require("code_runner.commands").runners[bufname]["id"] = vim.fn.win_getid()
       require("code_runner.commands").runners[bufname]["hide"] = false
-      vim.cmd(opt.prefix .. " | buffer " .. pattern .. bufname)
     else
-      vim.fn.win_gotoid(require("code_runner.commands").runners[bufname]["id"])
+      vim.fn.win_gotoid(exist["id"])
       require("code_runner.commands").runners[bufname]["hide"] = true
       vim.cmd(":hide")
     end
@@ -140,7 +145,7 @@ function M.get_project_command()
   local project_context = {}
   local opt = o.get()
   local context = nil
-  if vim.tbl_isempty(opt.project) then
+  if not vim.tbl_isempty(opt.project) then
     context = get_project_rootpath()
   end
   if context then
@@ -155,10 +160,10 @@ end
 function M.run_filetype(mode)
   mode = mode or ""
   local command = M.get_filetype_command()
-  local bufname = vim.fn.expand("%:t:r")
+  local bufname = pattern .. vim.fn.expand("%:t:r")
   if command ~= "" then
     if mode == "float" then
-      window.float(command)
+      window.floating(command)
     elseif mode == "toggle" then
       toggle(command, bufname)
     else
@@ -178,13 +183,14 @@ end
 function M.run_project(mode)
   mode = mode or ""
   local project = M.get_project_command()
+  local bufname = pattern .. project.name
   if project then
     if mode == "float" then
-      window.float(project.command)
+      window.floating(project.command)
     elseif mode == "toggle" then
-      toggle(project.command, project.name)
+      toggle(project.command, bufname)
     else
-      execute(project.command, project.name)
+      execute(project.command, bufname)
     end
   end
 end
@@ -212,7 +218,7 @@ end
 function M.run_close()
   local context = get_project_rootpath()
   if context then
-    close_runner(context.name)
+    close_runner(pattern .. context.name)
   else
     close_runner()
   end

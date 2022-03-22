@@ -31,8 +31,8 @@ M.setup = function(user_options)
 			command! CRProjects lua require('code_runner').open_project_manager()
       command! CRFiletype lua require('code_runner').open_filetype_suported()
 			command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
-      command! -nargs=? -complete=customlist,RunnerCompletion RunFile lua require('code_runner').run_filetype(<args>)
-      command! -nargs=? -complete=customlist,RunnerCompletion RunProject lua require('code_runner').run_project(<args>)
+      command! -nargs=? -complete=customlist,RunnerCompletion RunFile lua require('code_runner').run_filetype("<args>")
+      command! -nargs=? -complete=customlist,RunnerCompletion RunProject lua require('code_runner').run_project("<args>")
 			command! RunClose lua require('code_runner').run_close()
 		]],
     false
