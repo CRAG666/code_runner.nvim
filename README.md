@@ -34,15 +34,6 @@ Add the following line to your init.vim
 lua require('code_runner').setup({})
 ```
 
-### Chek new features
-
-Check out the `new_features` branch(:warning: Unstable, do not use in production)
-
-```lua
--- unstable
-use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim', branch = "new_features" }
-```
-
 #### Features
 
 - Run in a Float window(unstable)
