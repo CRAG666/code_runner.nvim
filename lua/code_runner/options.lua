@@ -3,7 +3,8 @@ local options = {
 		tab = false,
 		mode = "",
 		position = "belowright",
-		size = 8
+		size = 8,
+    toggleTerm = false
 	},
 	filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
 	filetype = {},
