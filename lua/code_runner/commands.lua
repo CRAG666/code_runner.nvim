@@ -95,6 +95,11 @@ local function execute(command, project_name_or_file)
 	local opt = o.get()
 	local bufname = "| :file ".. pattern .. project_name_or_file
 	close_runner(project_name_or_file)
+  if opt.term.toggleTerm then
+    local tcmd = string.format('TermExec cmd="%s"', command)
+    vim.cmd(tcmd)
+    return
+  end
 	if opt.term.tab then
 		vim.cmd("tabnew" .. opt.term.mode .. opt.prefix .. command)
 		vim.cmd(bufname)

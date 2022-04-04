@@ -93,6 +93,7 @@ Fields:
 	- `tab`: Open code runner en new tab(default: false)
 	- `position`: Integrated terminal position(for option :h windows, default: `belowright`)
 	- `size`: Size of the terminal window (default: `8`)
+ 	- `toggleTerm`: Use toggleTerm (default: `false`)
 
 - `filetype_path`: Absolute path to json file config (default: packer module path, use absolute paths)
 
