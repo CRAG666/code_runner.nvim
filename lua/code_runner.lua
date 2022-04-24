@@ -51,6 +51,9 @@ M.load_json_files = function()
 		opt.project = load_json_as_table(opt.project_path)
 	end
 
+	-- variable needed for the vimscript function command :RunCode
+	vim.g.fileCommands = opt.filetype;
+
 	-- Message if json file not exist
 	if next(opt.filetype or {}) == nil then
 		print("Not exist command for filetypes or format invalid, if use json please execute :CRFiletype or if use lua edit setup")
