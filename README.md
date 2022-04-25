@@ -93,7 +93,7 @@ Fields:
 	- `tab`: Open code runner en new tab(default: false)
 	- `position`: Integrated terminal position(for option :h windows, default: `belowright`)
 	- `size`: Size of the terminal window (default: `8`)
- 	- `toggleTerm`: Use toggleTerm (default: `false`)
+	- `toggleTerm`: Use toggleTerm (default: `false`)
 
 - `filetype_path`: Absolute path to json file config (default: packer module path, use absolute paths)
 
@@ -137,7 +137,7 @@ require('code_runner').setup {
 }
 ```
 
-It is important that you know that configuration is given priority in pure lua, but if you prefer to configure in json, do not add the options filetype and project, and configure over the options filetype_path and project_path (these are paths of the os where your file is json), then you have a configuration in pure lua:
+It is important that you know that configuration is given priority in pure lua, but if you prefer to configure in json, do not add the options filetype and project, and configure over the options filetype_path and project_path (these are paths of the os where your file is json), here you have a configuration in pure lua:
 
 ```lua
 require('code_runner').setup {
