@@ -16,7 +16,7 @@ M.setup = function(user_options)
 			endfunction
 
       function! RunnerCompletion(lead, cmd, cursor)
-        let valid_args = ['term', 'float', 'toggle']
+        let valid_args = ['float', 'tab', 'term', 'toggle', 'toggleterm']
         let l = len(a:lead) - 1
         if l >= 0
           let filtered_args = copy(valid_args)
@@ -34,7 +34,7 @@ M.setup = function(user_options)
       command! -nargs=? -complete=customlist,RunnerCompletion RunFile lua require('code_runner').run_filetype("<args>")
       command! -nargs=? -complete=customlist,RunnerCompletion RunProject lua require('code_runner').run_project("<args>")
 			command! RunClose lua require('code_runner').run_close()
-		]],
+		]] ,
     false
   )
 end

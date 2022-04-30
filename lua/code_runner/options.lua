@@ -1,12 +1,11 @@
 local options = {
+  -- choose default mode (valid term, tab, float, toggle)
+  mode = 'term',
   -- startinsert (see ':h inserting-ex')
   startinsert = false,
   insert_prefix = "",
-  -- choose default mode (valid term or float)
   term = {
-    --  Open in a new tab
-    tab = false,
-    --  Position to open the terminal, this option is ignored if tab is true
+    --  Position to open the terminal, this option is ignored if mode ~= term
     position = "bot",
     -- window size, this option is ignored if tab is true
     size = 8,
@@ -31,7 +30,7 @@ local options = {
   filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
   filetype = {},
   project_path = vim.fn.stdpath("data")
-    .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+      .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
   project = {},
   prefix = "",
 }
@@ -43,11 +42,7 @@ M.set = function(user_options)
     user_options.insert_prefix = "startinsert"
   end
   options = vim.tbl_deep_extend("force", options, user_options)
-  if options.term.tab then
-    options.prefix = "tabnew"
-  else
-    options.prefix = string.format("%s %d new", options.term.position, options.term.size)
-  end
+  options.prefix = string.format("%s %d new", options.term.position, options.term.size)
 end
 
 M.get = function()

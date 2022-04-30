@@ -42,18 +42,21 @@ require('code_runner').setup({
 })
 ```
 
+Don't use setup if filetype or a json path
+
 #### Features
 
-- Run in a Float window(unstable)
 - Toggle runner
 - Reload runner
+- Run in a Float window
+- Run in a tab
+- Run in a split
+- Run in toggleTerm
 
 ##### Help build this feature
 
 The things to do are listed below:
 
-- Improve setup function
-- Improve the way you switch between normal terminal and floating terminal(is currently filled with if else)
 - Open an issue to know if it is worth implementing this function and if there are people interested in its existence
 
 ### Functions
@@ -62,8 +65,8 @@ All run commands allow restart. So, for example, if you use a command that does 
 
 - `:RunCode` - Runs based on file type, first checking if belongs to project, then if filetype mapping exists
 - `:RunCode <A_key_here>` - Execute command from its key in current directory.
-- `:RunFile <mode>` - Run the current file(optionally you can select an opening mode: {"toggle", "float"}, default: "term")
-- `:RunProject <mode>` - Run the current project(If you are in a project otherwise you will not do anything, (optionally you can select an opening mode: {"toggle", "float"}, default: "term")
+- `:RunFile <mode>` - Run the current file(optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm"}, default: "term").
+- `:RunProject <mode>` - Run the current project(If you are in a project otherwise you will not do anything, (optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm"}, default: "term").
 - `:RunClose` - Close runner
 - `:CRFiletype` - Open json with supported files(Use only if you configured with json files).
 - `:CRProjects` - Open json with list of projects(Use only if you configured with json files).
@@ -73,39 +76,36 @@ This plugin stopped creating mappings, in favor of you creating your own
 Recomended:
 
 ```lua
-vim.api.nvim_set_keymap('n', '<leader>r', ':RunCode<CR>', { noremap = true, silent = false })
-vim.api.nvim_set_keymap('n', '<leader>rf', ':RunFile<CR>', { noremap = true, silent = false })
-vim.api.nvim_set_keymap('n', '<leader>rp', ':RunProject<CR>', { noremap = true, silent = false })
-vim.api.nvim_set_keymap('n', '<leader>rc', ':RunClose<CR>', { noremap = true, silent = false })
-vim.api.nvim_set_keymap('n', '<leader>crf', ':CRFiletype<CR>', { noremap = true, silent = false })
-vim.api.nvim_set_keymap('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>r', ':RunCode<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>rf', ':RunFile<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>rft', ':RunFile tab<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>rp', ':RunProject<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>rc', ':RunClose<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>crf', ':CRFiletype<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent = false })
 ```
 
 ### Options
 
+- `mode`: Mode in which you want to run(default: term, valid options: {"toggle", "float", "tab", "toggleterm"}),
 - `startinsert`: init in insert mode(default: false)
 - `term`: Configurations for the integrated terminal
+  Fields:
 
-If you use tab then the key position and size is not overridden as it doesn't make sense in the context.
-
-Fields:
-
-    - `tab`: Open code runner en new tab(default: false)
-    - `position`: Integrated terminal position(for option :h windows, default: `belowright`)
-    - `size`: Size of the terminal window (default: `8`)
+  - `position`: Integrated terminal position(for option :h windows, default: `belowright`)
+  - `size`: Size of the terminal window (default: `8`)
 
 - `float`: Configurations for the float win
+  Fields:
 
-Fields:
-
-    - `border`: Window border (see ':h nvim_open_win')
-    - `height`
-    - `width`
-    - `x`
-    - `y`
-    - `border_hl`: (default: FloatBorder)
-    - `float_hl`: (defult: "Normal")
-    - blend: Transparency (see ':h winblend')
+  - `border`: Window border (see ':h nvim_open_win')
+  - `height`
+  - `width`
+  - `x`
+  - `y`
+  - `border_hl`: (default: FloatBorder)
+  - `float_hl`: (defult: "Normal")
+  - `blend`: Transparency (see ':h winblend')
 
 - `filetype_path`: Absolute path to json file config (default: packer module path, use absolute paths)
 
@@ -120,10 +120,11 @@ Fields:
 ```lua
 -- this is a config example
 require('code_runner').setup {
+  mode = "tab"
+  startinsert = true
 	term = {
 		position = "vert",
 		size = 8,
-		startinsert = true
 	},
 	filetype_path = vim.fn.expand('~/.config/nvim/code_runner.json'),
 	project_path = vim.fn.expand('~/.config/nvim/project_manager.json')
@@ -136,14 +137,12 @@ Note: A common mistake code runners make is using relative paths and not absolut
 
 ```lua
 require('code_runner').setup {
+  -- choose default mode (valid term, tab, float, toggle)
+  mode = 'term',
   -- startinsert (see ':h inserting-ex')
   startinsert = false,
-  insert_prefix = "",
-  -- choose default mode (valid term or float)
   term = {
-    --  Open in a new tab
-    tab = false,
-    --  Position to open the terminal, this option is ignored if tab is true
+    --  Position to open the terminal, this option is ignored if mode is tab
     position = "bot",
     -- window size, this option is ignored if tab is true
     size = 8,
@@ -167,7 +166,8 @@ require('code_runner').setup {
   },
   filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
   filetype = {},
-  project_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+  project_path = vim.fn.stdpath("data")
+      .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
   project = {},
 }
 ```
@@ -176,10 +176,11 @@ It is important that you know that configuration is given priority in pure lua, 
 
 ```lua
 require('code_runner').setup {
+  mode = "term"
+  startinsert = true
 	term = {
 		position = "vert",
 		size = 15,
-		startinsert = true
 	},
 	filetype = {
 		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
@@ -240,19 +241,19 @@ if you want to add some other language or some other command follow this structu
 
 The available variables are the following:
 
-- file -- file path to currend file opened
-  - fileName -- file name to curren file opened
-  - fileNameWithoutExt -- file without extension file opened
-  - dir -- path of directory to file opened
+- `file` -- file path to currend file opened
+- `fileName` -- file name to curren file opened
+- `fileNameWithoutExt` -- file without extension file opened
+- `dir` -- path of directory to file opened
 
 Below is an example of an absolute path and how it behaves depending on the variable:
 
 absolute path: /home/anyuser/current/file.py
 
-- file = /home/anyuser/current/file.py
-- fileName = file.py
-- fileNameWithoutExt = file
-- dir = /home/anyuser/current
+- `file` = /home/anyuser/current/file.py
+- `fileName` = file.py
+- `fileNameWithoutExt` = file
+- `dir` = /home/anyuser/current
 
 Remember that if you don't want to use variables you can use vim [filename-modifiers](http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers)
 
@@ -379,11 +380,11 @@ you can directly integrate this plugin with [ThePrimeagen/harpoon](https://githu
 
 For unknown reasons, leaving a comma in the trailing element in any json file causes an error when loading into lua, so you have to remove the trailing comma in the last item.
 
-# inspirations and thanks
+# Inspirations and thanks
 
 - The idea of this project comes from the vscode plugin [code_runner](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner) You can even copy your configuration and pass it to this plugin, as they are the same in the way of defining commands associated with [filetypes](https://github.com/CRAG666/code_runner.nvim#add-support-for-more-file-types)
 
-- [absp-nvim](https://github.com/is0n/absp-nvim) some ideas of how to execute commands were taken from this plugin, thank you very much.
+- [jaq-nvim](https://github.com/is0n/jaq-nvim) some ideas of how to execute commands were taken from this plugin, thank you very much.
 
 - [FTerm.nvim](https://github.com/numToStr/FTerm.nvim) Much of how this README.md is structured was blatantly stolen from this plugin, thank you very much
 
@@ -399,7 +400,7 @@ For unknown reasons, leaving a comma in the trailing element in any json file ca
 
 # Contributing
 
-Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas
+Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas. All PR's are welcome.
 
 ## :warning: Important!
 

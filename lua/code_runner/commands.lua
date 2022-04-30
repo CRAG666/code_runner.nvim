@@ -1,5 +1,4 @@
 local o = require("code_runner.options")
-local window = require("code_runner.floats")
 local pattern = "crunner_"
 
 -- Replace json variables with vim variables in command.
@@ -72,21 +71,14 @@ local function get_project_command(context)
 end
 
 local function close_runner(bufname)
-  if not vim.tbl_isempty(require("code_runner.commands").runners) then
-    bufname = bufname or pattern .. vim.fn.expand("%:t:r")
-    local current_buf = vim.fn.bufname("%")
-    if string.find(current_buf, pattern) then
-      require("code_runner.commands").runners[current_buf] = nil
-      vim.cmd("bwipeout!")
-    else
-      local exist = require("code_runner.commands").runners[bufname]
-      if exist then
-        local temp_buf = exist["buffer"]
-        if vim.fn.bufexists(temp_buf) == 1 then
-          vim.cmd("bwipeout!" .. temp_buf)
-        end
-      end
-      require("code_runner.commands").runners[bufname] = nil
+  bufname = bufname or pattern .. vim.fn.expand("%:t:r")
+  local current_buf = vim.fn.bufname("%")
+  if string.find(current_buf, pattern) then
+    vim.cmd("bwipeout!")
+  else
+    local bufid = vim.fn.bufnr(bufname)
+    if bufid ~= -1 then
+      vim.cmd("bwipeout!" .. bufid)
     end
   end
 end
@@ -95,33 +87,27 @@ end
 ---@param command comando a ejecutar
 ---@param bufname buffer name
 -- @param hide not show output
-local function execute(command, bufname)
+local function execute(command, bufname, prefix)
   local opt = o.get()
+  prefix = prefix or opt.prefix
   local set_bufname = "file " .. bufname
   close_runner(bufname)
-  vim.cmd(opt.prefix .. " | term " .. command)
-  require("code_runner.commands").runners[bufname] = {
-    ["id"] = vim.api.nvim_get_current_win(),
-    ["buffer"] = vim.fn.bufnr("%"),
-    ["hide"] = false,
-  }
+  vim.cmd(prefix .. " | term " .. command)
   vim.cmd(set_bufname)
   vim.cmd(opt.insert_prefix)
 end
 
 local function toggle(command, bufname)
-  local opt = o.get()
-  local exist = require("code_runner.commands").runners[bufname]
-  if exist then
-    vim.pretty_print("Toggle " .. bufname .. "....")
-    local is_hide = exist["hide"]
+  local bufid = vim.fn.bufnr(bufname)
+  local buf_exist = vim.api.nvim_buf_is_valid(bufid)
+  if buf_exist then
+    local is_hide = vim.fn.getbufinfo(bufid)[1].hidden == 1
     if is_hide then
+      local opt = o.get()
       vim.cmd(opt.prefix .. " | buffer " .. bufname)
-      require("code_runner.commands").runners[bufname]["id"] = vim.api.nvim_get_current_win()
-      require("code_runner.commands").runners[bufname]["hide"] = false
     else
-      vim.fn.win_gotoid(exist["id"])
-      require("code_runner.commands").runners[bufname]["hide"] = true
+      local winid = vim.fn.getbufinfo(bufid)[1].windows[1]
+      vim.fn.win_gotoid(winid)
       vim.cmd(":hide")
     end
   else
@@ -129,9 +115,41 @@ local function toggle(command, bufname)
   end
 end
 
+--- Run according to a mode
+---@param command string
+---@param bufname string
+---@param mode string
+local function run_mode(command, bufname, mode)
+  local opt = o.get()
+  mode = mode or opt.mode
+  if mode == "" then
+    mode = opt.mode
+  end
+  bufname = pattern .. bufname
+  if mode == "float" then
+    local window = require("code_runner.floats")
+    window.floating(command)
+  elseif mode == "toggle" then
+    toggle(command, bufname)
+  elseif mode == "tab" then
+    execute(command, bufname, "tabnew")
+  elseif mode == "term" then
+    execute(command, bufname)
+  elseif mode == "toggleterm" then
+    local tcmd = string.format('TermExec cmd="%s"', command)
+    vim.cmd(tcmd)
+    vim.cmd(opt.insert_prefix)
+  else
+    vim.notify(
+      ":( mode not found, valid modes term, tab, float, toggle",
+      vim.log.levels.INFO,
+      { title = "Project" }
+    )
+  end
+end
+
 -- Create prefix for run commands
 local M = {}
-M.runners = {}
 
 -- Get command for the current filetype
 function M.get_filetype_command()
@@ -140,7 +158,7 @@ function M.get_filetype_command()
 end
 
 -- Get command for this current project
----@return project_context or nil
+---@return table or nil
 function M.get_project_command()
   local project_context = {}
   local opt = o.get()
@@ -158,17 +176,9 @@ end
 
 -- Execute filetype
 function M.run_filetype(mode)
-  mode = mode or ""
   local command = M.get_filetype_command()
-  local bufname = pattern .. vim.fn.expand("%:t:r")
   if command ~= "" then
-    if mode == "float" then
-      window.floating(command)
-    elseif mode == "toggle" then
-      toggle(command, bufname)
-    else
-      execute(command, bufname)
-    end
+    run_mode(command, vim.fn.expand("%:t:r"), mode)
   else
     local nvim_files = {
       lua = "luafile %",
@@ -181,17 +191,15 @@ end
 
 -- Execute project
 function M.run_project(mode)
-  mode = mode or ""
   local project = M.get_project_command()
-  local bufname = pattern .. project.name
   if project then
-    if mode == "float" then
-      window.floating(project.command)
-    elseif mode == "toggle" then
-      toggle(project.command, bufname)
-    else
-      execute(project.command, bufname)
-    end
+    run_mode(project.command, project.name, mode)
+  else
+    vim.notify(
+      "Not a project context",
+      vim.log.levels.INFO,
+      { title = "Project" }
+    )
   end
 end
 
@@ -202,14 +210,14 @@ function M.run(...)
     -- since we have reached here, means we have our command key
     local cmd_to_execute = get_command(json_key_select)
     if cmd_to_execute then
-      execute(cmd_to_execute, json_key_select)
+      run_mode(cmd_to_execute, vim.fn.expand("%:t:r"))
     end
   end
 
   --  procede here if no input arguments
   local project = M.get_project_command()
   if project then
-    execute(project.command, project.name)
+    run_mode(project.command, project.name)
   else
     M.run_filetype()
   end
