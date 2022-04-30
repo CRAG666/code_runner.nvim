@@ -101,7 +101,7 @@ local function execute(command, bufname)
   close_runner(bufname)
   vim.cmd(opt.prefix .. " | term " .. command)
   require("code_runner.commands").runners[bufname] = {
-    ["id"] = vim.fn.win_getid(),
+    ["id"] = vim.api.nvim_get_current_win(),
     ["buffer"] = vim.fn.bufnr("%"),
     ["hide"] = false,
   }
@@ -117,7 +117,7 @@ local function toggle(command, bufname)
     local is_hide = exist["hide"]
     if is_hide then
       vim.cmd(opt.prefix .. " | buffer " .. bufname)
-      require("code_runner.commands").runners[bufname]["id"] = vim.fn.win_getid()
+      require("code_runner.commands").runners[bufname]["id"] = vim.api.nvim_get_current_win()
       require("code_runner.commands").runners[bufname]["hide"] = false
     else
       vim.fn.win_gotoid(exist["id"])
