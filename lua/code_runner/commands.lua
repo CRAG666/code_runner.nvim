@@ -111,12 +111,12 @@ local function toggle(command, bufname)
   local bufid = vim.fn.bufnr(bufname)
   local buf_exist = vim.api.nvim_buf_is_valid(bufid)
   if buf_exist then
-    local is_hide = vim.fn.getbufinfo(bufid)[1].hidden == 1
-    if is_hide then
+    local bufinfo = vim.fn.getbufinfo(bufid)[1]
+    if bufinfo.hidden == 1 then
       local opt = o.get()
       vim.cmd(opt.prefix .. " | buffer " .. bufname)
     else
-      local winid = vim.fn.getbufinfo(bufid)[1].windows[1]
+      local winid = bufinfo.windows[1]
       vim.fn.win_gotoid(winid)
       vim.cmd(":hide")
     end
