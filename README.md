@@ -121,10 +121,10 @@ vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent =
 ```lua
 -- this is a config example
 require('code_runner').setup {
-  mode = "tab"
+  mode = "tab",
   focus = false,
-  startinsert = true
-	term = {
+  startinsert = true,
+  term = {
 		position = "vert",
 		size = 8,
 	},

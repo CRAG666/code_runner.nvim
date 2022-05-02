@@ -10,7 +10,7 @@ local options = {
     --  Position to open the terminal, this option is ignored if mode ~= term
     position = "bot",
     -- window size, this option is ignored if mode == tab
-    size = 8,
+    size = 12,
   },
   float = {
     -- Window border (see ':h nvim_open_win')
