@@ -58,6 +58,7 @@ end
 M.setup = function(user_options)
   o.set(user_options or {})
   load_runners()
+
   local simple_cmds = {
     RunClose = commands.run_close,
     CRFiletype = M.open_filetype_suported,
@@ -66,13 +67,16 @@ M.setup = function(user_options)
   for cmd,func in pairs(simple_cmds) do
     vim.api.nvim_create_user_command(cmd, func, {nargs=0})
   end
+
   local valid_filetypes = vim.tbl_keys(o.get().filetype)
-  vim.api.nvim_create_user_command('RunCode', commands.run, {
+  vim.api.nvim_create_user_command('RunCode',function(opts) commands.run(opts.args) end, {
     nargs = '?',
     complete = function(ArgLead, CmdLine, CursorPos)
       return completion(ArgLead, valid_filetypes)
     end,
   })
+
+  -- Add here the way you want
   local modes = {'float', 'tab', 'term', 'toggle', 'toggleterm'}
   vim.api.nvim_create_user_command('RunFile', function(opts) commands.run_filetype(opts.args) end, {
     nargs = '?',

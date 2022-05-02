@@ -91,10 +91,18 @@ local function execute(command, bufname, prefix)
   local opt = o.get()
   prefix = prefix or opt.prefix
   local set_bufname = "file " .. bufname
+  local current_wind_id = vim.api.nvim_get_current_win()
   close_runner(bufname)
   vim.cmd(prefix .. " | term " .. command)
   vim.cmd(set_bufname)
-  vim.cmd(opt.insert_prefix)
+  if prefix ~= "tabnew" then
+    vim.bo.buflisted = false
+  end
+  if opt.focus then
+    vim.cmd(opt.insert_prefix)
+  else
+    vim.fn.win_gotoid(current_wind_id)
+  end
 end
 
 local function toggle(command, bufname)
@@ -148,7 +156,6 @@ local function run_mode(command, bufname, mode)
   end
 end
 
--- Create prefix for run commands
 local M = {}
 
 -- Get command for the current filetype
@@ -204,11 +211,10 @@ function M.run_project(mode)
 end
 
 -- Execute filetype or project
-function M.run(...)
-  local json_key_select = select(1, ...)
-  if json_key_select ~= "" then
+function M.run(filetype)
+  if filetype ~= "" then
     -- since we have reached here, means we have our command key
-    local cmd_to_execute = get_command(json_key_select)
+    local cmd_to_execute = get_command(filetype)
     if cmd_to_execute then
       run_mode(cmd_to_execute, vim.fn.expand("%:t:r"))
     end

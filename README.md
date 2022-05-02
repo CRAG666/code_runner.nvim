@@ -88,6 +88,7 @@ vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent =
 ### Options
 
 - `mode`: Mode in which you want to run(default: term, valid options: {"toggle", "float", "tab", "toggleterm"}),
+- `focus`: Focus on runner window(only works on toggle, term and tab mode, default: true)
 - `startinsert`: init in insert mode(default: false)
 - `term`: Configurations for the integrated terminal
   Fields:
@@ -121,6 +122,7 @@ vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent =
 -- this is a config example
 require('code_runner').setup {
   mode = "tab"
+  focus = false,
   startinsert = true
 	term = {
 		position = "vert",
@@ -139,6 +141,8 @@ Note: A common mistake code runners make is using relative paths and not absolut
 require('code_runner').setup {
   -- choose default mode (valid term, tab, float, toggle)
   mode = 'term',
+  -- Focus on runner window(only works on toggle, term and tab mode)
+  focus = true,
   -- startinsert (see ':h inserting-ex')
   startinsert = false,
   term = {

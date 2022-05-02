@@ -1,13 +1,15 @@
 local options = {
   -- choose default mode (valid term, tab, float, toggle)
   mode = 'term',
+  -- Focus on runner window(only works on toggle, term and tab mode)
+  focus = true,
   -- startinsert (see ':h inserting-ex')
   startinsert = false,
   insert_prefix = "",
   term = {
     --  Position to open the terminal, this option is ignored if mode ~= term
     position = "bot",
-    -- window size, this option is ignored if tab is true
+    -- window size, this option is ignored if mode == tab
     size = 8,
   },
   float = {
