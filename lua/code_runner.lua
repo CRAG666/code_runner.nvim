@@ -50,17 +50,6 @@ local function open_json(json_path)
   vim.cmd(command)
 end
 
-local function get_filetype_suported()
-  local opt = o.get()
-  local keyset={}
-  local n=0
-  for k,v in pairs(opt.filetype) do
-    n=n+1
-    keyset[n]=k
-  end
-  return keyset
-end
-
 M.load_runners = function()
   -- Load json config and convert to table
   local opt = o.get()
@@ -84,7 +73,7 @@ M.load_runners = function()
       { title = "Code Runner Error" }
     )
   else
-    vim.g.crSupportedFileTypes = get_filetype_suported()
+    vim.g.crSupportedFileTypes = vim.tbl_keys(opt.filetype)
   end
 end
 
