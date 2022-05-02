@@ -1,30 +1,25 @@
 local commands = require("code_runner.commands")
-local M = {}
 local o = require("code_runner.options")
-
-function M.runner_keys(Arg,Cmd,Curs)
-  local opt = o.get()
-  local keyset={}
-  local n=0
-  for k,v in pairs(tab) do
-    n=n+1
-    keyset[n]=k
-  end
-  return keyset
-end
+local M = {}
 
 M.setup = function(user_options)
   o.set(user_options or {})
-  M.load_json_files()
+  M.load_runners()
   vim.api.nvim_exec(
     [[
-			function! CRunnerGetKeysForCmds(Arg,Cmd,Curs)
-				let cmd_keys = ""
-				for x in keys(g:fileCommands)
-					let cmd_keys = cmd_keys.x."\n"
-				endfor
-				return cmd_keys
-			endfunction
+      function! RunKeyCompletion(lead, cmd, cursor)
+        echo a:cmd
+        echo a:cursor
+        let l = len(a:lead) - 1
+        if l >= 0
+          let filtered_args = copy(g:crSupportedFileTypes)
+          call filter(filtered_args, {_, v -> v[:l] ==# a:lead})
+          if !empty(filtered_args)
+            return filtered_args
+          endif
+        endif
+        return g:crSupportedFileTypes
+      endfunction
 
       function! RunnerCompletion(lead, cmd, cursor)
         let valid_args = ['float', 'tab', 'term', 'toggle', 'toggleterm']
@@ -41,7 +36,7 @@ M.setup = function(user_options)
 
 			command! CRProjects lua require('code_runner').open_project_manager()
       command! CRFiletype lua require('code_runner').open_filetype_suported()
-			command! -nargs=? -complete=custom,lua require('code_runner').runner_keys RunCode lua require('code_runner').run_code("<args>")
+			command! -nargs=? -complete=customlist,RunKeyCompletion RunCode lua require('code_runner').run_code("<args>")
       command! -nargs=? -complete=customlist,RunnerCompletion RunFile lua require('code_runner').run_filetype("<args>")
       command! -nargs=? -complete=customlist,RunnerCompletion RunProject lua require('code_runner').run_project("<args>")
 			command! RunClose lua require('code_runner').run_close()
@@ -55,7 +50,18 @@ local function open_json(json_path)
   vim.cmd(command)
 end
 
-M.load_json_files = function()
+local function get_filetype_suported()
+  local opt = o.get()
+  local keyset={}
+  local n=0
+  for k,v in pairs(opt.filetype) do
+    n=n+1
+    keyset[n]=k
+  end
+  return keyset
+end
+
+M.load_runners = function()
   -- Load json config and convert to table
   local opt = o.get()
   local load_json_as_table = require("code_runner.load_json")
@@ -77,6 +83,8 @@ M.load_json_files = function()
       vim.log.levels.ERROR,
       { title = "Code Runner Error" }
     )
+  else
+    vim.g.crSupportedFileTypes = get_filetype_suported()
   end
 end
 
