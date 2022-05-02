@@ -2,6 +2,17 @@ local commands = require("code_runner.commands")
 local M = {}
 local o = require("code_runner.options")
 
+function M.runner_keys(Arg,Cmd,Curs)
+  local opt = o.get()
+  local keyset={}
+  local n=0
+  for k,v in pairs(tab) do
+    n=n+1
+    keyset[n]=k
+  end
+  return keyset
+end
+
 M.setup = function(user_options)
   o.set(user_options or {})
   M.load_json_files()
@@ -30,7 +41,7 @@ M.setup = function(user_options)
 
 			command! CRProjects lua require('code_runner').open_project_manager()
       command! CRFiletype lua require('code_runner').open_filetype_suported()
-			command! -nargs=? -complete=custom,CRunnerGetKeysForCmds RunCode lua require('code_runner').run_code("<args>")
+			command! -nargs=? -complete=custom,lua require('code_runner').runner_keys RunCode lua require('code_runner').run_code("<args>")
       command! -nargs=? -complete=customlist,RunnerCompletion RunFile lua require('code_runner').run_filetype("<args>")
       command! -nargs=? -complete=customlist,RunnerCompletion RunProject lua require('code_runner').run_project("<args>")
 			command! RunClose lua require('code_runner').run_close()
