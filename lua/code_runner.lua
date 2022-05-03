@@ -29,12 +29,12 @@ local function load_runners()
 
   -- convert json filetype as table lua
   if vim.tbl_isempty(opt.filetype) then
-    opt.filetype = load_json_as_table(opt.filetype_path)
+    opt.filetype = load_json_as_table(opt.filetype_path) or {}
   end
 
   -- convert json project as table lua
   if vim.tbl_isempty(opt.project) then
-    opt.project = load_json_as_table(opt.project_path)
+    opt.project = load_json_as_table(opt.project_path) or {}
   end
 
   -- Message if json file not exist
