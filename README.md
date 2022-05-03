@@ -396,8 +396,6 @@ For unknown reasons, leaving a comma in the trailing element in any json file ca
 
 # Screenshots
 
-https://user-images.githubusercontent.com/34254373/166345954-c05f8247-0bbc-40b1-b5a4-e920455578a9.mp4
-
 ![typescript](https://i.ibb.co/JCg3tNd/ezgif-com-video-to-gif.gif)
 
 ![python](https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif)
