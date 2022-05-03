@@ -94,8 +94,8 @@ local function execute(command, bufname, prefix)
   local current_wind_id = vim.api.nvim_get_current_win()
   close_runner(bufname)
   vim.cmd(prefix .. " | term " .. command)
-  vim.cmd("setlocal norelativenumber")
-  vim.cmd("setlocal nonumber")
+  vim.opt_local.relativenumber = false
+  vim.opt_local.number = false
   vim.cmd(set_bufname)
   if prefix ~= "tabnew" then
     vim.bo.buflisted = false
