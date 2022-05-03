@@ -1,38 +1,17 @@
 local commands = require("code_runner.commands")
 local o = require("code_runner.options")
-local M = {}
-
-M.run_code = commands.run
-M.run_filetype = commands.run_filetype
-M.run_project = commands.run_project
-M.run_close = commands.run_close
-M.get_filetype_command = commands.get_filetype_command
-M.get_project_command = commands.get_project_command
-
-local function open_json(json_path)
-  local command = "tabnew " .. json_path
-  vim.cmd(command)
-end
-
-M.open_filetype_suported = function()
-  open_json(o.get().filetype_path)
-end
-
-M.open_project_manager = function()
-  open_json(o.get().project_path)
-end
 
 local function load_runners()
   -- Load json config and convert to table
   local opt = o.get()
   local load_json_as_table = require("code_runner.load_json")
 
-  -- convert json filetype as table lua
+  -- Convert json filetype as table lua
   if vim.tbl_isempty(opt.filetype) then
     opt.filetype = load_json_as_table(opt.filetype_path) or {}
   end
 
-  -- convert json project as table lua
+  -- Convert json project as table lua
   if vim.tbl_isempty(opt.project) then
     opt.project = load_json_as_table(opt.project_path) or {}
   end
@@ -40,11 +19,16 @@ local function load_runners()
   -- Message if json file not exist
   if vim.tbl_isempty(opt.filetype) then
     vim.notify(
-    "Not exist command for filetypes or format invalid, if use json please execute :CRFiletype or if use lua edit setup",
-    vim.log.levels.ERROR,
-    { title = "Code Runner Error" }
+      "Not exist command for filetypes or format invalid, if use json please execute :CRFiletype or if use lua edit setup",
+      vim.log.levels.ERROR,
+      { title = "Code Runner Error" }
     )
   end
+end
+
+local function open_json(json_path)
+  local command = "tabnew " .. json_path
+  vim.cmd(command)
 end
 
 local function completion(ArgLead, options)
@@ -53,6 +37,16 @@ local function completion(ArgLead, options)
     return filterd_args
   end
   return options
+end
+
+local M = {}
+
+M.open_filetype_suported = function()
+  open_json(o.get().filetype_path)
+end
+
+M.open_project_manager = function()
+  open_json(o.get().project_path)
 end
 
 M.setup = function(user_options)
@@ -64,32 +58,27 @@ M.setup = function(user_options)
     CRFiletype = M.open_filetype_suported,
     CRProjects = M.open_project_manager
   }
-  for cmd,func in pairs(simple_cmds) do
-    vim.api.nvim_create_user_command(cmd, func, {nargs=0})
+  for cmd, func in pairs(simple_cmds) do
+    vim.api.nvim_create_user_command(cmd, func, { nargs = 0 })
   end
 
-  local valid_filetypes = vim.tbl_keys(o.get().filetype)
-  vim.api.nvim_create_user_command('RunCode',function(opts) commands.run(opts.args) end, {
-    nargs = '?',
-    complete = function(ArgLead, CmdLine, CursorPos)
-      return completion(ArgLead, valid_filetypes)
-    end,
-  })
-
-  -- Add here the way you want
-  local modes = {'float', 'tab', 'term', 'toggle', 'toggleterm'}
-  vim.api.nvim_create_user_command('RunFile', function(opts) commands.run_filetype(opts.args) end, {
-    nargs = '?',
-    complete = function(ArgLead, CmdLine, CursorPos)
-      return completion(ArgLead, modes)
-    end,
-  })
-  vim.api.nvim_create_user_command('RunProject',function(opts) commands.run_project(opts.args) end, {
-    nargs = '?',
-    complete = function(ArgLead, CmdLine, CursorPos)
-      return completion(ArgLead, modes)
-    end,
-  })
+  -- Commands with autocomplete
+  local modes = { 'float', 'tab', 'term', 'toggle', 'toggleterm' }
+  -- Format:
+  --  CoomandName = { function, option_list }
+  local completion_cmds = {
+    RunCode = { commands.run_code, vim.tbl_keys(o.get().filetype) },
+    RunFile = { commands.run_filetype, modes },
+    RunProject = { commands.run_project, modes }
+  }
+  for cmd, cmo in pairs(completion_cmds) do
+    vim.api.nvim_create_user_command(cmd, function(opts) cmo[1](opts.args) end, {
+      nargs = '?',
+      complete = function(ArgLead, ...)
+        return completion(ArgLead, cmo[2])
+      end,
+    })
+  end
 end
 
 return M

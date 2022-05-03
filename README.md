@@ -366,8 +366,8 @@ warning! : Avoid using all the parameters at the same time. The correct way to u
 These functions could be useful if you intend to create plugins around code_runner, currently only the file type and current project commands can be accessed respectively
 
 ```lua
-require("code_runner").get_filetype_command() -- get the current command for this filetype
-require("code_runner").get_project_command() -- get the current command for this project
+require("code_runner.commands").get_filetype_command() -- get the current command for this filetype
+require("code_runner.commands").get_project_command() -- get the current command for this project
 ```
 
 # Integration with other plugins
@@ -376,8 +376,8 @@ require("code_runner").get_project_command() -- get the current command for this
 
 you can directly integrate this plugin with [ThePrimeagen/harpoon](https://github.com/ThePrimeagen/harpoon) the way to do it is through command queries, harpoon allows the command to be sent to a terminal, below it is shown how to use harpoon term together with code_runner.nvim:
 
-```vimscript
-:lua require("harpoon.term").sendCommand(1, require("code_runner").get_filetype_command() .. "\n")
+```lua
+require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filetype_command() .. "\n")
 ```
 
 # Tip

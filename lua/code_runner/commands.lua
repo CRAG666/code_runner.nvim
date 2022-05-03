@@ -213,7 +213,7 @@ function M.run_project(mode)
 end
 
 -- Execute filetype or project
-function M.run(filetype)
+function M.run_code(filetype)
   if filetype ~= "" then
     -- since we have reached here, means we have our command key
     local cmd_to_execute = get_command(filetype)
