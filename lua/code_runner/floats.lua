@@ -4,13 +4,7 @@ local o = require("code_runner.options")
 function M.floating(command)
   local opt = o.get()
   local buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_keymap(
-    buf,
-    "n",
-    "<ESC>",
-    "<C-\\><C-n>:lua vim.api.nvim_win_close(win, true)<CR>",
-    { silent = true }
-  )
+  vim.api.nvim_buf_set_keymap(buf, "n", "<ESC>", "<C-\\><C-n>:q!<CR>", { silent = true })
   vim.api.nvim_buf_set_option(buf, "filetype", "crunner")
   local win_height = math.ceil(vim.api.nvim_get_option("lines") * opt.float.height - 4)
   local win_width = math.ceil(vim.api.nvim_get_option("columns") * opt.float.width)

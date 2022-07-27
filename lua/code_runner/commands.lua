@@ -7,6 +7,12 @@ local pattern = "crunner_"
 -- @param path absolute path
 -- @return command with variables replaced by modifiers
 local function jsonVars_to_vimVars(command, path)
+
+  if type(command) == "function" then
+    command()
+    return
+  end
+
   local no_sub_command = command
 
   command = command:gsub("$fileNameWithoutExt", vim.fn.fnamemodify(path, ":t:r"))
@@ -17,6 +23,7 @@ local function jsonVars_to_vimVars(command, path)
   if command == no_sub_command then
     command = command .. " " .. path
   end
+
   return command
 end
 
