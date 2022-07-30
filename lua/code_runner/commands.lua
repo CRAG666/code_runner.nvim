@@ -156,9 +156,11 @@ local function run_mode(command, bufname, mode)
     local tcmd = string.format('TermExec cmd="%s"', command)
     vim.cmd(tcmd)
     vim.cmd(opt.insert_prefix)
+  elseif mode == "buffer" then
+    execute(command, bufname, "bufdo")
   else
     vim.notify(
-      ":( mode not found, valid modes term, tab, float, toggle",
+      ":( mode not found, valid modes term, tab, float, toggle, buffer",
       vim.log.levels.INFO,
       { title = "Project" }
     )
