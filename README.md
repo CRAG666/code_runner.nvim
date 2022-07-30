@@ -180,8 +180,8 @@ It is important that you know that configuration is given priority in pure lua, 
 
 ```lua
 require('code_runner').setup {
-  mode = "term"
-  startinsert = true
+  mode = "term",
+  startinsert = true,
 	term = {
 		position = "vert",
 		size = 15,
