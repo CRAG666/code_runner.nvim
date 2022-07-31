@@ -49,6 +49,7 @@ Don't use setup if filetype or a json path
 - Toggle runner
 - Reload runner
 - Run in a Float window
+- Run in a buffer
 - Run in a tab
 - Run in a split
 - Run in toggleTerm
@@ -65,8 +66,8 @@ All run commands allow restart. So, for example, if you use a command that does 
 
 - `:RunCode` - Runs based on file type, first checking if belongs to project, then if filetype mapping exists
 - `:RunCode <A_key_here>` - Execute command from its key in current directory.
-- `:RunFile <mode>` - Run the current file(optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm"}, default: "term").
-- `:RunProject <mode>` - Run the current project(If you are in a project otherwise you will not do anything, (optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm"}, default: "term").
+- `:RunFile <mode>` - Run the current file(optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm", "buf"}, default: "term").
+- `:RunProject <mode>` - Run the current project(If you are in a project otherwise you will not do anything, (optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm", "buf"}, default: "term").
 - `:RunClose` - Close runner
 - `:CRFiletype` - Open json with supported files(Use only if you configured with json files).
 - `:CRProjects` - Open json with list of projects(Use only if you configured with json files).
@@ -87,7 +88,7 @@ vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent =
 
 ### Options
 
-- `mode`: Mode in which you want to run(default: term, valid options: {"toggle", "float", "tab", "toggleterm"}),
+- `mode`: Mode in which you want to run(default: term, valid options: {"toggle", "float", "tab", "toggleterm", "buf"}),
 - `focus`: Focus on runner window(only works on toggle, term and tab mode, default: true)
 - `startinsert`: init in insert mode(default: false)
 - `term`: Configurations for the integrated terminal
@@ -139,7 +140,7 @@ Note: A common mistake code runners make is using relative paths and not absolut
 
 ```lua
 require('code_runner').setup {
-  -- choose default mode (valid term, tab, float, toggle)
+  -- choose default mode (valid term, tab, float, toggle, buf)
   mode = 'term',
   -- Focus on runner window(only works on toggle, term and tab mode)
   focus = true,
