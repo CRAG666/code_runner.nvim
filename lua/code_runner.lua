@@ -63,7 +63,7 @@ M.setup = function(user_options)
   end
 
   -- Commands with autocomplete
-  local modes = { 'float', 'tab', 'term', 'toggle', 'toggleterm' }
+  local modes = { 'float', 'tab', 'term', 'toggle', 'toggleterm', 'buf' }
   -- Format:
   --  CoomandName = { function, option_list }
   local completion_cmds = {
