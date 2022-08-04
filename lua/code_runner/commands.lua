@@ -21,8 +21,7 @@ local function jsonVars_to_vimVars(command, path)
   command = command:gsub("$dir", vim.fn.fnamemodify(path, ":p:h"))
 
   if command == no_sub_command then
-    command = command .. " $fileName"
-    command = command:gsub("$fileName", vim.fn.fnamemodify(path, ":t"))
+    command = command .. " \"" .. path .. "\""
   end
 
   return command
