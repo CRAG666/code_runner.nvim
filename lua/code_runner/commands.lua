@@ -21,8 +21,7 @@ local function jsonVars_to_vimVars(command, path)
   command = command:gsub("$dir", vim.fn.fnamemodify(path, ":p:h"))
 
   if command == no_sub_command then
-    command = command .. " $fileName"
-    command = command:gsub("$fileName", vim.fn.fnamemodify(path, ":t"))
+    command = command .. " " .. path
   end
 
   return command
@@ -92,9 +91,9 @@ local function close_runner(bufname)
 end
 
 --- Execute comanda and create name buffer
----@param command comando a ejecutar
----@param bufname buffer name
--- @param hide not show output
+---@param command string
+---@param bufname string
+-- @param hide boolean
 local function execute(command, bufname, prefix)
   local opt = o.get()
   prefix = prefix or opt.prefix
