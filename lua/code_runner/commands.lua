@@ -9,8 +9,12 @@ local pattern = "crunner_"
 local function jsonVars_to_vimVars(command, path)
 
   if type(command) == "function" then
-    command()
-    return
+    local cmd = command()
+    if type(cmd) == "string" then
+      command = cmd
+    else
+      return
+    end
   end
 
   local no_sub_command = command
@@ -207,20 +211,6 @@ function M.run_filetype(mode)
   end
 end
 
--- Execute project
-function M.run_project(mode)
-  local project = M.get_project_command()
-  if project then
-    run_mode(project.command, project.name, mode)
-  else
-    vim.notify(
-      "Not a project context",
-      vim.log.levels.INFO,
-      { title = "Project" }
-    )
-  end
-end
-
 -- Execute filetype or project
 function M.run_code(filetype)
   if filetype ~= "" then
@@ -230,7 +220,6 @@ function M.run_code(filetype)
       run_mode(cmd_to_execute, vim.fn.expand("%:t:r"))
     end
   end
-
   --  procede here if no input arguments
   local project = M.get_project_command()
   if project then
