@@ -69,7 +69,7 @@ M.setup = function(user_options)
   local completion_cmds = {
     RunCode = { commands.run_code, vim.tbl_keys(o.get().filetype) },
     RunFile = { commands.run_filetype, modes },
-    RunProject = { commands.run_project, modes }
+    RunProject = { commands.run_code, modes }
   }
   for cmd, cmo in pairs(completion_cmds) do
     vim.api.nvim_create_user_command(cmd, function(opts) cmo[1](opts.args) end, {
