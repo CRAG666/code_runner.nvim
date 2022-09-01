@@ -73,7 +73,7 @@ M.setup = function(user_options)
   }
   for cmd, cmo in pairs(completion_cmds) do
     vim.api.nvim_create_user_command(cmd, function(opts) cmo[1](opts.args) end, {
-      nargs = '?',
+      nargs = 1,
       complete = function(ArgLead, ...)
         return completion(ArgLead, cmo[2])
       end,
