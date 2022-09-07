@@ -16,6 +16,8 @@ local function jsonVars_to_vimVars(command, path, user_argument)
     end
   end
 
+  -- command is of type string
+
   local no_sub_command = command
 
   command = command:gsub("$fileNameWithoutExt", vim.fn.fnamemodify(path, ":t:r"))
@@ -225,6 +227,10 @@ function M.run_code(filetype, user_argument)
     local cmd_to_execute = get_command(filetype, nil, user_argument)
     if cmd_to_execute then
       run_mode(cmd_to_execute, vim.fn.expand("%:t:r"))
+  else
+      -- command was a lua function with no output
+      -- it already run
+      return
     end
   end
   --  procede here if no input arguments
