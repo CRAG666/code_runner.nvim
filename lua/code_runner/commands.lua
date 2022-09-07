@@ -6,10 +6,9 @@ local pattern = "crunner_"
 -- @param command command to run the path
 -- @param path absolute path
 -- @return command with variables replaced by modifiers
-local function jsonVars_to_vimVars(command, path)
-
+local function jsonVars_to_vimVars(command, path, user_argument)
   if type(command) == "function" then
-    local cmd = command()
+    local cmd = command(user_argument)
     if type(cmd) == "string" then
       command = cmd
     else
@@ -52,12 +51,12 @@ end
 -- @param filetype filetype of path
 -- @param path absolute path to file
 -- @return command
-local function get_command(filetype, path)
+local function get_command(filetype, path, user_argument)
   local opt = o.get()
   path = path or vim.fn.expand("%:p")
   local command = opt.filetype[filetype]
   if command then
-    local command_vim = jsonVars_to_vimVars(command, path)
+    local command_vim = jsonVars_to_vimVars(command, path, user_argument)
     return command_vim
   end
   return nil
@@ -94,7 +93,7 @@ local function close_runner(bufname)
   end
 end
 
---- Execute comanda and create name buffer
+--- Execute command and create name buffer
 ---@param command string
 ---@param bufname string
 -- @param hide boolean
@@ -173,6 +172,14 @@ end
 
 local M = {}
 
+--- Run according to a mode
+---@param command string
+---@param bufname string
+---@param mode string
+function M.run_mode(command, bufname, mode)
+  run_mode(command, bufname, mode)
+end
+
 -- Get command for the current filetype
 function M.get_filetype_command()
   local filetype = vim.bo.filetype
@@ -212,10 +219,10 @@ function M.run_filetype(mode)
 end
 
 -- Execute filetype or project
-function M.run_code(filetype)
+function M.run_code(filetype, user_argument)
   if filetype ~= "" then
     -- since we have reached here, means we have our command key
-    local cmd_to_execute = get_command(filetype)
+    local cmd_to_execute = get_command(filetype, nil, user_argument)
     if cmd_to_execute then
       run_mode(cmd_to_execute, vim.fn.expand("%:t:r"))
     end
