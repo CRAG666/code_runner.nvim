@@ -32,7 +32,9 @@ local function open_json(json_path)
 end
 
 local function completion(ArgLead, options)
-  local filterd_args = vim.tbl_filter(function(v) return v:find(ArgLead:lower(), 1, true) == 1 end, options)
+  local filterd_args = vim.tbl_filter(function(v)
+    return v:find(ArgLead:lower(), 1, true) == 1
+  end, options)
   if not vim.tbl_isempty(filterd_args) then
     return filterd_args
   end
@@ -56,25 +58,31 @@ M.setup = function(user_options)
   local simple_cmds = {
     RunClose = commands.run_close,
     CRFiletype = M.open_filetype_suported,
-    CRProjects = M.open_project_manager
+    CRProjects = M.open_project_manager,
   }
   for cmd, func in pairs(simple_cmds) do
     vim.api.nvim_create_user_command(cmd, func, { nargs = 0 })
   end
 
   -- Commands with autocomplete
-  local modes = { 'float', 'tab', 'term', 'toggle', 'toggleterm', 'buf' }
+  local modes = { "float", "tab", "term", "toggle", "toggleterm", "buf" }
   -- Format:
   --  CoomandName = { function, option_list }
   local completion_cmds = {
     RunCode = { commands.run_code, vim.tbl_keys(o.get().filetype) },
     RunFile = { commands.run_filetype, modes },
-    RunProject = { commands.run_code, modes }
+    RunProject = { commands.run_code, modes },
   }
   for cmd, cmo in pairs(completion_cmds) do
-    vim.api.nvim_create_user_command(cmd, function(opts) cmo[1](opts.args) end, {
-      nargs = '?',
-      complete = function(ArgLead, ...)
+    vim.api.nvim_create_user_command(cmd, function(opts)
+      cmo[1](unpack(opts.fargs))
+    end, {
+      nargs = "*",
+      complete = function(ArgLead, word, ...)
+        -- only complete the first argument
+        if #vim.split(word, "%s+") > 2 then
+          return
+        end
         return completion(ArgLead, cmo[2])
       end,
     })
