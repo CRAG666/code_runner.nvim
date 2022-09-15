@@ -222,12 +222,12 @@ end
 
 -- Execute filetype or project
 function M.run_code(filetype, user_argument)
-  if filetype ~= "" then
+  if filetype ~= nil and filetype ~= "" then
     -- since we have reached here, means we have our command key
     local cmd_to_execute = get_command(filetype, nil, user_argument)
     if cmd_to_execute then
       run_mode(cmd_to_execute, vim.fn.expand("%:t:r"))
-  else
+    else
       -- command was a lua function with no output
       -- it already run
       return
