@@ -203,7 +203,7 @@ require('code_runner').setup {
 		["~/cpp/example"] = {
 			name = "ExapleCpp",
 			description = "Project with make file",
-			command = "make buid & cd buid/ & ./compiled_file"
+			command = "make buid && cd buid/ && ./compiled_file"
 		}
 	},
 }
@@ -312,7 +312,7 @@ The file should look like this(the default file does not exist create it with th
   "~/cpp/example": {
     "name": "ExapleCpp",
     "description": "Project with make file",
-    "command": "make buid & cd buid/ & ./compiled_file"
+    "command": "make buid && cd buid/ && ./compiled_file"
   }
 }
 ```
@@ -336,7 +336,7 @@ The file should look like this(the default file does not exist create it with th
 	["~/cpp/example"] = {
 		name = "ExapleCpp",
 		description = "Project with make file",
-		command = "make buid & cd buid/ & ./compiled_file"
+		command = "make buid && cd buid/ && ./compiled_file"
 	}
 },
 ..... more config .....
