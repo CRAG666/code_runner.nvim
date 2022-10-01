@@ -13,6 +13,7 @@ local options = {
     size = 12,
   },
   float = {
+    close_key = '<ESC>',
     -- Window border (see ':h nvim_open_win')
     border = "none",
 
