@@ -153,6 +153,8 @@ require('code_runner').setup {
     size = 8,
   },
   float = {
+    -- Key that close the code_runner floating window
+    close_key = '<ESC>',
     -- Window border (see ':h nvim_open_win')
     border = "none",
 
