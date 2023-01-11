@@ -155,7 +155,6 @@ local M = {}
 
 -- Valid modes
 M.modes = {
-  local opt = o.get()
   term = function(command, bufname)
     execute(command, bufname)
   end,
@@ -175,7 +174,6 @@ M.modes = {
   toggleterm = function(command, ...)
     local tcmd = string.format('TermExec cmd="%s"', command)
     vim.cmd(tcmd)
-    vim.cmd(opt.insert_prefix)
   end,
 }
 --- Run according to a mode
