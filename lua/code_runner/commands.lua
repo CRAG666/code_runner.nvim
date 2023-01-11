@@ -4,8 +4,8 @@ local pattern = "crunner_"
 --Replace json variables with vim variables in command.
 ---@param command string command to run the path
 ---@param path string absolute path
----@param user_argument table | nil
----@return string | nil
+---@param user_argument table?
+---@return string?
 local function jsonVars_to_vimVars(command, path, user_argument)
   if type(command) == "function" then
     local cmd = command(user_argument)
@@ -34,7 +34,7 @@ end
 
 -- Check if current buffer is in project
 -- if a project return table of project
----@return table | nil
+---@return table?
 local function get_project_rootpath()
   local opt = o.get()
   local path = vim.loop.cwd()
@@ -55,9 +55,9 @@ end
 -- @return command
 --- Return a command for filetype
 ---@param filetype string
----@param path string | nil
----@param user_argument table | nil
----@return string | nil
+---@param path string?
+---@param user_argument table?
+---@return string?
 local function get_command(filetype, path, user_argument)
   local opt = o.get()
   path = path or vim.fn.expand("%:p")
@@ -70,7 +70,7 @@ end
 
 -- Run command in project context
 ---@param context table
----@return string | nil
+---@return string?
 local function get_project_command(context)
   local command = nil
   if context.file_name then
@@ -89,7 +89,7 @@ local function get_project_command(context)
 end
 
 --- Close runner
----@param bufname string | nil
+---@param bufname string?
 local function close_runner(bufname)
   bufname = bufname or pattern .. vim.fn.expand("%:t:r")
   local current_buf = vim.fn.bufname("%")
@@ -106,7 +106,7 @@ end
 --- Execute command and create name buffer
 ---@param command string
 ---@param bufname string
----@param prefix string | nil
+---@param prefix string?
 local function execute(command, bufname, prefix)
   local opt = o.get()
   prefix = prefix or opt.prefix
@@ -180,7 +180,7 @@ M.modes = {
 --- Run according to a mode
 ---@param command string
 ---@param bufname string
----@param mode string | nil
+---@param mode string?
 local function run_mode(command, bufname, mode)
   local opt = o.get()
   mode = mode or opt.mode
@@ -211,7 +211,7 @@ function M.get_filetype_command()
 end
 
 -- Get command for this current project
----@return table | nil
+---@return table?
 function M.get_project_command()
   local project_context = {}
   local opt = o.get()
@@ -227,7 +227,7 @@ function M.get_project_command()
 end
 
 -- Execute current file
----@param mode string | nil
+---@param mode string?
 function M.run_filetype(mode)
   local command = M.get_filetype_command()
   if command ~= "" then
@@ -243,8 +243,8 @@ function M.run_filetype(mode)
 end
 
 -- Execute filetype or project
----@param filetype string | nil
----@param user_argument table | nil
+---@param filetype string?
+---@param user_argument table?
 function M.run_code(filetype, user_argument)
   if filetype ~= nil and filetype ~= "" then
     -- since we have reached here, means we have our command key
@@ -267,7 +267,7 @@ function M.run_code(filetype, user_argument)
 end
 
 --- Run a project associated with the current path
----@param mode string | nil
+---@param mode string?
 function M.run_project(mode)
   local project = M.get_project_command()
   if project then
