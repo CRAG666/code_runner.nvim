@@ -1,6 +1,6 @@
 local options = {
   -- choose default mode (valid term, tab, float, toggle)
-  mode = 'term',
+  mode = "term",
   -- Focus on runner window(only works on toggle, term and tab mode)
   focus = true,
   -- startinsert (see ':h inserting-ex')
@@ -13,7 +13,7 @@ local options = {
     size = 12,
   },
   float = {
-    close_key = '<ESC>',
+    close_key = "<ESC>",
     -- Window border (see ':h nvim_open_win')
     border = "none",
 
@@ -33,13 +33,14 @@ local options = {
   filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
   filetype = {},
   project_path = vim.fn.stdpath("data")
-      .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+    .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
   project = {},
   prefix = "",
 }
 
 local M = {}
 -- set user config
+---@param user_options table
 M.set = function(user_options)
   if user_options.startinsert then
     user_options.insert_prefix = "startinsert"

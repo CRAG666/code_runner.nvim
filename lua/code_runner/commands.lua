@@ -1,11 +1,11 @@
 local o = require("code_runner.options")
 local pattern = "crunner_"
 
--- Replace json variables with vim variables in command.
--- If a command has no arguments, one is added with the current file path
--- @param command command to run the path
--- @param path absolute path
--- @return command with variables replaced by modifiers
+--Replace json variables with vim variables in command.
+---@param command string command to run the path
+---@param path string absolute path
+---@param user_argument table | nil
+---@return string | nil
 local function jsonVars_to_vimVars(command, path, user_argument)
   if type(command) == "function" then
     local cmd = command(user_argument)
@@ -34,6 +34,7 @@ end
 
 -- Check if current buffer is in project
 -- if a project return table of project
+---@return table | nil
 local function get_project_rootpath()
   local opt = o.get()
   local path = vim.loop.cwd()
@@ -46,13 +47,17 @@ local function get_project_rootpath()
     end
     path = vim.fn.fnamemodify(path, ":h")
   end
-  return nil
 end
 
 -- Return a command for filetype
 -- @param filetype filetype of path
 -- @param path absolute path to file
 -- @return command
+--- Return a command for filetype
+---@param filetype string
+---@param path string | nil
+---@param user_argument table | nil
+---@return string | nil
 local function get_command(filetype, path, user_argument)
   local opt = o.get()
   path = path or vim.fn.expand("%:p")
@@ -61,10 +66,11 @@ local function get_command(filetype, path, user_argument)
     local command_vim = jsonVars_to_vimVars(command, path, user_argument)
     return command_vim
   end
-  return nil
 end
 
 -- Run command in project context
+---@param context table
+---@return string | nil
 local function get_project_command(context)
   local command = nil
   if context.file_name then
@@ -82,6 +88,8 @@ local function get_project_command(context)
   return command
 end
 
+--- Close runner
+---@param bufname string | nil
 local function close_runner(bufname)
   bufname = bufname or pattern .. vim.fn.expand("%:t:r")
   local current_buf = vim.fn.bufname("%")
@@ -98,14 +106,17 @@ end
 --- Execute command and create name buffer
 ---@param command string
 ---@param bufname string
--- @param hide boolean
+---@param prefix string | nil
 local function execute(command, bufname, prefix)
   local opt = o.get()
   prefix = prefix or opt.prefix
   local set_bufname = "file " .. bufname
   local current_wind_id = vim.api.nvim_get_current_win()
   close_runner(bufname)
-  vim.cmd(prefix .. " | term " .. command)
+  if prefix ~= "bufdo" then
+    prefix = prefix .. " |"
+  end
+  vim.cmd(prefix .. " term " .. command)
   vim.opt_local.relativenumber = false
   vim.opt_local.number = false
   vim.cmd(set_bufname)
@@ -119,6 +130,9 @@ local function execute(command, bufname, prefix)
   end
 end
 
+--- Toggle mode
+---@param command string
+---@param bufname string
 local function toggle(command, bufname)
   local bufid = vim.fn.bufnr(bufname)
   local buf_exist = vim.api.nvim_buf_is_valid(bufid)
@@ -137,10 +151,36 @@ local function toggle(command, bufname)
   end
 end
 
+local M = {}
+
+-- Valid modes
+M.modes = {
+  term = function(command, bufname)
+    execute(command, bufname)
+  end,
+  toggle = function(command, bufname)
+    toggle(command, bufname)
+  end,
+  float = function(command, ...)
+    local window = require("code_runner.floats")
+    window.floating(command)
+  end,
+  tab = function(command, bufname)
+    execute(command, bufname, "tabnew")
+  end,
+  buf = function(command, bufname)
+    execute(command, bufname, "bufdo")
+  end,
+  toggleterm = function(command, ...)
+    local tcmd = string.format('TermExec cmd="%s"', command)
+    vim.cmd(tcmd)
+    vim.cmd(opt.insert_prefix)
+  end,
+}
 --- Run according to a mode
 ---@param command string
 ---@param bufname string
----@param mode string
+---@param mode string | nil
 local function run_mode(command, bufname, mode)
   local opt = o.get()
   mode = mode or opt.mode
@@ -148,31 +188,13 @@ local function run_mode(command, bufname, mode)
     mode = opt.mode
   end
   bufname = pattern .. bufname
-  if mode == "float" then
-    local window = require("code_runner.floats")
-    window.floating(command)
-  elseif mode == "toggle" then
-    toggle(command, bufname)
-  elseif mode == "tab" then
-    execute(command, bufname, "tabnew")
-  elseif mode == "term" then
-    execute(command, bufname)
-  elseif mode == "toggleterm" then
-    local tcmd = string.format('TermExec cmd="%s"', command)
-    vim.cmd(tcmd)
-    vim.cmd(opt.insert_prefix)
-  elseif mode == "buf" then
-    execute(command, bufname, "bufdo")
-  else
-    vim.notify(
-      ":( mode not found, valid modes term, tab, float, toggle, buf",
-      vim.log.levels.INFO,
-      { title = "Project" }
-    )
+  local call_mode = M.modes[mode]
+  if call_mode == nil then
+    vim.notify(":( mode not found, Select valid mode", vim.log.levels.INFO, { title = "Project" })
+    return
   end
+  call_mode(command, bufname)
 end
-
-local M = {}
 
 --- Run according to a mode
 ---@param command string
@@ -189,7 +211,7 @@ function M.get_filetype_command()
 end
 
 -- Get command for this current project
----@return table or nil
+---@return table | nil
 function M.get_project_command()
   local project_context = {}
   local opt = o.get()
@@ -202,10 +224,10 @@ function M.get_project_command()
     project_context.name = context.name
     return project_context
   end
-  return nil
 end
 
--- Execute filetype
+-- Execute current file
+---@param mode string | nil
 function M.run_filetype(mode)
   local command = M.get_filetype_command()
   if command ~= "" then
@@ -221,6 +243,8 @@ function M.run_filetype(mode)
 end
 
 -- Execute filetype or project
+---@param filetype string | nil
+---@param user_argument table | nil
 function M.run_code(filetype, user_argument)
   if filetype ~= nil and filetype ~= "" then
     -- since we have reached here, means we have our command key
@@ -242,6 +266,17 @@ function M.run_code(filetype, user_argument)
   end
 end
 
+--- Run a project associated with the current path
+---@param mode string | nil
+function M.run_project(mode)
+  local project = M.get_project_command()
+  if project then
+    run_mode(project.command, project.name, mode)
+  end
+  vim.notify(":( There is no project associated with this path", vim.log.levels.INFO, { title = "Project" })
+end
+
+--- Close current execution
 function M.run_close()
   local context = get_project_rootpath()
   if context then
@@ -250,5 +285,4 @@ function M.run_close()
     close_runner()
   end
 end
-
 return M

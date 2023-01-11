@@ -1,5 +1,6 @@
--- @param json_path absolute path to json
--- @return json as table or nil
+-- Load json and convert to table
+---@param json_path string
+---@return table | nil
 function load_as_table(json_path)
   local contents = ""
   local file = io.open(json_path, "r")
@@ -12,10 +13,9 @@ function load_as_table(json_path)
     if status then
       return result
     else
-      return nil
+      return
     end
   end
-  return nil
 end
 
 return load_as_table

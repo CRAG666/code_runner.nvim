@@ -65,13 +65,13 @@ M.setup = function(user_options)
   end
 
   -- Commands with autocomplete
-  local modes = { "float", "tab", "term", "toggle", "toggleterm", "buf" }
+  local modes = vim.tbl_keys(commands.modes)
   -- Format:
   --  CoomandName = { function, option_list }
   local completion_cmds = {
     RunCode = { commands.run_code, vim.tbl_keys(o.get().filetype) },
     RunFile = { commands.run_filetype, modes },
-    RunProject = { commands.run_code, modes },
+    RunProject = { commands.run_project, modes },
   }
   for cmd, cmo in pairs(completion_cmds) do
     vim.api.nvim_create_user_command(cmd, function(opts)
