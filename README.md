@@ -20,6 +20,10 @@ When I was still in college it was common to try multiple programming languages,
 use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' }
 ```
 
+Consider using [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim)
+
+require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filetype_command() .. "\n")
+
 - With [paq-nvim](https://github.com/savq/paq-nvim)
 
 ```lua
@@ -381,6 +385,16 @@ you can directly integrate this plugin with [ThePrimeagen/harpoon](https://githu
 
 ```lua
 require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filetype_command() .. "\n")
+```
+
+## betterTerm
+
+you can directly integrate this plugin with [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim) the way to do it is through command queries, `betterTerm` allows the command to be sent to a terminal, below it is shown how to use `betterTerm` term together with code_runner.nvim:
+
+```lua
+
+-- Send command to term one
+require("betterTerm").send(require("code_runner.commands").get_filetype_command(), 1)
 ```
 
 # Tip
