@@ -155,6 +155,7 @@ local M = {}
 
 -- Valid modes
 M.modes = {
+  local opt = o.get()
   term = function(command, bufname)
     execute(command, bufname)
   end,
