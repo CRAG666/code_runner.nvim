@@ -7,17 +7,26 @@ local function setup(opt)
 
   -- Convert json filetype as table lua
   if vim.tbl_isempty(opt.filetype or {}) then
-    local filetype = load_json_as_table(opt.filetype_path)
-    if not filetype then
-      vim.notify("Error trying to load filetype", vim.log.levels.ERROR, { title = "Code Runner Error" })
+    opt.filetype_path = opt.filetype_path or ""
+    if opt.filetype_path ~= "" then
+      local filetype = load_json_as_table(opt.filetype_path)
+      if not filetype then
+        vim.notify("Error trying to load filetypes commands", vim.log.levels.ERROR, { title = "Code Runner Error" })
+      end
+      opt.filetype = filetype or {}
     end
-    opt.filetype = filetype
   end
 
   -- Convert json project as table lua
   if vim.tbl_isempty(opt.project or {}) then
-    local project = load_json_as_table(opt.project_path)
-    opt.project = project or {}
+    opt.project_path = opt.project_path or ""
+    if opt.project_path ~= "" then
+      local project = load_json_as_table(opt.project_path)
+      if not project then
+        vim.notify("Error trying to load project commands", vim.log.levels.ERROR, { title = "Code Runner Error" })
+      end
+      opt.project = project or {}
+    end
   end
 
   -- set user options
