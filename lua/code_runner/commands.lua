@@ -241,6 +241,25 @@ function M.run_filetype(mode)
   end
 end
 
+--- Run a project associated with the current path
+---@param mode string?
+---@param notify boolean?
+---@return boolean
+function M.run_project(mode, notify)
+  if notify == nil then
+    notify = true
+  end
+  local project = M.get_project_command()
+  if project then
+    run_mode(project.command, project.name, mode)
+    return true
+  end
+  if notify then
+    vim.notify(":( There is no project associated with this path", vim.log.levels.INFO, { title = "Project" })
+  end
+  return false
+end
+
 -- Execute filetype or project
 ---@param filetype string?
 ---@param user_argument table?
@@ -257,22 +276,10 @@ function M.run_code(filetype, user_argument)
     end
   end
   --  procede here if no input arguments
-  local project = M.get_project_command()
-  if project then
-    run_mode(project.command, project.name)
-  else
+  local project = M.run_project(nil, false)
+  if not project then
     M.run_filetype()
   end
-end
-
---- Run a project associated with the current path
----@param mode string?
-function M.run_project(mode)
-  local project = M.get_project_command()
-  if project then
-    run_mode(project.command, project.name, mode)
-  end
-  vim.notify(":( There is no project associated with this path", vim.log.levels.INFO, { title = "Project" })
 end
 
 --- Close current execution

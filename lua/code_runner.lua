@@ -1,23 +1,33 @@
 local commands = require("code_runner.commands")
 local o = require("code_runner.options")
 
-local function load_runners()
+local function setup(opt)
   -- Load json config and convert to table
-  local opt = o.get()
   local load_json_as_table = require("code_runner.load_json")
 
   -- Convert json filetype as table lua
-  if vim.tbl_isempty(opt.filetype) then
-    opt.filetype = load_json_as_table(opt.filetype_path) or {}
+  if vim.tbl_isempty(opt.filetype or {}) then
+    local filetype = load_json_as_table(opt.filetype_path)
+    if not filetype then
+      vim.notify("Error trying to load filetype", vim.log.levels.ERROR, { title = "Code Runner Error" })
+    end
+    opt.filetype = filetype
   end
 
   -- Convert json project as table lua
-  if vim.tbl_isempty(opt.project) then
-    opt.project = load_json_as_table(opt.project_path) or {}
+  if vim.tbl_isempty(opt.project or {}) then
+    local project = load_json_as_table(opt.project_path)
+    if not project then
+      vim.notify("Error trying to load projects", vim.log.levels.ERROR, { title = "Code Runner Error" })
+    end
+    opt.project = project
   end
 
+  -- set user options
+  o.set(opt)
+
   -- Message if json file not exist
-  if vim.tbl_isempty(opt.filetype) then
+  if vim.tbl_isempty(o.get().filetype) then
     vim.notify(
       "Not exist command for filetypes or format invalid, if use json please execute :CRFiletype or if use lua edit setup",
       vim.log.levels.ERROR,
@@ -52,8 +62,7 @@ M.open_project_manager = function()
 end
 
 M.setup = function(user_options)
-  o.set(user_options or {})
-  load_runners()
+  setup(user_options or {})
 
   local simple_cmds = {
     RunClose = commands.run_close,
