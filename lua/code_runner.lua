@@ -17,10 +17,7 @@ local function setup(opt)
   -- Convert json project as table lua
   if vim.tbl_isempty(opt.project or {}) then
     local project = load_json_as_table(opt.project_path)
-    if not project then
-      vim.notify("Error trying to load projects", vim.log.levels.ERROR, { title = "Code Runner Error" })
-    end
-    opt.project = project
+    opt.project = project or {}
   end
 
   -- set user options

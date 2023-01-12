@@ -30,10 +30,17 @@ local options = {
     -- Transparency (see ':h winblend')
     blend = 0,
   },
-  filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
-  filetype = {},
-  project_path = vim.fn.stdpath("data")
-    .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+  filetype_path = "",
+  filetype = {
+    javascript = "node",
+    java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+    c = "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
+    cpp = "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
+    python = "python -u",
+    sh = "bash",
+    rust = "cd $dir && rustc $fileName && $dir$fileNameWithoutExt",
+  },
+  project_path = "",
   project = {},
   prefix = "",
 }

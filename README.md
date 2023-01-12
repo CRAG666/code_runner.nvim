@@ -113,11 +113,11 @@ vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent =
   - `float_hl`: (defult: "Normal")
   - `blend`: Transparency (see ':h winblend')
 
-- `filetype_path`: Absolute path to json file config (default: packer module path, use absolute paths)
+- `filetype_path`: Absolute path to json file config (default: "", use absolute paths)
 
 - `filetype`: If you prefer to use lua instead of json files, you can add your settings by file type here(type table)
 
-- `project_path`: Absolute path to json file config (default: packer module path, use absolute paths)
+- `project_path`: Absolute path to json file config (default: "", use absolute paths)
 
 - `project`: If you prefer to use lua instead of json files, you can add your settings by project here(type table)
 
@@ -175,10 +175,17 @@ require('code_runner').setup {
     -- Transparency (see ':h winblend')
     blend = 0,
   },
-  filetype_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/code_runner.json",
-  filetype = {},
-  project_path = vim.fn.stdpath("data")
-      .. "/site/pack/packer/start/code_runner.nvim/lua/code_runner/project_manager.json",
+  filetype_path = "", -- No default path defined
+  filetype = {
+    javascript = "node",
+    java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+    c = "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
+    cpp = "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
+    python = "python -u",
+    sh = "bash",
+    rust = "cd $dir && rustc $fileName && $dir$fileNameWithoutExt",
+  },
+  project_path = "", -- No default path defined
   project = {},
 }
 ```
