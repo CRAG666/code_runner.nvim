@@ -256,6 +256,7 @@ The available variables are the following:
 - `fileName` -- file name to curren file opened
 - `fileNameWithoutExt` -- file without extension file opened
 - `dir` -- path of directory to file opened
+- `end` -- finish the command (it is useful for commands that do not require final autocompletion)
 
 Below is an example of an absolute path and how it behaves depending on the variable:
 
