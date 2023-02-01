@@ -118,6 +118,7 @@ local function execute(command, bufname, prefix)
     prefix = prefix .. " |"
   end
   vim.cmd(prefix .. " term " .. command)
+  vim.cmd("norm G")
   vim.opt_local.relativenumber = false
   vim.opt_local.number = false
   vim.cmd(set_bufname)
