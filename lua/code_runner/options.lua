@@ -31,14 +31,36 @@ local options = {
     blend = 0,
   },
   filetype_path = "",
+  -- Execute before executing a file
+  before_run_filetype = function()
+    vim.cmd(":w")
+  end,
   filetype = {
     javascript = "node",
-    java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
-    c = "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
-    cpp = "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
+    java = {
+      "cd $dir &&",
+      "javac $fileName &&",
+      "java $fileNameWithoutExt"
+    },
+    c = {
+      "cd $dir &&",
+      "gcc $fileName",
+      "-o $fileNameWithoutExt &&",
+      "$dir/$fileNameWithoutExt"
+    },
+    cpp = {
+      "cd $dir &&",
+      "g++ $fileName",
+      "-o $fileNameWithoutExt &&",
+      "$dir/$fileNameWithoutExt"
+    },
     python = "python -u",
     sh = "bash",
-    rust = "cd $dir && rustc $fileName && $dir$fileNameWithoutExt",
+    rust = {
+      "cd $dir &&",
+      "rustc $fileName &&",
+      "$dir$fileNameWithoutExt"
+    },
   },
   project_path = "",
   project = {},
@@ -46,6 +68,14 @@ local options = {
 }
 
 local M = {}
+
+local function concat(v)
+  if type(v) == 'table' then
+    return table.concat(v, " ")
+  end
+  return v
+end
+
 -- set user config
 ---@param user_options table
 M.set = function(user_options)
@@ -53,6 +83,7 @@ M.set = function(user_options)
     user_options.insert_prefix = "startinsert"
   end
   options = vim.tbl_deep_extend("force", options, user_options)
+  options.filetype = vim.tbl_map(concat, options.filetype)
   options.prefix = string.format("%s %d new", options.term.position, options.term.size)
 end
 

@@ -14,6 +14,14 @@ When I was still in college it was common to try multiple programming languages,
 
 ### Install
 
+- With [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+```lua
+require("lazy").setup({
+    {"CRAG666/code_runner.nvim", config = true },
+}
+```
+
 - With [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
@@ -38,11 +46,19 @@ Add the following line to your init.lua
 require('code_runner').setup({
   -- put here the commands by filetype
   filetype = {
-		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
-		python = "python3 -u",
-		typescript = "deno run",
-		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
-	},
+    java = {
+      "cd $dir &&",
+      "javac $fileName &&",
+      "java $fileNameWithoutExt"
+    },
+    python = "python3 -u",
+    typescript = "deno run",
+    rust = {
+      "cd $dir &&",
+      "rustc $fileName &&",
+      "$dir$fileNameWithoutExt"
+    },
+  },
 })
 ```
 
@@ -113,6 +129,8 @@ vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent =
   - `float_hl`: (defult: "Normal")
   - `blend`: Transparency (see ':h winblend')
 
+- `before_run_filetype`: Execute before executing a file(type func)
+
 - `filetype_path`: Absolute path to json file config (default: "", use absolute paths)
 
 - `filetype`: If you prefer to use lua instead of json files, you can add your settings by file type here(type table)
@@ -176,14 +194,35 @@ require('code_runner').setup {
     blend = 0,
   },
   filetype_path = "", -- No default path defined
+  before_run_filetype = function()
+    vim.cmd(":w")
+  end,
   filetype = {
     javascript = "node",
-    java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
-    c = "cd $dir && gcc $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
-    cpp = "cd $dir && g++ $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt",
+    java = {
+      "cd $dir &&",
+      "javac $fileName &&",
+      "java $fileNameWithoutExt"
+    },
+    c = {
+      "cd $dir &&",
+      "gcc $fileName",
+      "-o $fileNameWithoutExt &&",
+      "$dir/$fileNameWithoutExt"
+    },
+    cpp = {
+      "cd $dir &&",
+      "g++ $fileName",
+      "-o $fileNameWithoutExt &&",
+      "$dir/$fileNameWithoutExt"
+    },
     python = "python -u",
     sh = "bash",
-    rust = "cd $dir && rustc $fileName && $dir$fileNameWithoutExt",
+    rust = {
+      "cd $dir &&",
+      "rustc $fileName &&",
+      "$dir$fileNameWithoutExt"
+    },
   },
   project_path = "", -- No default path defined
   project = {},
@@ -201,10 +240,18 @@ require('code_runner').setup {
 		size = 15,
 	},
 	filetype = {
-		java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+        java = {
+          "cd $dir &&",
+          "javac $fileName &&",
+          "java $fileNameWithoutExt"
+        },
 		python = "python3 -u",
 		typescript = "deno run",
-		rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+        rust = {
+          "cd $dir &&",
+          "rustc $fileName &&",
+          "$dir$fileNameWithoutExt"
+        },
 	},
 	project = {
 		["~/deno/example"] = {
@@ -244,10 +291,18 @@ The file should look like this(the default file does not exist create it with th
 ```lua
 ..... more config .....
 	filetype = {
-	java = "cd $dir && javac $fileName && java $fileNameWithoutExt",
+    java = {
+      "cd $dir &&",
+      "javac $fileName &&",
+      "java $fileNameWithoutExt"
+    },
 	python = "python3 -u",
 	typescript = "deno run",
-	rust = "cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"
+    rust = {
+      "cd $dir &&",
+      "rustc $fileName &&",
+      "$dir$fileNameWithoutExt"
+    },
 },
 ..... more config .....
 }

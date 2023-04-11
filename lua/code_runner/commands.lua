@@ -232,6 +232,7 @@ end
 function M.run_filetype(mode)
   local command = M.get_filetype_command()
   if command ~= "" then
+    o.get().before_run_filetype()
     run_mode(command, vim.fn.expand("%:t:r"), mode)
   else
     local nvim_files = {
