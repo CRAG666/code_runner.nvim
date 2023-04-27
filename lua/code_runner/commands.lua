@@ -79,9 +79,14 @@ local function get_project_command(context)
     if context.command then
       command = jsonVars_to_vimVars(context.command, file)
     else
-      local filetype = require("plenary.filetype")
-      local current_filetype = filetype.detect_from_extension(file)
-      command = get_command(current_filetype, file)
+      if vim.fn.has('nvim-0.8.0') == 1 then
+        local filetype = vim.filetype.match({ filename = file})
+        command = get_command(filetype, file)
+      else
+        local filetype = require("plenary.filetype")
+        local current_filetype = filetype.detect_from_extension(file)
+        command = get_command(current_filetype, file)
+      end
     end
   else
     command = "cd " .. context.path .. " &&" .. context.command

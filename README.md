@@ -10,7 +10,10 @@ When I was still in college it was common to try multiple programming languages,
 
 ### Requirements
 
-- Neovim (>= 0.7)
+- Neovim (>= 0.8)
+
+> **Note** 
+> If you are using Neovim neovim 0.7, you need to have `nvim-lua/plenary.nvim` installed
 
 ### Install
 
@@ -25,18 +28,18 @@ require("lazy").setup({
 - With [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
-use { 'CRAG666/code_runner.nvim', requires = 'nvim-lua/plenary.nvim' }
+use 'CRAG666/code_runner.nvim'
+```
+
+- With [paq-nvim](https://github.com/savq/paq-nvim)
+
+```lua
+require "paq"{ 'CRAG666/code_runner.nvim'; }
 ```
 
 Consider using [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim)
 
 require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filetype_command() .. "\n")
-
-- With [paq-nvim](https://github.com/savq/paq-nvim)
-
-```lua
-require "paq"{'CRAG666/code_runner.nvim'; 'nvim-lua/plenary.nvim';}
-```
 
 ### Quick start
 
