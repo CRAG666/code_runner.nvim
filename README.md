@@ -56,7 +56,7 @@ require('code_runner').setup({
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt"
     },
   },
 })
@@ -221,7 +221,7 @@ require('code_runner').setup {
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt"
     },
   },
   project_path = "", -- No default path defined
@@ -250,7 +250,7 @@ require('code_runner').setup {
         rust = {
           "cd $dir &&",
           "rustc $fileName &&",
-          "$dir$fileNameWithoutExt"
+          "$dir/$fileNameWithoutExt"
         },
 	},
 	project = {
@@ -301,7 +301,7 @@ The file should look like this(the default file does not exist create it with th
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt"
     },
 },
 ..... more config .....
