@@ -79,9 +79,10 @@ local function get_project_command(context)
     if context.command then
       command = jsonVars_to_vimVars(context.command, file)
     else
-      local filetype = require("plenary.filetype")
-      local current_filetype = filetype.detect_from_extension(file)
-      command = get_command(current_filetype, file)
+      -- Plenary version:
+      -- https://github.com/CRAG666/code_runner.nvim/commit/825a0d5a450e269b450016b2a390026c68af3588
+      local filetype = vim.filetype.match({ filename = file })
+      command = get_command(filetype, file)
     end
   else
     command = "cd " .. context.path .. " &&" .. context.command
@@ -289,4 +290,5 @@ function M.run_close()
     close_runner()
   end
 end
+
 return M

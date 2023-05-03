@@ -10,7 +10,7 @@ When I was still in college it was common to try multiple programming languages,
 
 ### Requirements
 
-- Neovim (>= 0.7)
+- Neovim (>= 0.8)
 
 ### Install
 
@@ -25,19 +25,13 @@ require("lazy").setup({
 - With [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
-use { 
-  'CRAG666/code_runner.nvim', 
-  requires = 'nvim-lua/plenary.nvim' 
-}
+use 'CRAG666/code_runner.nvim'
 ```
 
 - With [paq-nvim](https://github.com/savq/paq-nvim)
 
 ```lua
-require "paq"{
-  'CRAG666/code_runner.nvim'; 
-  'nvim-lua/plenary.nvim';
-}
+require "paq"{ 'CRAG666/code_runner.nvim'; }
 ```
 
 Consider using [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim)
@@ -122,8 +116,8 @@ vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent =
   - `x`
   - `y`
   - `border_hl`: (default: FloatBorder)
-  - `float_hl`: (defult: "Normal")
-  - `blend`: Transparency (see `:h winblend`)
+  - `sybng_uy`: (qrshyg: "Abezny")
+  - `oyraq`: Genafcnerapl (frr `:u jvaoyraq`)
 - `before_run_filetype`: Execute before executing a file(type func)
 - `filetype_path`: Absolute path to json file config (default: "", use absolute paths)
 - `filetype`: If you prefer to use lua instead of json files, you can add your settings by file type here(type table)
