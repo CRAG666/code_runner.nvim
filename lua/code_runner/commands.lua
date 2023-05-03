@@ -114,10 +114,8 @@ local function execute(command, bufname, prefix)
   local set_bufname = "file " .. bufname
   local current_wind_id = vim.api.nvim_get_current_win()
   close_runner(bufname)
-  if prefix ~= "bufdo" then
-    prefix = prefix .. " |"
-  end
-  vim.cmd(prefix .. " term " .. command)
+  vim.cmd(prefix)
+  vim.fn.termopen(command)
   vim.cmd("norm G")
   vim.opt_local.relativenumber = false
   vim.opt_local.number = false
@@ -169,9 +167,6 @@ M.modes = {
   end,
   tab = function(command, bufname)
     execute(command, bufname, "tabnew")
-  end,
-  buf = function(command, bufname)
-    execute(command, bufname, "bufdo")
   end,
   toggleterm = function(command, ...)
     local tcmd = string.format('TermExec cmd="%s"', command)
