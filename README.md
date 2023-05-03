@@ -12,16 +12,13 @@ When I was still in college it was common to try multiple programming languages,
 
 - Neovim (>= 0.8)
 
-> **Note** 
-> If you are using Neovim neovim 0.7, you need to have `nvim-lua/plenary.nvim` installed
-
 ### Install
 
 - With [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 require("lazy").setup({
-    {"CRAG666/code_runner.nvim", config = true },
+  { "CRAG666/code_runner.nvim", config = true },
 }
 ```
 
@@ -38,8 +35,6 @@ require "paq"{ 'CRAG666/code_runner.nvim'; }
 ```
 
 Consider using [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim)
-
-require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filetype_command() .. "\n")
 
 ### Quick start
 
@@ -59,7 +54,7 @@ require('code_runner').setup({
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt"
     },
   },
 })
@@ -72,16 +67,12 @@ Don't use setup if filetype or a json path
 - Toggle runner
 - Reload runner
 - Run in a Float window
-- Run in a buffer
 - Run in a tab
 - Run in a split
 - Run in toggleTerm
 
-##### Help build this feature
-
-The things to do are listed below:
-
-- Open an issue to know if it is worth implementing this function and if there are people interested in its existence
+> **Note**  
+> If you want implement a new feature open an issue to know if it is worth implementing it and if there are people interested.
 
 ### Functions
 
@@ -89,8 +80,8 @@ All run commands allow restart. So, for example, if you use a command that does 
 
 - `:RunCode` - Runs based on file type, first checking if belongs to project, then if filetype mapping exists
 - `:RunCode <A_key_here>` - Execute command from its key in current directory.
-- `:RunFile <mode>` - Run the current file(optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm", "buf"}, default: "term").
-- `:RunProject <mode>` - Run the current project(If you are in a project otherwise you will not do anything, (optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm", "buf"}, default: "term").
+- `:RunFile <mode>` - Run the current file(optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm"}, default: "term").
+- `:RunProject <mode>` - Run the current project(If you are in a project otherwise you will not do anything, (optionally you can select an opening mode: {"toggle", "float", "tab", "toggleterm"}, default: "term").
 - `:RunClose` - Close runner
 - `:CRFiletype` - Open json with supported files(Use only if you configured with json files).
 - `:CRProjects` - Open json with list of projects(Use only if you configured with json files).
@@ -111,35 +102,26 @@ vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent =
 
 ### Options
 
-- `mode`: Mode in which you want to run(default: term, valid options: {"toggle", "float", "tab", "toggleterm", "buf"}),
+- `mode`: Mode in which you want to run(default: term, valid options: {"toggle", "float", "tab", "toggleterm"}),
 - `focus`: Focus on runner window(only works on toggle, term and tab mode, default: true)
 - `startinsert`: init in insert mode(default: false)
 - `term`: Configurations for the integrated terminal
   Fields:
-
   - `position`: Integrated terminal position(for option :h windows, default: `belowright`)
   - `size`: Size of the terminal window (default: `8`)
-
 - `float`: Configurations for the float win
-  Fields:
-
-  - `border`: Window border (see ':h nvim_open_win')
+  - `border`: Window border (see `:h nvim_open_win`)
   - `height`
   - `width`
   - `x`
   - `y`
   - `border_hl`: (default: FloatBorder)
-  - `float_hl`: (defult: "Normal")
-  - `blend`: Transparency (see ':h winblend')
-
+  - `sybng_uy`: (qrshyg: "Abezny")
+  - `oyraq`: Genafcnerapl (frr `:u jvaoyraq`)
 - `before_run_filetype`: Execute before executing a file(type func)
-
 - `filetype_path`: Absolute path to json file config (default: "", use absolute paths)
-
 - `filetype`: If you prefer to use lua instead of json files, you can add your settings by file type here(type table)
-
 - `project_path`: Absolute path to json file config (default: "", use absolute paths)
-
 - `project`: If you prefer to use lua instead of json files, you can add your settings by project here(type table)
 
 ### Setup
@@ -151,11 +133,11 @@ require('code_runner').setup {
   focus = false,
   startinsert = true,
   term = {
-		position = "vert",
-		size = 8,
-	},
-	filetype_path = vim.fn.expand('~/.config/nvim/code_runner.json'),
-	project_path = vim.fn.expand('~/.config/nvim/project_manager.json')
+    position = "vert",
+    size = 8,
+  },
+  filetype_path = vim.fn.expand('~/.config/nvim/code_runner.json'),
+  project_path = vim.fn.expand('~/.config/nvim/project_manager.json')
 }
 ```
 
@@ -165,7 +147,7 @@ Note: A common mistake code runners make is using relative paths and not absolut
 
 ```lua
 require('code_runner').setup {
-  -- choose default mode (valid term, tab, float, toggle, buf)
+  -- choose default mode (valid term, tab, float, toggle)
   mode = 'term',
   -- Focus on runner window(only works on toggle, term and tab mode)
   focus = true,
@@ -224,7 +206,7 @@ require('code_runner').setup {
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt"
     },
   },
   project_path = "", -- No default path defined
@@ -253,7 +235,7 @@ require('code_runner').setup {
         rust = {
           "cd $dir &&",
           "rustc $fileName &&",
-          "$dir$fileNameWithoutExt"
+          "$dir/$fileNameWithoutExt"
         },
 	},
 	project = {
@@ -292,26 +274,26 @@ The file should look like this(the default file does not exist create it with th
 #### Configure with lua files
 
 ```lua
-..... more config .....
-	filetype = {
+-- ..... more config .....
+  filetype = {
     java = {
       "cd $dir &&",
       "javac $fileName &&",
       "java $fileNameWithoutExt"
     },
-	python = "python3 -u",
-	typescript = "deno run",
+  python = "python3 -u",
+  typescript = "deno run",
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt"
     },
 },
-..... more config .....
+-- ..... more config .....
 }
 ```
 
-if you want to add some other language or some other command follow this structure "key": "commans"
+if you want to add some other language or some other command follow this structure `key`: `commans`
 
 #### Variables
 
@@ -325,12 +307,12 @@ The available variables are the following:
 
 Below is an example of an absolute path and how it behaves depending on the variable:
 
-absolute path: /home/anyuser/current/file.py
+absolute path: `/home/anyuser/current/file.py`
 
-- `file` = /home/anyuser/current/file.py
-- `fileName` = file.py
-- `fileNameWithoutExt` = file
-- `dir` = /home/anyuser/current
+- `file` = `/home/anyuser/current/file.py`
+- `fileName` = `file.py`
+- `fileNameWithoutExt` = `file`
+- `dir` = `/home/anyuser/current`
 
 Remember that if you don't want to use variables you can use vim [filename-modifiers](http://vimdoc.sourceforge.net/htmldoc/cmdline.html#filename-modifiers)
 
@@ -342,9 +324,9 @@ json:
 
 ```json
 {
-....... more ........
-	"javascript": "node",
-	"objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
+# ....... more ........
+  "javascript": "node",
+  "objective-c": "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
 }
 ```
 
@@ -352,9 +334,9 @@ lua:
 
 ```lua
 {
-	....... more ........
-		javascript = "node",
-	["objective-c"] = "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
+-- ....... more ........
+    javascript = "node",
+  ["objective-c"] = "cd $dir && gcc -framework Cocoa $fileName -o $fileNameWithoutExt && $dir/$fileNameWithoutExt"
 }
 ```
 
@@ -392,47 +374,46 @@ The file should look like this(the default file does not exist create it with th
 #### Configure with lua files
 
 ```lua
-..... more config .....
-	project = {
-	["~/python/intel_2021_1"] = {
-		name = "Intel Course 2021",
-		description = "Simple python project",
-		file_name = "POO/main.py"
-	},
-	["~/deno/example"] = {
-		name = "ExapleDeno",
-		description = "Project with deno using other command",
-		file_name = "http/main.ts",
-		command = "deno run --allow-net"
-	},
-	["~/cpp/example"] = {
-		name = "ExapleCpp",
-		description = "Project with make file",
-		command = "make buid && cd buid/ && ./compiled_file"
-	}
+-- ..... more config .....
+  project = {
+    ["~/python/intel_2021_1"] = {
+      name = "Intel Course 2021",
+      description = "Simple python project",
+      file_name = "POO/main.py"
+    },
+    ["~/deno/example"] = {
+      name = "ExapleDeno",
+      description = "Project with deno using other command",
+      file_name = "http/main.ts",
+      command = "deno run --allow-net"
+    },
+    ["~/cpp/example"] = {
+      name = "ExapleCpp",
+      description = "Project with make file",
+      command = "make buid && cd buid/ && ./compiled_file"
+    }
 },
-..... more config .....
-}
+-- ..... more config .....
 ```
 
 There are 3 main ways to configure the execution of a project (found in the example.)
 
 1. Use the default command defined in the filetypes file (see `:CRFiletype`or check your confi lua). In order to do that it is necessary to define file_name.
-
 2. Use a different command than the one set in `CRFiletype` or your config lua. In this case, the file_name and command must be provided.
-
 3. Use a command to run the project. It is only necessary to define command(You do not need to write navigate to the root of the project, because automatically the plugin is located in the root of the project).
 
 Note: Don't forget to name your projects because if you don't do so code runner will fail as it uses the name for the buffer name
 
 #### Projects parameters
 
+> **Warning**  
+> Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described above.
+
 - `name`: Project name
 - `description`: Project description
 - `file_name`: Filename relative to root path
 - `command`: Command to run the project. It is possible to use variables exactly the same as we would in `CRFiletype`
 
-warning! : Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described above.
 
 ### Queries
 
@@ -470,9 +451,7 @@ For unknown reasons, leaving a comma in the trailing element in any json file ca
 # Inspirations and thanks
 
 - The idea of this project comes from the vscode plugin [code_runner](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner) You can even copy your configuration and pass it to this plugin, as they are the same in the way of defining commands associated with [filetypes](https://github.com/CRAG666/code_runner.nvim#add-support-for-more-file-types)
-
 - [jaq-nvim](https://github.com/is0n/jaq-nvim) some ideas of how to execute commands were taken from this plugin, thank you very much.
-
 - [FTerm.nvim](https://github.com/numToStr/FTerm.nvim) Much of how this README.md is structured was blatantly stolen from this plugin, thank you very much
 
 - Thanks to all current and future collaborators, without their contributions this plugin would not be what it is today
@@ -489,9 +468,8 @@ For unknown reasons, leaving a comma in the trailing element in any json file ca
 
 Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas. All PR's are welcome.
 
-## :warning: Important!
-
-If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon
+> **Note**  
+> If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon
 
 # LICENCE
 
