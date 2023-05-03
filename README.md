@@ -60,7 +60,7 @@ require('code_runner').setup({
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt"
     },
   },
 })
@@ -212,7 +212,7 @@ require('code_runner').setup {
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt"
     },
   },
   project_path = "", -- No default path defined
@@ -226,37 +226,37 @@ It is important that you know that configuration is given priority in pure lua, 
 require('code_runner').setup {
   mode = "term",
   startinsert = true,
-  term = {
-    position = "vert",
-    size = 15,
-  },
-  filetype = {
-    java = {
-      "cd $dir &&",
-      "javac $fileName &&",
-      "java $fileNameWithoutExt"
-    },
-    python = "python3 -u",
-    typescript = "deno run",
-      rust = {
-        "cd $dir &&",
-        "rustc $fileName &&",
-        "$dir$fileNameWithoutExt"
-      },
-  },
-  project = {
-    ["~/deno/example"] = {
-      name = "ExapleDeno",
-      description = "Project with deno using other command",
-      file_name = "http/main.ts",
-      command = "deno run --allow-net"
-    },
-    ["~/cpp/example"] = {
-      name = "ExapleCpp",
-      description = "Project with make file",
-      command = "make buid && cd buid/ && ./compiled_file"
-    }
-  },
+	term = {
+		position = "vert",
+		size = 15,
+	},
+	filetype = {
+        java = {
+          "cd $dir &&",
+          "javac $fileName &&",
+          "java $fileNameWithoutExt"
+        },
+		python = "python3 -u",
+		typescript = "deno run",
+        rust = {
+          "cd $dir &&",
+          "rustc $fileName &&",
+          "$dir/$fileNameWithoutExt"
+        },
+	},
+	project = {
+		["~/deno/example"] = {
+			name = "ExapleDeno",
+			description = "Project with deno using other command",
+			file_name = "http/main.ts",
+			command = "deno run --allow-net"
+		},
+		["~/cpp/example"] = {
+			name = "ExapleCpp",
+			description = "Project with make file",
+			command = "make buid && cd buid/ && ./compiled_file"
+		}
+	},
 }
 ```
 
@@ -292,7 +292,7 @@ The file should look like this(the default file does not exist create it with th
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt"
     },
 },
 -- ..... more config .....

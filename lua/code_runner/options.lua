@@ -40,26 +40,26 @@ local options = {
     java = {
       "cd $dir &&",
       "javac $fileName &&",
-      "java $fileNameWithoutExt"
+      "java $fileNameWithoutExt",
     },
     c = {
       "cd $dir &&",
       "gcc $fileName",
       "-o $fileNameWithoutExt &&",
-      "$dir/$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt",
     },
     cpp = {
       "cd $dir &&",
       "g++ $fileName",
       "-o $fileNameWithoutExt &&",
-      "$dir/$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt",
     },
     python = "python -u",
     sh = "bash",
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
-      "$dir$fileNameWithoutExt"
+      "$dir/$fileNameWithoutExt",
     },
   },
   project_path = "",
@@ -70,7 +70,7 @@ local options = {
 local M = {}
 
 local function concat(v)
-  if type(v) == 'table' then
+  if type(v) == "table" then
     return table.concat(v, " ")
   end
   return v
