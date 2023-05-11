@@ -220,37 +220,38 @@ It is important that you know that configuration is given priority in pure lua, 
 require('code_runner').setup {
   mode = "term",
   startinsert = true,
-	term = {
-		position = "vert",
-		size = 15,
-	},
-	filetype = {
+  term = {
+    position = "vert",
+    size = 15,
+  },
+  filetype = {
         java = {
           "cd $dir &&",
           "javac $fileName &&",
           "java $fileNameWithoutExt"
         },
-		python = "python3 -u",
-		typescript = "deno run",
+    python = "python3 -u",
+    typescript = "deno run",
         rust = {
           "cd $dir &&",
           "rustc $fileName &&",
           "$dir/$fileNameWithoutExt"
         },
-	},
-	project = {
-		["~/deno/example"] = {
-			name = "ExapleDeno",
-			description = "Project with deno using other command",
-			file_name = "http/main.ts",
-			command = "deno run --allow-net"
-		},
-		["~/cpp/example"] = {
-			name = "ExapleCpp",
-			description = "Project with make file",
-			command = "make buid && cd buid/ && ./compiled_file"
-		}
-	},
+  },
+  project = {
+    ["~/deno/example"] = {
+      name = "ExapleDeno",
+      description = "Project with deno using other command",
+      file_name = "http/main.ts",
+      command = "deno run --allow-net",
+      mode = "" -- valid: term, tab, float, toggle
+    },
+    ["~/cpp/example"] = {
+      name = "ExapleCpp",
+      description = "Project with make file",
+      command = "make buid && cd buid/ && ./compiled_file"
+    }
+  },
 }
 ```
 
