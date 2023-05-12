@@ -219,6 +219,7 @@ function M.get_project_command()
   if context then
     project_context.command = get_project_command(context) or ""
     project_context.name = context.name
+    project_context.mode = context.mode
     return project_context
   end
 end
@@ -250,6 +251,9 @@ function M.run_project(mode, notify)
   end
   local project = M.get_project_command()
   if project then
+    if not mode then
+      mode = project.mode
+    end
     run_mode(project.command, project.name, mode)
     return true
   end
