@@ -88,7 +88,7 @@ All run commands allow restart. So, for example, if you use a command that does 
 
 This plugin stopped creating mappings, in favor of you creating your own
 
-Recomended:
+Recommended:
 
 ```lua
 vim.keymap.set('n', '<leader>r', ':RunCode<CR>', { noremap = true, silent = false })
@@ -294,21 +294,21 @@ The file should look like this(the default file does not exist create it with th
 }
 ```
 
-if you want to add some other language or some other command follow this structure `key`: `commans`
+If you want to add some other language or some other command follow this structure `key`: `commans`
 
 #### Variables
 
 The available variables are the following:
 
-- `file` -- file path to currend file opened
-- `fileName` -- file name to curren file opened
-- `fileNameWithoutExt` -- file without extension file opened
-- `dir` -- path of directory to file opened
-- `end` -- finish the command (it is useful for commands that do not require final autocompletion)
+- `file`: path to current open file 
+- `fileName`: filename of current open file
+- `fileNameWithoutExt`: filename without extension of current file
+- `dir`: path to directory of current open file
+- `end`: finish the command (it is useful for commands that do not require final autocompletion)
 
 Below is an example of an absolute path and how it behaves depending on the variable:
 
-absolute path: `/home/anyuser/current/file.py`
+Absolute path: `/home/anyuser/current/file.py`
 
 - `file` = `/home/anyuser/current/file.py`
 - `fileName` = `file.py`
@@ -399,8 +399,8 @@ The file should look like this(the default file does not exist create it with th
 
 There are 3 main ways to configure the execution of a project (found in the example.)
 
-1. Use the default command defined in the filetypes file (see `:CRFiletype`or check your confi lua). In order to do that it is necessary to define file_name.
-2. Use a different command than the one set in `CRFiletype` or your config lua. In this case, the file_name and command must be provided.
+1. Use the default command defined in the filetypes file (see `:CRFiletype`or check your config). In order to do that it is necessary to define file_name.
+2. Use a different command than the one set in `CRFiletype` or your config. In this case, the file_name and command must be provided.
 3. Use a command to run the project. It is only necessary to define command(You do not need to write navigate to the root of the project, because automatically the plugin is located in the root of the project).
 
 Note: Don't forget to name your projects because if you don't do so code runner will fail as it uses the name for the buffer name
@@ -429,7 +429,7 @@ require("code_runner.commands").get_project_command() -- get the current command
 
 ## Harpoon
 
-you can directly integrate this plugin with [ThePrimeagen/harpoon](https://github.com/ThePrimeagen/harpoon) the way to do it is through command queries, harpoon allows the command to be sent to a terminal, below it is shown how to use harpoon term together with code_runner.nvim:
+You can directly integrate this plugin with [ThePrimeagen/harpoon](https://github.com/ThePrimeagen/harpoon) the way to do it is through command queries, harpoon allows the command to be sent to a terminal, below it is shown how to use harpoon term together with code_runner.nvim:
 
 ```lua
 require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filetype_command() .. "\n")
@@ -437,7 +437,7 @@ require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filet
 
 ## betterTerm
 
-you can directly integrate this plugin with [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim) the way to do it is through command queries, `betterTerm` allows the command to be sent to a terminal, below it is shown how to use `betterTerm` term together with code_runner.nvim:
+You can directly integrate this plugin with [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim) the way to do it is through command queries, `betterTerm` allows the command to be sent to a terminal, below it is shown how to use `betterTerm` term together with code_runner.nvim:
 
 ```lua
 
@@ -467,7 +467,7 @@ For unknown reasons, leaving a comma in the trailing element in any json file ca
 
 # Contributing
 
-Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas. All PR's are welcome.
+Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas. All PRs are welcome.
 
 > **Note**  
 > If you have any ideas to improve this project, do not hesitate to make a request, if problems arise, try to solve them and publish them. Don't be so picky I did this in one afternoon
