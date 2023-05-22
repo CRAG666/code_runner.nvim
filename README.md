@@ -34,14 +34,12 @@ use 'CRAG666/code_runner.nvim'
 require "paq"{ 'CRAG666/code_runner.nvim'; }
 ```
 
-Consider using [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim)
-
 ## Features
 
 > **Note**
 > If you want implement a new feature open an issue to know if it is worth implementing it and if there are people interested.
 
-- Toggle runner
+- Toggle runner(you need [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim), By the way, this is the mode I currently use with this plugin)
 - Reload task on the fly
 - Run code in a Float window
 - Run code in a tab
@@ -53,13 +51,6 @@ Consider using [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.n
 ## Setup
 
 This plugin can be configured either in lua, with the `setup` function, or with json files for interopability between this plugin and the [original code runner](https://github.com/formulahendry/vscode-code-runner) vscode plugin.
-
-See also:
-
-- [options](#options): options that can be passed to setup function;
-- [filetype](#setup-filetypes): filetype specific commands;
-- [project](#setup-projects): project specific commands.
-  - [project-parameters](#projects-parameters): project specific commands.
 
 ### Minimal example
 
@@ -103,7 +94,7 @@ require('code_runner').setup {
 ## Commands
 
 > **Note**
-> To check what modes are supported see [mode parameter](#setup-1).
+> To check what modes ore supported see [mode parameter](#setup).
 
 All run commands allow restart. So, for example, if you use a command that does not have hot reload, you can call a command again and it will close the previous one and start again.
 
@@ -111,7 +102,7 @@ All run commands allow restart. So, for example, if you use a command that does 
 - `:RunCode <A_key_here>`: Execute command from its key in current directory.
 - `:RunFile <mode>`: Run the current file (optionally you can select an opening mode).
 - `:RunProject <mode>`: Run the current project(If you are in a project otherwise you will not do anything,).
-- `:RunClose`: Close runner
+- `:RunClose`: Close runner(Doesn't work in better_term mode, use native plugin options)
 - `:CRFiletype` - Open json with supported files(Use only if you configured with json files).
 - `:CRProjects` - Open json with list of projects(Use only if you configured with json files).
 
@@ -127,21 +118,6 @@ vim.keymap.set('n', '<leader>crf', ':CRFiletype<CR>', { noremap = true, silent =
 vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent = false })
 ```
 
-### Variables
-
-> **Note**
-> If you don't want to use the plugin specific variables you can use vim [filename-modifiers](https://neovim.io/doc/user/cmdline.html#filename-modifiers).
-
-This uses some special keyword to that means different things. This is do mainly for be compatible with the original vscode plugin.
-
-The available variables are the following:
-
-- `file`: path to current open file (e.g. `/home/user/current_dir/current_file.ext`
-- `fileName`: filename of current open file (e.g. `current_file.ext`)
-- `fileNameWithoutExt`: filename without extension of current file (e.g. `current_file`)
-- `dir`: path to directory of current open file (e.g. `/home/user/current_dir`)
-- `end`: finish the command (it is useful for commands that do not require final autocompletion)
-
 ## Parameters
 
 ### Setup Global
@@ -150,19 +126,26 @@ This are the the configuration option you can pass to the `setup` function. To s
 
 Parameters:
 
-- `mode`: Mode in which you want to run. Are supported: "toggle", "float", "tab", "toggleterm" (type: `bool`)
-- `focus`: Focus on runner window. Only works on toggle, term and tab mode (type: `bool`)
-- `startinsert`: init in insert mode (type: `bool`)
+- `mode`: Mode in which you want to run. Are supported: "better_term", "float", "tab", "toggleterm" (type: `bool`)
+- `focus`: Focus on runner window. Only works on term and tab mode (type: `bool`)
+- `startinsert`: init in insert mode.Only works on term and tab mode (type: `bool`)
 - `term`: Configurations for the integrated terminal
   - `position`: terminal position consult `:h windows` for options (type: `string`)
   - `size`: Size of the terminal window (type: `uint` | `float`)
 - `float`: Configurations for the float win
+
   - `border`: Window border see `:h nvim_open_win` (type: `string`)
   - `height`
   - `width`
   - `x`
   - `y`
   - `border_hl`: (type: `string`)
+
+- `better_term`: Toggle mode replacement(Install [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim))
+  - `clean`: Clean terminal before launch(type: `bool`)
+  - `number`: Use nil for dynamic number and set init(type: `uint?`)
+  - `init`: Set a start number for executions, each execution will go to a different terminal(type: `uint?`)
+    },
 - `before_run_filetype`: Execute before executing a file (type: `func`)
 - `filetype`: If you prefer to use lua instead of json files, you can add your settings by file type here (type: `table`)
 - `filetype_path`: Absolute path to json file config (type: `absolute paths`)
@@ -213,6 +196,21 @@ The equivalent for your json filetype file is:
 }
 ```
 
+### Variables
+
+> **Note**
+> If you don't want to use the plugin specific variables you can use vim [filename-modifiers](https://neovim.io/doc/user/cmdline.html#filename-modifiers).
+
+This uses some special keyword to that means different things. This is do mainly for be compatible with the original vscode plugin.
+
+The available variables are the following:
+
+- `file`: path to current open file (e.g. `/home/user/current_dir/current_file.ext`
+- `fileName`: filename of current open file (e.g. `current_file.ext`)
+- `fileNameWithoutExt`: filename without extension of current file (e.g. `current_file`)
+- `dir`: path to directory of current open file (e.g. `/home/user/current_dir`)
+- `end`: finish the command (it is useful for commands that do not require final autocompletion)
+
 If you want to add some other language or some other command follow this structure `key: commans`.
 
 ### Setup Projects
@@ -223,7 +221,7 @@ There are 3 main ways to configure the execution of a project (found in the exam
 2. Use a different command than the one set in `CRFiletype` or your config. In this case, the file_name and command must be provided.
 3. Use a command to run the project. It is only necessary to define command (You do not need to write navigate to the root of the project, because automatically the plugin is located in the root of the project).
 
-Also see [project parameters](#projects) to set correctly your project commands.
+Also see [project parameters](#setup-projects) to set correctly your project commands.
 
 #### Lua
 
@@ -271,7 +269,7 @@ project = {
 }
 ```
 
-Parameters:
+#### Parameters
 
 - `name`: Project name
 - `description`: Project description
@@ -301,15 +299,6 @@ You can directly integrate this plugin with [ThePrimeagen/harpoon](https://githu
 
 ```lua
 require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filetype_command() .. "\n")
-```
-
-### betterTerm
-
-You can directly integrate this plugin with [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim) the way to do it is through command queries, `betterTerm` allows the command to be sent to a terminal, below it is shown how to use `betterTerm` term together with code_runner.nvim:
-
-```lua
--- Send command to term one
-require("betterTerm").send(require("code_runner.commands").get_filetype_command(), 1)
 ```
 
 ## Inspirations and thanks

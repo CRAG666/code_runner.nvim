@@ -102,6 +102,9 @@ M.setup = function(user_options)
       end,
     })
   end
+  M.run_code = commands.run_code
+  M.run_filetype = commands.run_filetype
+  M.run_project = commands.run_project
 end
 
 return M

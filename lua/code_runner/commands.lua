@@ -131,24 +131,17 @@ local function execute(command, bufname, prefix)
   end
 end
 
---- Toggle mode
----@param command string
----@param bufname string
-local function toggle(command, bufname)
-  local bufid = vim.fn.bufnr(bufname)
-  local buf_exist = vim.api.nvim_buf_is_valid(bufid)
-  if buf_exist then
-    local bufinfo = vim.fn.getbufinfo(bufid)[1]
-    if bufinfo.hidden == 1 then
-      local opt = o.get()
-      vim.cmd(opt.prefix .. " | buffer " .. bufname)
+btm_number = o.get().better_term.init
+local function betterTermM(command)
+  local opt = o.get().better_term
+  local betterTerm_ok, betterTerm = pcall(require, "betterTerm")
+  if betterTerm_ok then
+    if opt.number == nil then
+      btm_number = btm_number + 1
     else
-      local winid = bufinfo.windows[1]
-      vim.fn.win_gotoid(winid)
-      vim.cmd(":hide")
+      btm_number = opt.number
     end
-  else
-    execute(command, bufname)
+    betterTerm.send(command, btm_number, { clean = opt.clean })
   end
 end
 
@@ -159,15 +152,15 @@ M.modes = {
   term = function(command, bufname)
     execute(command, bufname)
   end,
-  toggle = function(command, bufname)
-    toggle(command, bufname)
+  tab = function(command, bufname)
+    execute(command, bufname, "tabnew")
   end,
   float = function(command, ...)
     local window = require("code_runner.floats")
     window.floating(command)
   end,
-  tab = function(command, bufname)
-    execute(command, bufname, "tabnew")
+  better_term = function(command, ...)
+    betterTermM(command)
   end,
   toggleterm = function(command, ...)
     local tcmd = string.format('TermExec cmd="%s"', command)
