@@ -141,7 +141,8 @@ local function betterTermM(command)
     else
       btm_number = opt.number
     end
-    betterTerm.send(command, btm_number, { clean = opt.clean })
+    local cmd = "cd " .. vim.fn.fnamemodify(path, ":p:h") .. " && " .. command
+    betterTerm.send(cmd, btm_number, { clean = opt.clean })
   end
 end
 
