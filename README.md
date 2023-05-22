@@ -137,10 +137,10 @@ Parameters:
 - `float`: Configurations for the float win
 
   - `border`: Window border see `:h nvim_open_win` (type: `string`)
-  - `height`
-  - `width`
-  - `x`
-  - `y`
+  - `height`: (type: `float`)
+  - `width`: (type: `float`)
+  - `x`: (type: `float`)
+  - `y`: (type: `float`)
   - `border_hl`: (type: `string`)
 
 - `better_term`: Toggle mode replacement(Install [CRAG666/betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim))
