@@ -1,12 +1,12 @@
 local o = require("code_runner.options")
 local pattern = "crunner_"
 
---Replace json variables with vim variables in command.
+-- Replace variables with full paths
 ---@param command string command to run the path
 ---@param path string absolute path
 ---@param user_argument table?
 ---@return string?
-local function jsonVars_to_vimVars(command, path, user_argument)
+local function replaceVars(command, path, user_argument)
   if type(command) == "function" then
     local cmd = command(user_argument)
     if type(cmd) == "string" then
@@ -36,35 +36,30 @@ end
 -- Check if current buffer is in project
 -- if a project return table of project
 ---@return table?
-local function get_project_rootpath()
-  local opt = o.get()
-  local path = vim.loop.cwd()
-  local home_path = vim.fn.expand("~")
-  while path ~= home_path do
-    local project = opt.project[path] or opt.project[vim.fn.fnamemodify(path, ":~")]
-    if project then
-      project["path"] = path
-      return project
+local function getProjectRootPath()
+  local projects = o.get().project
+  local current_file_path = vim.fn.expand("%:p")
+  local projects_paths = vim.tbl_keys(projects)
+  for _ , path in ipairs(projects_paths) do
+    if string.find(current_file_path, path, 1, true) == 1 then
+      current_proyect = projects[path]
+      current_proyect["path"] = path
+      return current_proyect
     end
-    path = vim.fn.fnamemodify(path, ":h")
   end
 end
 
--- Return a command for filetype
--- @param filetype filetype of path
--- @param path absolute path to file
--- @return command
 --- Return a command for filetype
 ---@param filetype string
 ---@param path string?
 ---@param user_argument table?
 ---@return string?
-local function get_command(filetype, path, user_argument)
+local function getCommand(filetype, path, user_argument)
   local opt = o.get()
   path = path or vim.fn.expand("%:p")
   local command = opt.filetype[filetype]
   if command then
-    local command_vim = jsonVars_to_vimVars(command, path, user_argument)
+    local command_vim = replaceVars(command, path, user_argument)
     return command_vim
   end
 end
@@ -72,17 +67,17 @@ end
 -- Run command in project context
 ---@param context table
 ---@return string?
-local function get_project_command(context)
+local function getProjectCommand(context)
   local command = nil
   if context.file_name then
     local file = context.path .. "/" .. context.file_name
     if context.command then
-      command = jsonVars_to_vimVars(context.command, file)
+      command = replaceVars(context.command, file)
     else
       -- Plenary version:
       -- https://github.com/CRAG666/code_runner.nvim/commit/825a0d5a450e269b450016b2a390026c68af3588
       local filetype = vim.filetype.match({ filename = file })
-      command = get_command(filetype, file)
+      command = getCommand(filetype, file)
     end
   else
     command = "cd " .. context.path .. " &&" .. context.command
@@ -92,7 +87,7 @@ end
 
 --- Close runner
 ---@param bufname string?
-local function close_runner(bufname)
+local function closeRunner(bufname)
   bufname = bufname or pattern .. vim.fn.expand("%:t:r")
   local current_buf = vim.fn.bufname("%")
   if string.find(current_buf, pattern) then
@@ -114,7 +109,7 @@ local function execute(command, bufname, prefix)
   prefix = prefix or opt.prefix
   local set_bufname = "file " .. bufname
   local current_wind_id = vim.api.nvim_get_current_win()
-  close_runner(bufname)
+  closeRunner(bufname)
   vim.cmd(prefix)
   vim.fn.termopen(command)
   vim.cmd("norm G")
@@ -172,7 +167,7 @@ M.modes = {
 ---@param command string
 ---@param bufname string
 ---@param mode string?
-local function run_mode(command, bufname, mode)
+local function runMode(command, bufname, mode)
   local opt = o.get()
   mode = mode or opt.mode
   if mode == "" then
@@ -187,18 +182,12 @@ local function run_mode(command, bufname, mode)
   call_mode(command, bufname)
 end
 
---- Run according to a mode
----@param command string
----@param bufname string
----@param mode string
-function M.run_mode(command, bufname, mode)
-  run_mode(command, bufname, mode)
-end
+M.run_mode = runMode
 
 -- Get command for the current filetype
 function M.get_filetype_command()
   local filetype = vim.bo.filetype
-  return get_command(filetype) or ""
+  return getCommand(filetype) or ""
 end
 
 -- Get command for this current project
@@ -208,10 +197,10 @@ function M.get_project_command()
   local opt = o.get()
   local context = nil
   if not vim.tbl_isempty(opt.project) then
-    context = get_project_rootpath()
+    context = getProjectRootPath()
   end
   if context then
-    project_context.command = get_project_command(context) or ""
+    project_context.command = getProjectCommand(context) or ""
     project_context.name = context.name
     project_context.mode = context.mode
     return project_context
@@ -224,7 +213,7 @@ function M.run_filetype(mode)
   local command = M.get_filetype_command()
   if command ~= "" then
     o.get().before_run_filetype()
-    run_mode(command, vim.fn.expand("%:t:r"), mode)
+    runMode(command, vim.fn.expand("%:t:r"), mode)
   else
     local nvim_files = {
       lua = "luafile %",
@@ -248,7 +237,7 @@ function M.run_project(mode, notify)
     if not mode then
       mode = project.mode
     end
-    run_mode(project.command, project.name, mode)
+    runMode(project.command, project.name, mode)
     return true
   end
   if notify then
@@ -263,9 +252,11 @@ end
 function M.run_code(filetype, user_argument)
   if filetype ~= nil and filetype ~= "" then
     -- since we have reached here, means we have our command key
-    local cmd_to_execute = get_command(filetype, nil, user_argument)
+    local cmd_to_execute = getCommand(filetype, nil, user_argument)
     if cmd_to_execute then
-      run_mode(cmd_to_execute, vim.fn.expand("%:t:r"))
+      o.get().before_run_filetype()
+      runMode(cmd_to_execute, vim.fn.expand("%:t:r"))
+      return
     else
       -- command was a lua function with no output
       -- it already run
@@ -281,11 +272,11 @@ end
 
 --- Close current execution
 function M.run_close()
-  local context = get_project_rootpath()
+  local context = getProjectRootPath()
   if context then
-    close_runner(pattern .. context.name)
+    closeRunner(pattern .. context.name)
   else
-    close_runner()
+    closeRunner()
   end
 end
 
