@@ -381,6 +381,9 @@ require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filet
 - The idea of this project comes from the vscode plugin [code_runner](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner) You can even copy your configuration and pass it to this plugin, as they are the same in the way of defining commands associated with [filetypes](https://github.com/CRAG666/code_runner.nvim#add-support-for-more-file-types)
 - [jaq-nvim](https://github.com/is0n/jaq-nvim) some ideas of how to execute commands were taken from this plugin, thank you very much.
 - [FTerm.nvim](https://github.com/numToStr/FTerm.nvim) Much of how this README.md is structured was blatantly stolen from this plugin, thank you very much
+- @adalessa, [profile](https://github.com/adalessa), Much of the code for the
+  pdf preview hook was taken from a plugin it has. thank you. For the Spanish
+  community he has an excellent channel on neovim, [Channel](https://www.youtube.com/@Alpha_Dev)
 - Thanks to all current and future collaborators, without their contributions this plugin would not be what it is today
 
 ## Screenshots
