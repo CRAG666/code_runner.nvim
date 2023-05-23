@@ -333,6 +333,8 @@ This module allows us to send a command to compile to pdf as well as show the re
 
 ```
 
+![preview](https://github.com/CRAG666/dotfiles/assets/34254373/6cf06bc5-82b5-4953-8b0b-c06b0087b5cd)
+
 In the above example we use the hook to compile markdown and latex files to pdf.
 Not only that, but we also indicate in what order the resulting pdf file will be
 opened. In my case it is zathura but you can use a browser if it is more
