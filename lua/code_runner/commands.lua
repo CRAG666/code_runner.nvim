@@ -40,8 +40,9 @@ local function getProjectRootPath()
   local projects = o.get().project
   local current_file_path = vim.fn.expand("%:p")
   local projects_paths = vim.tbl_keys(projects)
-  for _ , path in ipairs(projects_paths) do
-    if string.find(current_file_path, path, 1, true) == 1 then
+  for _, path in ipairs(projects_paths) do
+    path_full = vim.fs.normalize(path)
+    if string.find(current_file_path, path_full, 1, true) == 1 then
       current_proyect = projects[path]
       current_proyect["path"] = path
       return current_proyect
@@ -136,8 +137,7 @@ local function betterTermM(command)
     else
       btm_number = opt.number
     end
-    local cmd = "cd " .. vim.fn.fnamemodify(path, ":p:h") .. " && " .. command
-    betterTerm.send(cmd, btm_number, { clean = opt.clean })
+    betterTerm.send(command, btm_number, { clean = opt.clean })
   end
 end
 
