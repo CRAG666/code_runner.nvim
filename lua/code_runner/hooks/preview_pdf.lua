@@ -1,5 +1,5 @@
 local Job = require("plenary.job")
-local commands = {}
+local hook = require("code_runner.hooks.autocmd_preview")
 
 function replaceElement(table, replacement_table)
   for i, value in ipairs(table) do
@@ -36,19 +36,9 @@ local function convertToPdf(command_config, to, open)
   }):start()
 end
 
-local stop = function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  if commands[bufnr] ~= nil then
-    vim.api.nvim_del_autocmd(commands[bufnr])
-  end
-end
-
 ---@param command_config CommandConfig Table of options
 local run = function(command_config)
-  local bufnr = vim.api.nvim_get_current_buf()
-
-  vim.api.nvim_create_user_command("PreviewPDFStop" .. bufnr, stop, {})
-
+  hook.stop_au_preview()
   local fileName = vim.fn.expand("%:p")
   if fileName == nil then
     return
@@ -64,17 +54,10 @@ local run = function(command_config)
     ["$tmpFile"] = tmpFile,
   })
 
-  local group = vim.api.nvim_create_augroup("PreviewPDF", { clear = true })
-  local id = vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-    group = group,
-    buffer = bufnr,
-    callback = function()
-      convertToPdf(command_config, tmpFile)
-    end,
-  })
-
-  commands[bufnr] = id
-
+  local fn = function()
+    convertToPdf(command_config, tmpFile)
+  end
+  hook.create_au_preview(fn)
   convertToPdf(command_config, tmpFile, true)
 end
 
