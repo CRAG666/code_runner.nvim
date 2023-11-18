@@ -301,13 +301,53 @@ This module allows us to send a command to compile to pdf as well as show the re
 {
 ...
     filetype = {
+      -- Using pdflatex compiler
+      -- tex = function(...)
+      --   require("code_runner.hooks.preview_pdf").run {
+      --     command = "pdflatex",
+      --     args = { "-output-directory", "/tmp", "$fileName" },
+      --     preview_cmd = "/bin/zathura --fork",
+      --     overwrite_output = "/tmp",
+      --   }
+      -- end,
+      -- Using tectonic compiler
       tex = function(...)
-        require("code_runner.hooks.preview_pdf").run {
-          command = "pdflatex",
-          args = { "-output-directory", "/tmp", "$fileName" },
-          preview_cmd = "/bin/zathura --fork",
-          overwrite_output = "/tmp",
+        latexCompileOptions = {
+          "Single",
+          "Project",
         }
+        local preview = require "code_runner.hooks.preview_pdf"
+        local cr_au = require "code_runner.hooks.autocmd"
+        vim.ui.select(latexCompileOptions, {
+          prompt = "Select compile mode:",
+        }, function(opt, _)
+          if opt then
+            if opt == "Single" then
+              -- Single preview for latex files
+              preview.run {
+                command = "tectonic",
+                args = { "$fileName", "--keep-logs", "-o", "/tmp" },
+                preview_cmd = preview_cmd,
+                overwrite_output = "/tmp",
+              }
+            elseif opt == "Project" then
+              -- Create command for stop job
+              cr_au.stop_job() -- CodeRunnerJobPosWrite
+              -- Compile
+              os.execute "tectonic -X build --keep-logs --open &> /dev/null &"
+              -- Command for hotreload
+              local fn = function()
+                os.execute "tectonic -X build --keep-logs &> /dev/null &"
+              end
+              -- Create Job for hot reload latex compiler
+              -- Execute after write
+              cr_au.create_au_wirte(fn)
+            end
+          else
+            local warn = require("utils").warn
+            warn("Not Preview", "Preview")
+          end
+        end)
       end,
       markdown = function(...)
         markdownCompileOptions = {

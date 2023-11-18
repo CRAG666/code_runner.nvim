@@ -1,5 +1,5 @@
 local Job = require("plenary.job")
-local hook = require("code_runner.hooks.autocmd_preview")
+local hook = require("code_runner.hooks.autocmd")
 
 function replaceElement(table, replacement_table)
   for i, value in ipairs(table) do
@@ -38,7 +38,7 @@ end
 
 ---@param command_config CommandConfig Table of options
 local run = function(command_config)
-  hook.stop_au_preview()
+  hook.stop_job()
   local fileName = vim.fn.expand("%:p")
   if fileName == nil then
     return
@@ -57,7 +57,7 @@ local run = function(command_config)
   local fn = function()
     convertToPdf(command_config, tmpFile)
   end
-  hook.create_au_preview(fn)
+  hook.create_au_write(fn)
   convertToPdf(command_config, tmpFile, true)
 end
 

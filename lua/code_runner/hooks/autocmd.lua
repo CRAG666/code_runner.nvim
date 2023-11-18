@@ -1,9 +1,9 @@
 local commands = {}
 local M = {}
 
-function M.create_au_preview(fn)
+function M.create_au_write(fn)
   local bufnr = vim.api.nvim_get_current_buf()
-  local group = vim.api.nvim_create_augroup("PreviewPDF", { clear = true })
+  local group = vim.api.nvim_create_augroup("CodeRunnerJobPosWrite", { clear = true })
   local id = vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = group,
     buffer = bufnr,
@@ -18,9 +18,9 @@ local stop = function(bufnr)
   end
 end
 
-function M.stop_au_preview()
+function M.stop_job()
   local bufnr = vim.api.nvim_get_current_buf()
-  vim.api.nvim_create_user_command("PreviewPDFStop" .. bufnr, stop, {})
+  vim.api.nvim_create_user_command("CodeRunnerJobStop" .. bufnr, stop, {})
 end
 
 return M
