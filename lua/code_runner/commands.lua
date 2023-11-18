@@ -38,13 +38,12 @@ end
 ---@return table?
 local function getProjectRootPath()
   local projects = o.get().project
-  local current_file_path = vim.fn.expand("%:p")
-  local projects_paths = vim.tbl_keys(projects)
-  for _, path in ipairs(projects_paths) do
-    path_full = vim.fs.normalize(path)
-    if string.find(current_file_path, path_full, 1, true) == 1 then
-      current_proyect = projects[path]
-      current_proyect["path"] = path
+  local path = vim.fn.expand("%:p")
+  for project_path, _ in pairs(projects) do
+    path_full = vim.fs.normalize(project_path)
+    if string.find(path, path_full) == 1 then
+      current_proyect = projects[project_path]
+      current_proyect["path"] = project_path
       return current_proyect
     end
   end
