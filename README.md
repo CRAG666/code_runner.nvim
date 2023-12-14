@@ -136,10 +136,15 @@ Parameters:
 - `term`: Configurations for the integrated terminal
   - `position`: terminal position consult `:h windows` for options (type: `string`)
   - `size`: Size of the terminal window (type: `uint` | `float`)
-- `float`: Configurations for the float win
-
-  - `border`: Window border see `:h nvim_open_win` (type: `string`)
-  - `height`: (type: `float`)
+- `float`: Configurations for the float window
+  - `border`: Window border options (type: `string`)
+    - "none": No border (default).
+    - "single": A single line box.
+    - "double": A double line box.
+    - "rounded": Like "single", but with rounded corners ("╭" etc.).
+    - "solid": Adds padding by a single whitespace cell.
+    - "shadow": A drop shadow effect by blending with the background.
+    - For more border options see `:h nvim_open_win()` or [NeoVim API Documentation](https://neovim.io/doc/user/api.html#nvim_open_win())
   - `width`: (type: `float`)
   - `x`: (type: `float`)
   - `y`: (type: `float`)
