@@ -34,7 +34,7 @@ use 'CRAG666/code_runner.nvim'
 require "paq"{ 'CRAG666/code_runner.nvim'; }
 ```
 
-Please see my config [code_runner.lua](https://github.com/CRAG666/dotfiles/blob/main/config/nvim/lua/plugins/general/code_runner.lua)
+Please see my config [code_runner.lua](https://github.com/CRAG666/dotfiles/blob/main/config/nvim/lua/plugins/dev/code_runner.lua)
 
 ## Features
 
