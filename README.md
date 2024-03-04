@@ -230,6 +230,13 @@ There are 3 main ways to configure the execution of a project (found in the exam
 2. Use a different command than the one set in `CRFiletype` or your config. In this case, the file_name and command must be provided.
 3. Use a command to run the project. It is only necessary to define command (You do not need to write navigate to the root of the project, because automatically the plugin is located in the root of the project).
 
+The key for each project is a pattern to match against the current filename of
+the buffer. The pattern is a lua [patterns](https://www.lua.org/pil/20.3.html)
+and needs to escape magic characters like `-`, `.`, `(`, etc. with a `%`.
+To match the entire path to a directory you cannot simply append `/`. This is
+due to `vim.fs.normalize` being used. Append `/.-` instead to prevent stripping
+of `/`.
+
 Also see [project parameters](#setup-projects) to set correctly your project commands.
 
 #### Lua
@@ -251,7 +258,12 @@ project = {
     name = "ExapleCpp",
     description = "Project with make file",
     command = "make buid && cd buid/ && ./compiled_file"
-  }
+  },
+  ["~/private/.*terraform%-prod.-/.-"] = {
+    name = "ExampleTerraform",
+    description = "All Folders in ~/private containing \"terraform-prod\"",
+    command = "terraform plan",
+  },
 },
 ```
 
@@ -274,6 +286,11 @@ project = {
     "name": "ExapleCpp",
     "description": "Project with make file",
     "command": "make buid && cd buid/ && ./compiled_file"
+  },
+  "~/private/.*terrafrom%-prod.-/.-": {
+    "name": "ExampleTerraform",
+    "description": "All Folders in ~/private containing \"terraform-prod\"",
+    "command": "terraform plan"
   }
 }
 ```
