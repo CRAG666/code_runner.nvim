@@ -363,7 +363,7 @@ This module allows us to send a command to compile to pdf as well as show the re
               end
               -- Create Job for hot reload latex compiler
               -- Execute after write
-              cr_au.create_au_wirte(fn)
+              cr_au.create_au_write(fn)
             end
           else
             local warn = require("utils").warn
