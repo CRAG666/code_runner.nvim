@@ -1,5 +1,6 @@
 local o = require("code_runner.options")
 local pattern = "crunner_"
+local au_cd = require("code_runner.hooks.autocmd")
 
 -- Replace variables with full paths
 ---@param command string command to run the path
@@ -90,6 +91,10 @@ end
 ---@param bufname string?
 local function closeRunner(bufname)
   bufname = bufname or pattern .. vim.fn.expand("%:t:r")
+
+  -- stop autocmd
+  au_cd.stop_job()
+
   local current_buf = vim.fn.bufname("%")
   if string.find(current_buf, pattern) then
     vim.cmd("bwipeout!")
