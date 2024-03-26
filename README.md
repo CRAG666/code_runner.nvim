@@ -75,6 +75,22 @@ require('code_runner').setup({
       "rustc $fileName &&",
       "$dir/$fileNameWithoutExt"
     },
+    c = function(...)
+      c_base = {
+        "cd $dir &&",
+        "gcc $fileName -o",
+        "/tmp/$fileNameWithoutExt",
+      }
+      local c_exec = {
+        "&& /tmp/$fileNameWithoutExt &&",
+        "rm /tmp/$fileNameWithoutExt",
+      }
+      vim.ui.input({ prompt = "Add more args:" }, function(input)
+        c_base[4] = input
+        vim.print(vim.tbl_extend("force", c_base, c_exec))
+        require("code_runner.commands").run_from_fn(vim.list_extend(c_base, c_exec))
+      end)
+    end,
   },
 })
 ```
@@ -334,68 +350,60 @@ This module allows us to send a command to compile to pdf as well as show the re
       -- end,
       -- Using tectonic compiler
       tex = function(...)
-        latexCompileOptions = {
-          "Single",
-          "Project",
-        }
-        local preview = require "code_runner.hooks.preview_pdf"
-        local cr_au = require "code_runner.hooks.autocmd"
-        vim.ui.select(latexCompileOptions, {
-          prompt = "Select compile mode:",
-        }, function(opt, _)
-          if opt then
-            if opt == "Single" then
-              -- Single preview for latex files
-              preview.run {
-                command = "tectonic",
-                args = { "$fileName", "--keep-logs", "-o", "/tmp" },
-                preview_cmd = preview_cmd,
-                overwrite_output = "/tmp",
-              }
-            elseif opt == "Project" then
-              -- Create command for stop job
-              cr_au.stop_job() -- CodeRunnerJobPosWrite
-              -- Compile
-              os.execute "tectonic -X build --keep-logs --open &> /dev/null &"
-              -- Command for hotreload
-              local fn = function()
-                os.execute "tectonic -X build --keep-logs &> /dev/null &"
-              end
-              -- Create Job for hot reload latex compiler
-              -- Execute after write
-              cr_au.create_au_wirte(fn)
+        require("code_runner.hooks.ui").select {
+          Single = function()
+            local preview = require "code_runner.hooks.preview_pdf"
+            preview.run {
+              command = "tectonic",
+              args = { "$fileName", "--keep-logs", "-o", "/tmp" },
+              preview_cmd = preview_cmd,
+              overwrite_output = "/tmp",
+            }
+          end,
+          Project = function()
+            local cr_au = require "code_runner.hooks.autocmd"
+            cr_au.stop_job()
+            os.execute "tectonic -X build --keep-logs --open &> /dev/null &"
+            local fn = function()
+              os.execute "tectonic -X build --keep-logs &> /dev/null &"
             end
-          else
-            local warn = require("utils").warn
-            warn("Not Preview", "Preview")
-          end
-        end)
+            cr_au.create_au_write(fn)
+          end,
+        }
       end,
       markdown = function(...)
-        markdownCompileOptions = {
-          Normal = "pdf",
-          Presentation = "beamer",
-        }
-        vim.ui.select(vim.tbl_keys(markdownCompileOptions), {
-          prompt = "Select preview mode:",
-        }, function(opt, _)
-          if opt then
-            require("code_runner.hooks.preview_pdf").run {
+        local hook = require "code_runner.hooks.preview_pdf"
+        require("code_runner.hooks.ui").select {
+          Normal = function()
+            hook.run {
               command = "pandoc",
-              args = { "$fileName", "-o", "$tmpFile", "-t", markdownCompileOptions[opt] },
-              preview_cmd = "/bin/zathura --fork",
+              args = { "$fileName", "-o", "$tmpFile", "-t pdf" },
+              preview_cmd = preview_cmd,
             }
-          else
-            print "Not Preview"
-          end
-        end)
+          end,
+          Presentation = function()
+            hook.run {
+              command = "pandoc",
+              args = { "$fileName", "-o", "$tmpFile", "-t beamer" },
+              preview_cmd = preview_cmd,
+            }
+          end,
+          Eisvogel = function()
+            hook.run {
+              command = "bash",
+              args = { "./build.sh" },
+              preview_cmd = preview_cmd,
+              overwrite_output = ".",
+            }
+          end,
+        }
       end,
   ...
 }
 
 ```
 
-![preview](https://github.com/CRAG666/dotfiles/assets/34254373/6cf06bc5-82b5-4953-8b0b-c06b0087b5cd)
+![preview](https://github.com/CRAG666/dotfiles/blob/main/config/nvim/lua/plugins/dev/code_runner.lua)
 
 In the above example we use the hook to compile markdown and latex files to pdf.
 Not only that, but we also indicate in what order the resulting pdf file will be

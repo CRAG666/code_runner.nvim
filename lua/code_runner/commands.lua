@@ -11,6 +11,8 @@ local function replaceVars(command, path, user_argument)
     local cmd = command(user_argument)
     if type(cmd) == "string" then
       command = cmd
+    elseif type(cmd) == "table" then
+      command = table.concat(cmd, " ")
     else
       return
     end
@@ -183,6 +185,17 @@ local function runMode(command, bufname, mode)
 end
 
 M.run_mode = runMode
+
+function M.run_from_fn(cmd)
+  if type(cmd) == "string" then
+    command = cmd
+  elseif type(cmd) == "table" then
+    command = table.concat(cmd, " ")
+  end
+  local path = vim.fn.expand("%:p")
+  local command_vim = replaceVars(command, path)
+  M.run_mode(command_vim, vim.fn.expand("%:t:r"))
+end
 
 -- Get command for the current filetype
 function M.get_filetype_command()
