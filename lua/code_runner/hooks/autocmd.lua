@@ -12,15 +12,16 @@ function M.create_au_write(fn)
   commands[bufnr] = id
 end
 
-local stop = function(bufnr)
+local function stop(bufnr)
   if commands[bufnr] ~= nil then
     vim.api.nvim_del_autocmd(commands[bufnr])
+    commands[bufnr] = nil
   end
 end
 
 function M.stop_job()
   local bufnr = vim.api.nvim_get_current_buf()
-  vim.api.nvim_create_user_command("CodeRunnerJobStop" .. bufnr, stop, {})
+  stop(bufnr)
 end
 
 return M

@@ -1,6 +1,8 @@
 local options = {
   -- choose default mode (valid term, tab, float, toggle)
   mode = "term",
+  -- add hot reload
+  hot_reload = true,
   -- Focus on runner window(only works on toggle, term and tab mode)
   focus = true,
   -- startinsert (see ':h inserting-ex')

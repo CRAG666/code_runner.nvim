@@ -1,5 +1,6 @@
 local o = require("code_runner.options")
 local pattern = "crunner_"
+local au_cd = require("code_runner.hooks.autocmd")
 
 -- Replace variables with full paths
 ---@param command string command to run the path
@@ -92,6 +93,7 @@ end
 ---@param bufname string?
 local function closeRunner(bufname)
   bufname = bufname or pattern .. vim.fn.expand("%:t:r")
+
   local current_buf = vim.fn.bufname("%")
   if string.find(current_buf, pattern) then
     vim.cmd("bwipeout!")
@@ -109,23 +111,33 @@ end
 ---@param prefix string?
 local function execute(command, bufname, prefix)
   local opt = o.get()
-  prefix = prefix or opt.prefix
-  local set_bufname = "file " .. bufname
-  local current_wind_id = vim.api.nvim_get_current_win()
-  closeRunner(bufname)
-  vim.cmd(prefix)
-  vim.fn.termopen(command)
-  vim.cmd("norm G")
-  vim.opt_local.relativenumber = false
-  vim.opt_local.number = false
-  vim.cmd(set_bufname)
-  if prefix ~= "tabnew" then
-    vim.bo.buflisted = false
+
+  local fn = function()
+    prefix = prefix or opt.prefix
+    local set_bufname = "file " .. bufname
+    local current_wind_id = vim.api.nvim_get_current_win()
+    closeRunner(bufname)
+    vim.cmd(prefix)
+    vim.fn.termopen(command)
+    vim.cmd("norm G")
+    vim.opt_local.relativenumber = false
+    vim.opt_local.number = false
+    vim.cmd(set_bufname)
+    if prefix ~= "tabnew" then
+      vim.bo.buflisted = false
+    end
+    if opt.focus then
+      vim.cmd(opt.insert_prefix)
+    else
+      vim.fn.win_gotoid(current_wind_id)
+    end
   end
-  if opt.focus then
-    vim.cmd(opt.insert_prefix)
-  else
-    vim.fn.win_gotoid(current_wind_id)
+
+  fn()
+
+  if opt.hot_reload then
+    au_cd.stop_job()
+    au_cd.create_au_write(fn)
   end
 end
 
@@ -291,6 +303,8 @@ function M.run_close()
   else
     closeRunner()
   end
+  -- stop auto_cmd
+  au_cd.stop_job()
 end
 
 return M
