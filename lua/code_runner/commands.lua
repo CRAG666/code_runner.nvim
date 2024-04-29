@@ -123,6 +123,7 @@ local function execute(command, bufname, prefix)
     vim.opt_local.relativenumber = false
     vim.opt_local.number = false
     vim.cmd(set_bufname)
+    vim.api.nvim_buf_set_option(0, "filetype", "crunner")
     if prefix ~= "tabnew" then
       vim.bo.buflisted = false
     end
