@@ -63,6 +63,7 @@ local options = {
     },
     python = "python -u",
     sh = "bash",
+    ruby = "ruby",
     rust = {
       "cd $dir &&",
       "rustc $fileName &&",
