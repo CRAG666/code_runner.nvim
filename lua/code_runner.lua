@@ -1,7 +1,7 @@
 local commands = require("code_runner.commands")
 local o = require("code_runner.options")
 
-local function setup(opt)
+local function config(opt)
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
 
@@ -29,8 +29,7 @@ local function setup(opt)
     end
   end
 
-  -- set user options
-  o.set(opt)
+  o.set(opt) -- set user options
 
   -- Message if json file not exist
   if vim.tbl_isempty(o.get().filetype) then
@@ -68,42 +67,66 @@ M.open_project_manager = function()
 end
 
 M.setup = function(user_options)
-  setup(user_options or {})
+  config(user_options or {})
 
-  local simple_cmds = {
-    RunClose = commands.run_close,
-    CRFiletype = M.open_filetype_suported,
-    CRProjects = M.open_project_manager,
+  local Subcmds = {
+    on = "on",
+    with = "with",
+    project = "project",
+    close = "closeRunnerWindow",
+    openProject = "openProjectList",
+    openProjectFtSupported = "openProjectFiletypes",
   }
-  for cmd, func in pairs(simple_cmds) do
-    vim.api.nvim_create_user_command(cmd, func, { nargs = 0 })
-  end
 
-  -- Commands with autocomplete
-  local modes = vim.tbl_keys(commands.modes)
-  -- Format:
-  --  CoomandName = { function, option_list }
-  local completion_cmds = {
-    RunCode = { commands.run_code, vim.tbl_keys(o.get().filetype) },
-    RunFile = { commands.run_filetype, modes },
-    RunProject = { commands.run_project, modes },
-  }
-  for cmd, cmo in pairs(completion_cmds) do
-    vim.api.nvim_create_user_command(cmd, function(opts)
-      cmo[1](unpack(opts.fargs))
-    end, {
-      nargs = "*",
-      complete = function(ArgLead, word, ...)
-        -- only complete the first argument
-        if #vim.split(word, "%s+") > 2 then
-          return
+  vim.api.nvim_create_user_command("Run", function(opts)
+    if opts.args == "" then
+      return commands.run_current_file(nil, opts)
+    end
+
+    local args = vim.split(opts.args, "%s+")
+    local subcommand = args[1]
+    local value = args[2]
+
+    if subcommand == Subcmds.on then
+      return commands.run_current_file(value, opts)
+    elseif subcommand == Subcmds.with then
+      return commands.run_code(value, opts)
+    elseif subcommand == Subcmds.project then
+      return commands.run_project(value, opts)
+    elseif subcommand == Subcmds.close then
+      return commands.close_current_execution()
+    elseif subcommand == Subcmds.openProject then
+      return M.open_project_manager()
+    elseif subcommand == Subcmds.openProjectFtSupported then
+      return M.open_filetype_suported()
+    else
+      return vim.notify(
+        string.format("Invalid operation %s"),
+        vim.log.levels.ERROR,
+        { title = "Code Runner plugin Error" }
+      )
+    end
+  end, {
+    range = 0,
+    nargs = "?",
+    complete = function(ArgLead, CmdLine, _) -- :help :command-completion-custom
+      local cmdline_values = vim.split(CmdLine, "%s+")
+
+      if #cmdline_values > 2 and #cmdline_values < 4 then
+        local sub_cmd = cmdline_values[2]
+        if sub_cmd == Subcmds.with then
+          return completion(ArgLead, vim.tbl_keys(o.get().filetype))
+        elseif sub_cmd == Subcmds.on or sub_cmd == Subcmds.project then
+          return completion(ArgLead, vim.tbl_keys(commands.display_modes))
         end
-        return completion(ArgLead, cmo[2])
-      end,
-    })
-  end
+      elseif #cmdline_values == 2 then
+        return completion(ArgLead, vim.tbl_values(Subcmds))
+      end
+    end,
+  })
+
   M.run_code = commands.run_code
-  M.run_filetype = commands.run_filetype
+  M.run_current_file = commands.run_current_file
   M.run_project = commands.run_project
 end
 
