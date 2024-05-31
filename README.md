@@ -1,6 +1,6 @@
-<h1 align='center'>Code_Runner</h1>
+# code_runner.nvim
 
-<h4 align='center'>  Code Runner for Neovim written in pure lua 󰢱</h4>
+🏃‍♂️ Code Runner for Neovim written in pure lua 🌙
 
 <p align='center'><img src='https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif'></p>
 
@@ -18,7 +18,7 @@ When I was still in college it was common to try multiple programming languages,
 
 ```lua
 require("lazy").setup({
-  { "CRAG666/code_runner.nvim", 
+  { "CRAG666/code_runner.nvim",
      event= "VeryLazy",
   },
 }
@@ -56,7 +56,7 @@ Please see my config [code_runner.lua](https://github.com/CRAG666/dotfiles/blob/
 
 ## Setup
 
-This plugin can be configured either in lua, with the `setup` function, or with json files for interopability between this plugin and the [original code runner](https://github.com/formulahendry/vscode-code-runner) vscode plugin.
+This plugin can be configured either in lua, with the `setup` function, or with json files for interoperability between this plugin and the [original code runner](https://github.com/formulahendry/vscode-code-runner) vscode plugin.
 
 ### Minimal example
 
@@ -154,6 +154,7 @@ Parameters:
   - `position`: terminal position consult `:h windows` for options (type: `string`)
   - `size`: Size of the terminal window (type: `uint` | `float`)
 - `float`: Configurations for the float window (type: `table`)
+
   - `border`: Window border options (type: `string`)
     - "none": No border (default).
     - "single": A single line box.
@@ -161,7 +162,7 @@ Parameters:
     - "rounded": Like "single", but with rounded corners ("╭" etc.).
     - "solid": Adds padding by a single whitespace cell.
     - "shadow": A drop shadow effect by blending with the background.
-    - For more border options see `:h nvim_open_win()` or [NeoVim API Documentation](https://neovim.io/doc/user/api.html#nvim_open_win())
+    - For more border options see `:h nvim_open_win()` or [NeoVim API Documentation](<https://neovim.io/doc/user/api.html#nvim_open_win()>)
   - `width`: (type: `float`)
   - `x`: (type: `float`)
   - `y`: (type: `float`)
@@ -204,7 +205,7 @@ filetype = {
 },
 ```
 
-If you want to add some other language or some other command follow this structure `key = commans`.
+If you want to add some other language or some other command follow this structure `key = commands`.
 
 #### Json
 
@@ -522,8 +523,11 @@ require("harpoon.term").sendCommand(1, require("code_runner.commands").get_filet
 
 Your help is needed to make this plugin the best of its kind, be free to contribute, criticize (don't be soft) or contribute ideas. All PRs are welcome.
 
-# LICENCE
+## Similar Projects
 
----
+- [SnipRun](https://github.com/michaelb/sniprun)
+- [iron.nvim](https://github.com/Vigemus/iron.nvim)
+
+# LICENCE
 
 [MIT](https://github.com/CRAG666/code_runner.nvim/blob/main/LICENSE)
