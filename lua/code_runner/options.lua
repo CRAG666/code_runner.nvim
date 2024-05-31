@@ -1,40 +1,31 @@
+---@type CodeRunnerOptions
 local options = {
-  -- choose default mode (valid term, tab, float, toggle)
-  mode = "term",
-  -- add hot reload
-  hot_reload = true,
-  -- Focus on runner window(only works on toggle, term and tab mode)
-  focus = true,
-  -- startinsert (see ':h inserting-ex')
-  startinsert = false,
-  insert_prefix = "",
+  mode = "term", -- default display mode
+  hot_reload = true, -- hot reload enabled/disabled
+  focus = false, -- Focus window/viewport on the buffer (only works term and tab display mode)
+  startinsert = false, -- startinsert (see ':h inserting-ex')
+  insert_prefix = "", --  this key is controlled by startinsert
   term = {
-    --  Position to open the terminal, this option is ignored if mode ~= term
-    position = "bot",
-    -- window size, this option is ignored if mode == tab
-    size = 12,
+    position = "vert", --  Position to open the terminal, this option is ignored if mode ~= term
+    size = 64, -- window size, this option is ignored if mode == tab
   },
   float = {
     close_key = "<ESC>",
-    -- Window border (see ':h nvim_open_win')
-    border = "none",
+    border = "solid", -- Window border (see ':h nvim_open_win()' ; /border)
 
-    -- Num from `0 - 1` for measurements
-    height = 0.8,
-    width = 0.8,
+    height = 0.8, -- number from `0 - 1` for measurements
+    width = 0.8, -- number from `0 - 1` for measurements
     x = 0.5,
     y = 0.5,
 
-    -- Highlight group for floating window/border (see ':h winhl')
-    border_hl = "FloatBorder",
+    border_hl = "FloatBorder", -- Highlight group for floating window/border (see ':h winhl')
     float_hl = "Normal",
 
-    -- Transparency (see ':h winblend')
-    blend = 0,
+    blend = 0, -- Transparency (see ':h winblend')
   },
-  better_term = { -- Toggle mode replacement
+  better_term = {  -- Toggle mode replacement
     clean = false, -- Clean terminal before launch
-    number = 10, -- Use nil for dynamic number and set init
+    number = 10,   -- Use nil for dynamic number and set init
     init = nil,
   },
   filetype_path = "",
