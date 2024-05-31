@@ -1,6 +1,6 @@
 <h1 align='center'>Code_Runner</h1>
 
-<h4 align='center'>🔥 Code Runner for Neovim written in pure lua 🔥</h4>
+<h4 align='center'>  Code Runner for Neovim written in pure lua 󰢱</h4>
 
 <p align='center'><img src='https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif'></p>
 
@@ -10,7 +10,7 @@ When I was still in college it was common to try multiple programming languages,
 
 ## Requirements
 
-- Neovim (>= 0.8)
+- Neovim (>= 0.10)
 
 ## Install
 
@@ -18,7 +18,9 @@ When I was still in college it was common to try multiple programming languages,
 
 ```lua
 require("lazy").setup({
-  { "CRAG666/code_runner.nvim", config = true },
+  { "CRAG666/code_runner.nvim", 
+     event= "VeryLazy",
+  },
 }
 ```
 
@@ -118,24 +120,22 @@ require('code_runner').setup {
 
 All run commands allow restart. So, for example, if you use a command that does not have hot reload, you can call a command again and it will close the previous one and start again.
 
-- `:RunCode`: Runs based on file type, first checking if belongs to project, then if filetype mapping exists
-- `:RunCode <A_key_here>`: Execute command from its key in current directory.
-- `:RunFile <mode>`: Run the current file (optionally you can select an opening mode).
-- `:RunProject <mode>`: Run the current project(If you are in a project otherwise you will not do anything,).
-- `:RunClose`: Close runner(Doesn't work in better_term mode, use native plugin options)
-- `:CRFiletype` - Open json with supported files(Use only if you configured with json files).
-- `:CRProjects` - Open json with list of projects(Use only if you configured with json files).
+- `:Run`: Evaluate and write the current buffer based on filetype, first checking if belongs to project, then if filetype mapping exists
+- `:Run on <display_mode>`: Run the current file (optionally you can select an display mode).
+- `:Run with <filetype/cmd>`: Run the current file with the associate filetype/command (will run in the default display mode).
+- `:<range>Run`: Execute range can be combined with `on` or `with`.
+- `:Run project <display_mode>`: Run the current project (If you are in a project, optionally you can select an display mode).
+- `:Run closeRunnerWindow`: Close runner window/viewport (Doesn't work in better_term mode, use native plugin options)
+- `:Run openProjectFiletypes` - Open json with supported files (Use only if you configured with json files).
+- `:Run openProjectList` - Open json with list of projects(Use only if you configured with json files).
 
 Recommended mappings:
 
 ```lua
-vim.keymap.set('n', '<leader>r', ':RunCode<CR>', { noremap = true, silent = false })
-vim.keymap.set('n', '<leader>rf', ':RunFile<CR>', { noremap = true, silent = false })
-vim.keymap.set('n', '<leader>rft', ':RunFile tab<CR>', { noremap = true, silent = false })
-vim.keymap.set('n', '<leader>rp', ':RunProject<CR>', { noremap = true, silent = false })
-vim.keymap.set('n', '<leader>rc', ':RunClose<CR>', { noremap = true, silent = false })
-vim.keymap.set('n', '<leader>crf', ':CRFiletype<CR>', { noremap = true, silent = false })
-vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>rr', ':Run<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>rot', ':Run on tab<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>rp', ':Run project<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>rc', ':Run closeRunnerWindow<CR>', { noremap = true, silent = false })
 ```
 
 ## Parameters
@@ -146,13 +146,14 @@ This are the the configuration option you can pass to the `setup` function. To s
 
 Parameters:
 
-- `mode`: Mode in which you want to run. Are supported: "better_term", "float", "tab", "toggleterm" (type: `bool`)
-- `focus`: Focus on runner window. Only works on term and tab mode (type: `bool`)
-- `startinsert`: init in insert mode.Only works on term and tab mode (type: `bool`)
-- `term`: Configurations for the integrated terminal
+- `mode`: Display Mode in which you want to run. Supported: "term", "float", "tab","better_term", "toggleterm" (type: `string`, default: "term")
+- `focus`: Focus on runner window. Only works on "term" and "tab" display modes (type: `bool`, default: false)
+- `startinsert`: init in insert mode. Only works on "term" and "tab" display modes (type: `bool`, default: false)
+- `hot_reload`: Run automatically on buffer save, only works in "term" or similar (type: `bool`, default: true)
+- `term`: Configurations for the integrated terminal (type: `table`)
   - `position`: terminal position consult `:h windows` for options (type: `string`)
   - `size`: Size of the terminal window (type: `uint` | `float`)
-- `float`: Configurations for the float window
+- `float`: Configurations for the float window (type: `table`)
   - `border`: Window border options (type: `string`)
     - "none": No border (default).
     - "single": A single line box.
@@ -180,7 +181,7 @@ Parameters:
 ### Setup Filetypes
 
 > **Note**
-> The commands are runned in a shell. This means that you can't run neovim commands with [this](https://github.com/CRAG666/code_runner.nvim/issues/59).
+> The commands ran in a shell. This means that you can't run neovim commands with [this](https://github.com/CRAG666/code_runner.nvim/issues/59).
 
 #### Lua
 
@@ -242,8 +243,8 @@ If you want to add some other language or some other command follow this structu
 
 There are 3 main ways to configure the execution of a project (found in the example.)
 
-1. Use the default command defined in the filetypes file (see `:CRFiletype`or check your config). In order to do that it is necessary to define file_name.
-2. Use a different command than the one set in `CRFiletype` or your config. In this case, the file_name and command must be provided.
+1. Use the default command defined in the filetypes file (see `:Run openProjectFiletypes`or check your config). In order to do that it is necessary to define file_name.
+2. Use a different command than the one set in `Run openProjectFiletypes` or your config. In this case, the file_name and command must be provided.
 3. Use a command to run the project. It is only necessary to define command (You do not need to write navigate to the root of the project, because automatically the plugin is located in the root of the project).
 
 The key for each project is a pattern to match against the current filename of
@@ -316,7 +317,7 @@ project = {
 - `name`: Project name
 - `description`: Project description
 - `file_name`: Filename relative to root path
-- `command`: Command to run the project. It is possible to use variables exactly the same as we would in [`CRFiletype`](#commands).
+- `command`: Command to run the project. It is possible to use variables exactly the same as we would in [`Run openProjectFiletypes`](#commands).
 
 > **Warning**
 > Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described above.
