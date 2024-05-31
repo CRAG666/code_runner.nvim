@@ -1,3 +1,4 @@
+# https://github.com/kdheepak/panvimdoc
 name: panvimdoc
 
 on: [push]
@@ -14,4 +15,5 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "chore(docs): Auto generate docs"
+          version: "NVIM v0.10.0"
           branch: ${{ github.head_ref }}
