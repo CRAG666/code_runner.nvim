@@ -1,7 +1,7 @@
 local Job = require("plenary.job")
 local hook = require("code_runner.hooks.autocmd")
 
-function replaceElement(table, replacement_table)
+local function replaceElement(table, replacement_table)
   for i, value in ipairs(table) do
     if replacement_table[value] then
       table[i] = replacement_table[value]

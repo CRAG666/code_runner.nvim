@@ -1,7 +1,7 @@
 -- Load json and convert to table
 ---@param json_path string
 ---@return table | nil
-function load_as_table(json_path)
+local function load_as_table(json_path)
   local contents = ""
   local file = io.open(json_path, "r")
 
