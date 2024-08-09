@@ -47,6 +47,7 @@ Please see my config [code_runner.lua](https://github.com/CRAG666/dotfiles/blob/
 - Run code in a tab
 - Run code in a split
 - Run code with toggleTerm
+- Run code in a split tmux pane(you need [preservim/vimux](https://github.com/preservim/vimux/) in your dependencies)
 - Custom hooks, for example preview in files like markdown, hot reload enabled.
   see [Hooks](#hooks)
 - Assign commands to projects without files in the root of the project
@@ -146,13 +147,14 @@ This are the the configuration option you can pass to the `setup` function. To s
 
 Parameters:
 
-- `mode`: Mode in which you want to run. Are supported: "better_term", "float", "tab", "toggleterm" (type: `bool`)
+- `mode`: Mode in which you want to run. Are supported: "better_term", "float", "tab", "toggleterm", "vimux" (type: `bool`)
 - `focus`: Focus on runner window. Only works on term and tab mode (type: `bool`)
 - `startinsert`: init in insert mode.Only works on term and tab mode (type: `bool`)
 - `term`: Configurations for the integrated terminal
   - `position`: terminal position consult `:h windows` for options (type: `string`)
   - `size`: Size of the terminal window (type: `uint` | `float`)
 - `float`: Configurations for the float window
+
   - `border`: Window border options (type: `string`)
     - "none": No border (default).
     - "single": A single line box.
@@ -160,7 +162,7 @@ Parameters:
     - "rounded": Like "single", but with rounded corners ("╭" etc.).
     - "solid": Adds padding by a single whitespace cell.
     - "shadow": A drop shadow effect by blending with the background.
-    - For more border options see `:h nvim_open_win()` or [NeoVim API Documentation](https://neovim.io/doc/user/api.html#nvim_open_win())
+    - For more border options see `:h nvim_open_win()` or [NeoVim API Documentation](<https://neovim.io/doc/user/api.html#nvim_open_win()>)
   - `width`: (type: `float`)
   - `x`: (type: `float`)
   - `y`: (type: `float`)
