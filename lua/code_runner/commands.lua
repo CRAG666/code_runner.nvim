@@ -177,6 +177,16 @@ M.modes = {
     local tcmd = string.format('TermExec cmd="%s"', command)
     vim.cmd(tcmd)
   end,
+  vimux = function(command, ...)
+    if vim.fn.exists(':VimuxRunCommand') == 2 then
+      vim.fn.VimuxRunCommand(command)
+    else
+      vim.notify(
+        "The 'VimuxRunCommand' does not exist. Please add 'preservim/vimux' plugin to your dependencies.",
+        vim.log.levels.ERROR
+      )
+    end
+  end,
 }
 --- Run according to a mode
 ---@param command string
