@@ -341,15 +341,6 @@ This module allows us to send a command to compile to pdf as well as show the re
 {
 ...
     filetype = {
-      -- Using pdflatex compiler
-      -- tex = function(...)
-      --   require("code_runner.hooks.preview_pdf").run {
-      --     command = "pdflatex",
-      --     args = { "-output-directory", "/tmp", "$fileName" },
-      --     preview_cmd = "/bin/zathura --fork",
-      --     overwrite_output = "/tmp",
-      --   }
-      -- end,
       -- Using tectonic compiler
       tex = function(...)
         require("code_runner.hooks.ui").select {
@@ -363,13 +354,9 @@ This module allows us to send a command to compile to pdf as well as show the re
             }
           end,
           Project = function()
-            local cr_au = require "code_runner.hooks.autocmd"
-            cr_au.stop_job()
-            os.execute "tectonic -X build --keep-logs --open &> /dev/null &"
-            local fn = function()
-              os.execute "tectonic -X build --keep-logs &> /dev/null &"
-            end
-            cr_au.create_au_write(fn)
+            -- this is my personal config for compiling a project with tectonic
+            -- for example --keep-logs is used to keep the logs of the compilation, see tectonic -X build --help for more info
+            require("code_runner.hooks.tectonic").build(preview_cmd, { "--keep-logs" }) -- Build the project, default command is tectonic -X build
           end,
         }
       end,
