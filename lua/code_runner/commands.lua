@@ -1,6 +1,7 @@
 local o = require("code_runner.options")
 local pattern = "crunner_"
 local au_cd = require("code_runner.hooks.autocmd")
+local utils = require("code_runner.hooks.utils")
 
 -- Replace variables with full paths
 ---@param command string command to run the path
@@ -137,8 +138,8 @@ local function execute(command, bufname, prefix)
   fn()
 
   if opt.hot_reload then
-    au_cd.stop_job()
-    au_cd.create_au_write(fn)
+    id = au_cd.create_on_write(fn, vim.fn.expand("%:p"))
+    utils.create_stop_hot_reload(id)
   end
 end
 
@@ -178,7 +179,7 @@ M.modes = {
     vim.cmd(tcmd)
   end,
   vimux = function(command, ...)
-    if vim.fn.exists(':VimuxRunCommand') == 2 then
+    if vim.fn.exists(":VimuxRunCommand") == 2 then
       vim.fn.VimuxRunCommand(command)
     else
       vim.notify(

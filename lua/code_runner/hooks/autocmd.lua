@@ -1,27 +1,18 @@
-local commands = {}
 local M = {}
 
-function M.create_au_write(fn)
-  local bufnr = vim.api.nvim_get_current_buf()
+function M.create_on_write(fn, pattern)
+  pattern = pattern or "*"
   local group = vim.api.nvim_create_augroup("CodeRunnerJobPosWrite", { clear = true })
   local id = vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = group,
-    buffer = bufnr,
+    pattern = pattern,
     callback = fn,
   })
-  commands[bufnr] = id
+  return id
 end
 
-local function stop(bufnr)
-  if commands[bufnr] ~= nil then
-    vim.api.nvim_del_autocmd(commands[bufnr])
-    commands[bufnr] = nil
-  end
-end
-
-function M.stop_job()
-  local bufnr = vim.api.nvim_get_current_buf()
-  stop(bufnr)
+function M.stop(id)
+  vim.api.nvim_del_autocmd(id)
 end
 
 return M

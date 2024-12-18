@@ -1,5 +1,6 @@
-local Job = require("plenary.job")
-local hook = require("code_runner.hooks.autocmd")
+local au = require("code_runner.hooks.autocmd")
+local notify = require("code_runner.hooks.notify")
+local utils = require("code_runner.hooks.utils")
 
 function replaceElement(table, replacement_table)
   for i, value in ipairs(table) do
@@ -18,47 +19,49 @@ end
 ---@param command_config CommandConfig
 ---@param to string
 ---@param open boolean?
-local function convertToPdf(command_config, to, open)
-  open = open or false
-  Job:new({
-    command = command_config.command,
-    args = command_config.args,
-    on_exit = vim.schedule_wrap(function(_, return_val)
-      if return_val == 1 then
-        vim.notify("Could not comvert to PDF", vim.log.levels.ERROR)
-        return
-      end
+local function convertToPdf(command_config, to)
+  local on_exit = function(obj)
+    if obj.code > 0 then
+      notify.error("Error in compiling!!", "CodeRunner Hook")
+      utils.preview_close()
+    else
+      notify.info("Finish compiling!!", "CodeRunner Hook")
+      utils.preview_open(to, command_config.preview_cmd)
+    end
+  end
 
-      if open then
-        os.execute(command_config.preview_cmd .. " " .. to)
-      end
-    end),
-  }):start()
+  vim.system(vim.list_extend(command_config.command, command_config.args), {}, vim.schedule_wrap(on_exit))
 end
+
+local active_talbe = {}
 
 ---@param command_config CommandConfig Table of options
 local run = function(command_config)
-  hook.stop_job()
-  local fileName = vim.fn.expand("%:p")
-  if fileName == nil then
-    return
-  end
+  bufnr = vim.api.nvim_get_current_buf()
+  if vim.tbl_isempty(active_talbe) or vim.tbl_get(active_tamble, bufnr) then
+    local fileName = vim.fn.expand("%:p")
+    if fileName == nil then
+      return
+    end
 
-  local tmpFile = os.tmpname() .. ".pdf"
-  if command_config.overwrite_output ~= nil then
-    tmpFile = command_config.overwrite_output .. "/" .. vim.fn.fnamemodify(fileName, ":t:r") .. ".pdf"
-  end
+    local tmpFile = os.tmpname() .. ".pdf"
+    if command_config.overwrite_output ~= nil then
+      tmpFile = command_config.overwrite_output .. "/" .. vim.fn.fnamemodify(fileName, ":t:r") .. ".pdf"
+    end
 
-  replaceElement(command_config.args, {
-    ["$fileName"] = fileName,
-    ["$tmpFile"] = tmpFile,
-  })
+    replaceElement(command_config.args, {
+      ["$fileName"] = fileName,
+      ["$tmpFile"] = tmpFile,
+    })
 
-  local fn = function()
-    convertToPdf(command_config, tmpFile)
+    local fn = function()
+      convertToPdf(command_config, tmpFile)
+    end
+    id = au.create_on_write(fn, fileName)
+    active_talbe[bufnr] = id
+  else
+    au.stop(active_talbe[bufnr])
   end
-  hook.create_au_write(fn)
-  convertToPdf(command_config, tmpFile, true)
 end
 
 return {
