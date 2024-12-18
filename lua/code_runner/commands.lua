@@ -2,6 +2,7 @@ local o = require("code_runner.options")
 local pattern = "crunner_"
 local au_cd = require("code_runner.hooks.autocmd")
 local utils = require("code_runner.hooks.utils")
+local notify = require("code_runner.hooks.notify")
 
 -- Replace variables with full paths
 ---@param command string command to run the path
@@ -42,16 +43,18 @@ end
 ---@return table?
 local function getProjectRootPath()
   local projects = o.get().project
-  local file_path = vim.fn.expand("%:p")
+  local file_path = vim.fn.expand("%:p:h")
+
   for project_path, _ in pairs(projects) do
-    path_full = vim.fs.normalize(project_path)
-    local path_start, path_end = string.find(file_path, path_full)
-    if path_start == 1 then
-      current_project = projects[project_path]
-      current_project["path"] = string.sub(file_path, path_start, path_end)
+    local path_full = vim.fs.normalize(project_path)
+    local issubdir = string.sub(file_path, 1, #path_full) == path_full
+    if issubdir then
+      local current_project = projects[project_path]
+      current_project["path"] = path_full
       return current_project
     end
   end
+  return nil
 end
 
 --- Return a command for filetype
@@ -263,22 +266,23 @@ end
 
 --- Run a project associated with the current path
 ---@param mode string?
----@param notify boolean?
+---@param notify_enable boolean?
 ---@return boolean
-function M.run_project(mode, notify)
-  if notify == nil then
-    notify = true
+function M.run_project(mode, notify_enable)
+  if notify_enable == nil then
+    notify_enable = true
   end
   local project = M.get_project_command()
   if project then
+    notify.info("File execution as project", "Project")
     if not mode then
       mode = project.mode
     end
     runMode(project.command, project.name, mode)
     return true
   end
-  if notify then
-    vim.notify(":( There is no project associated with this path", vim.log.levels.INFO, { title = "Project" })
+  if notify_enable then
+    notify.warn(":( There is no project associated with this path", "Project")
   end
   return false
 end
@@ -315,8 +319,6 @@ function M.run_close()
   else
     closeRunner()
   end
-  -- stop auto_cmd
-  au_cd.stop_job()
 end
 
 return M
