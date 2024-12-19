@@ -1,34 +1,36 @@
+local Singleton = require("code_runner.singleton")
+local notify = require("code_runner.hooks.notify")
+
+-- Definition of the FileType class
 local FileType = {}
 FileType.__index = FileType
 
---- Crea una nueva instancia de FileType
-function FileType:new(utils)
-  assert(utils, "utils es requerido") -- Validación directa
-  local self = setmetatable({}, FileType)
+--- Constructor for the FileType class.
+---@param utils table A utility object, required for execution.
+function FileType:ctor(utils)
+  assert(utils, "utils is required") -- Direct validation
   self.opt = utils.opt
   self.utils = utils
-  return self
 end
 
---- Obtiene el comando asociado al tipo de archivo actual
----@return string Comando correspondiente al tipo de archivo
+--- Retrieves the command associated with the current file type.
+---@return string The command for the current file type, or an empty string if none exists.
 function FileType:getCommand()
   return self.utils:getCommand(vim.bo.filetype) or ""
 end
 
---- Ejecuta el archivo actual según su tipo de archivo
----@param mode string? Modo de ejecución opcional
+--- Executes the current file based on its file type.
+---@param mode string? The mode in which the command should run.
 function FileType:run(mode)
   local command = self:getCommand()
   if command ~= "" then
     if self.opt.before_run_filetype then
-      self.opt.before_run_filetype() -- Llama a before_run_filetype si está definido
+      self.opt.before_run_filetype()
     end
     self.utils:runMode(command, vim.fn.expand("%:t:r"), mode)
     return
   end
 
-  -- Comandos específicos de Neovim
   local nvim_files = {
     lua = "luafile %",
     vim = "source %",
@@ -37,19 +39,19 @@ function FileType:run(mode)
   if cmd then
     vim.cmd(cmd)
   else
-    vim.notify("No hay comando disponible para este tipo de archivo", vim.log.levels.WARN)
+    notify.warn("No command available for this file type", "CodeRunner")
   end
 end
 
---- Ejecuta un comando específico desde una función
----@param cmd string|table Comando como cadena o tabla
+--- Executes a specific command provided as a function parameter.
+---@param cmd string|table The command to execute, either as a string or a table.
 function FileType:run_from_fn(cmd)
   local command = type(cmd) == "table" and table.concat(cmd, " ") or cmd
-  assert(type(command) == "string", "El parámetro cmd debe ser una cadena o una tabla")
-
+  assert(type(command) == "string", "The parameter 'cmd' must be a string or a table")
   local path = vim.fn.expand("%:p")
   local expanded_command = self.utils:replaceVars(command, path)
   self.utils:runMode(expanded_command, vim.fn.expand("%:t:r"))
 end
 
-return FileType
+-- Convert FileType into a singleton
+return Singleton(FileType)

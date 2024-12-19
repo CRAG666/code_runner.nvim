@@ -1,16 +1,15 @@
-local au_cd = require("code_runner.hooks.autocmd")
 local notify = require("code_runner.hooks.notify")
+local Singleton = require("code_runner.singleton")
 local pattern = "crunner_"
 local Utils = {}
 Utils.__index = Utils
 
-function Utils:new(opt)
-  local self = setmetatable({}, Utils)
+function Utils:ctor(opt)
+  assert(opt, "opt is requiered") -- Validación directa
   self.opt = opt
   self.btm_number = self.opt.better_term.init
   self._user_argument = {}
   self.modes = self:getModes()
-  return self
 end
 
 function Utils:setUserArgument(user_argument)
@@ -68,13 +67,12 @@ end
 
 function Utils:execute(command, bufname, prefix)
   prefix = prefix or self.opt.prefix
+  self:close(bufname)
   bufname = "file " .. bufname
   local current_win_id = vim.api.nvim_get_current_win()
 
-  self:close(bufname)
   vim.cmd(prefix)
   vim.fn.termopen(command)
-  vim.cmd("norm G")
 
   vim.opt_local.relativenumber = false
   vim.opt_local.number = false
@@ -90,16 +88,9 @@ function Utils:execute(command, bufname, prefix)
   else
     vim.fn.win_gotoid(current_win_id)
   end
-
-  if self.opt.hot_reload then
-    local id = au_cd.create_on_write(function()
-      self:execute(command, bufname, prefix)
-    end, vim.fn.expand("%:p"))
-    utils.create_stop_hot_reload(id)
-  end
 end
 
-function Utils:betterTermM(command)
+function Utils:betterTerm(command)
   local ok, betterTerm = pcall(require, "betterTerm")
   if ok then
     self.btm_number = self.opt.better_term.number or (self.btm_number + 1)
@@ -131,7 +122,7 @@ function Utils:getModes()
       require("code_runner.floats").floating(command)
     end,
     better_term = function(command)
-      self:betterTermM(command)
+      self:betterTerm(command)
     end,
     toggleterm = function(command)
       vim.cmd(string.format('TermExec cmd="%s"', command))
@@ -148,4 +139,4 @@ function Utils:getModes()
     end,
   }
 end
-return Utils
+return Singleton(Utils)

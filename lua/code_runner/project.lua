@@ -1,20 +1,20 @@
 local notify = require("code_runner.hooks.notify")
+local Singleton = require("code_runner.singleton")
 
--- Define la clase Project
+-- Define the Project class
 local Project = {}
 Project.__index = Project
 
--- Constructor
-function Project:new(utils)
-  assert(utils, "utils is requiered") -- Validación directa
-  local self = setmetatable({}, Project)
+--- Constructor for the Project class.
+---@param utils table A utility object, required for execution.
+function Project:ctor(utils)
+  assert(utils, "utils is required") -- Direct validation
   self.opt = utils.opt
   self.utils = utils
   self.context = nil
-  return self
 end
 
--- Método para establecer la ruta raíz
+--- Sets the root path of the project.
 function Project:setRootPath()
   local file_path = vim.fn.expand("%:p:h")
   for project_path, project_data in pairs(self.opt.project) do
@@ -27,7 +27,7 @@ function Project:setRootPath()
   end
 end
 
--- Método para configurar el comando
+--- Configures the command for the project.
 function Project:setCommand()
   if not self.context then
     return
@@ -46,9 +46,12 @@ function Project:setCommand()
   end
 end
 
--- Método para ejecutar el proyecto
+--- Executes the project with the specified mode.
+---@param mode string? The mode in which to run the project.
+---@param notify_enable boolean? Whether notifications are enabled (default: true).
+---@return boolean True if the project runs successfully, false otherwise.
 function Project:run(mode, notify_enable)
-  notify_enable = notify_enable ~= false -- Por defecto, habilitar notificaciones
+  notify_enable = notify_enable ~= false -- Enable notifications by default
 
   self:setRootPath()
   if self.context then
@@ -66,12 +69,12 @@ function Project:run(mode, notify_enable)
   return false
 end
 
--- Método para obtener el comando actual
+--- Retrieves the current command for the project.
+---@return string|nil The command if available, or nil if no project is associated.
 function Project:getCommand()
   self:setRootPath()
   self:setCommand()
   return self.context and self.context.command or nil
 end
 
--- Exporta el módulo
-return Project
+return Singleton(Project)

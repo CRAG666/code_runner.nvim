@@ -1,102 +1,100 @@
-local o = require("code_runner.options")
+local Options = require("code_runner.options")
 local FileType = require("code_runner.filetype")
 local Project = require("code_runner.project")
 local Utils = require("code_runner.utils")
 
--- Variables globales dentro del módulo
-local ft, project, utils = nil, nil, nil
+local first_run = true
+
+--- Initializes the utility module with options and user arguments.
+---@param args table User-provided arguments.
+---@return utils Utils initialized utility object.
+local function get_utils(args)
+  local options = {}
+  if first_run then
+    options = Options.get()
+    first_run = false
+  end
+  local utils = Utils.new(options)
+  utils:setUserArgument(args)
+  return utils
+end
+
+--- Initializes the file type module.
+---@return FileType The initialized file type object.
+local function get_filetype()
+  return FileType.new(get_utils({}))
+end
+
+--- Initializes the project module.
+---@return Project The initialized project object.
+local function get_project()
+  return Project.new(get_utils({}))
+end
 
 local M = {}
 
---- Inicializa utils con las opciones proporcionadas
----@param opt table
-function M.set_utils(opt)
-  utils = Utils:new(opt)
-end
-
---- Ejecuta el código para un tipo de archivo o proyecto
----@param filetype string?
----@param user_argument table?
+--- Runs code based on file type or project context.
+---@param filetype string? The specific file type to execute, if provided.
+---@param user_argument table? Additional user arguments for execution.
 function M.run_code(filetype, user_argument)
-  local opt = o.get()
-  utils:setUserArgument(user_argument)
-
-  ft = FileType:new(utils)
+  local utils = get_utils(user_argument)
 
   if filetype and filetype ~= "" then
-    local cmd_to_execute = ft:getCommand(filetype)
+    local cmd_to_execute = FileType:getCommand(filetype)
     if cmd_to_execute then
-      opt.before_run_filetype()
-      ft:runMode(cmd_to_execute, vim.fn.expand("%:t:r"))
+      utils.opt.before_run_filetype()
+      utils:runMode(cmd_to_execute, vim.fn.expand("%:t:r"))
       return
     end
-    return -- Salir si es una función Lua sin salida
+    return -- Exit if there is no valid command.
   end
 
-  -- Proceder si no hay argumentos de entrada
-  project = Project:new(utils)
-  local context = project:run(false)
+  -- Fallback to project or file type execution
+  local context = get_project():run(false)
   if not context then
-    ft:run()
+    get_filetype():run()
   end
 end
 
---- Obtiene el comando del proyecto actual
----@return string?
+--- Retrieves the current project command.
+---@return string? The project-specific command.
 function M.get_project_command()
-  if not project then
-    utils:setUserArgument({})
-    project = Project:new(utils)
-  end
-  return project:getCommand()
+  return get_project():getCommand()
 end
 
---- Ejecuta el proyecto en un modo específico
----@param mode string?
+--- Runs the project in a specific mode.
+---@param mode string? The execution mode.
 function M.run_project(mode)
-  if not project then
-    utils:setUserArgument({})
-    project = Project:new(utils)
-  end
-  project:run(mode)
+  get_project():run(mode)
 end
 
---- Obtiene el comando del tipo de archivo actual
----@return string?
+--- Retrieves the current file type command.
+---@return string? The file type-specific command.
 function M.get_filetype_command()
-  if not ft then
-    utils:setUserArgument({})
-    ft = FileType:new(utils)
-  end
-  return ft:getCommand()
+  return get_filetype():getCommand()
 end
 
---- Ejecuta el tipo de archivo en un modo específico
----@param mode string?
+--- Runs the file type in a specific mode.
+---@param mode string? The execution mode.
 function M.run_filetype(mode)
-  if not ft then
-    utils:setUserArgument({})
-    ft = FileType:new(utils)
-  end
-  ft:run(mode)
+  get_filetype():run(mode)
 end
 
---- Cierra la ejecución actual
+--- Closes the currently running execution context.
 function M.run_close()
-  if not project then
-    project = Project:new(utils)
-  end
   local bufname = nil
+  local project = get_project()
   project:setRootPath()
   if project.context then
-    bufname = pattern .. project.context.name
+    bufname = "pattern" .. project.context.name
   end
-  utils:close(bufname)
+  get_utils({}):close(bufname)
 end
 
---- Obtiene los modos disponibles
----@return table
+--- Retrieves the available modes.
+---@return table The table of available modes.
 function M.get_modes()
+  local utils = get_utils({})
   return utils and utils.modes or {}
 end
 

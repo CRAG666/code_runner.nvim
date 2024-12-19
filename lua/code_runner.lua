@@ -1,4 +1,7 @@
 local commands = require("code_runner.commands")
+local au_cd = require("code_runner.hooks.autocmd")
+local utils = require("code_runner.hooks.utils")
+local notify = require("code_runner.hooks.notify")
 local o = require("code_runner.options")
 
 local M = {}
@@ -13,7 +16,7 @@ local function setup(opt)
     if opt.filetype_path ~= "" then
       local filetype = load_json_as_table(opt.filetype_path)
       if not filetype then
-        vim.notify("Error trying to load filetypes commands", vim.log.levels.ERROR, { title = "Code Runner Error" })
+        notify.error("Error trying to load filetypes commands", "Code Runner Error")
       end
       opt.filetype = filetype or {}
     end
@@ -25,7 +28,7 @@ local function setup(opt)
     if opt.project_path ~= "" then
       local project = load_json_as_table(opt.project_path)
       if not project then
-        vim.notify("Error trying to load project commands", vim.log.levels.ERROR, { title = "Code Runner Error" })
+        notify.error("Error trying to load project commands", "Code Runner Error")
       end
       opt.project = project or {}
     end
@@ -36,13 +39,11 @@ local function setup(opt)
 
   -- Message if json file not exist
   if vim.tbl_isempty(o.get().filetype) then
-    vim.notify(
+    notify.error(
       "Not exist command for filetypes or format invalid, if use json please execute :CRFiletype or if use lua edit setup",
-      vim.log.levels.ERROR,
-      { title = "Code Runner Error" }
+      "Code Runner Error"
     )
   end
-  commands.set_utils(o.get())
 end
 
 local function open_json(json_path)
@@ -106,6 +107,13 @@ M.setup = function(user_options)
   M.run_code = commands.run_code
   M.run_filetype = commands.run_filetype
   M.run_project = commands.run_project
+  M.run_close = commands.run_close
+  M.get_filetype_command = commands.get_filetype_command
+  M.get_project_command = commands.get_project_command
+  if o.get().hot_reload then
+    local id = au_cd.create_on_write(M.run_code)
+    utils.create_stop_hot_reload(id)
+  end
 end
 
 return M

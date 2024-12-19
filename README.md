@@ -126,7 +126,7 @@ All run commands allow restart. So, for example, if you use a command that does 
 - `:RunClose`: Close runner(Doesn't work in better_term mode, use native plugin options)
 - `:CRFiletype` - Open json with supported files(Use only if you configured with json files).
 - `:CRProjects` - Open json with list of projects(Use only if you configured with json files).
-- `:CrStopHr` - Stop Hot Reload(Use only if `hot_reload` is true).
+- `:CrStopHr` - Stop Hot Reload(Use only if `hot_reload` is true, experimental feature).
 
 Recommended mappings:
 
@@ -179,7 +179,7 @@ Parameters:
 - `filetype_path`: Absolute path to json file config (type: `absolute paths`)
 - `project`: If you prefer to use lua instead of json files, you can add your settings by project here (type: `table`)
 - `project_path`: Absolute path to json file config (type: `absolute paths`)
-- `hot_reload`: Use only if not configured any hooks (type: `bool`)
+- `hot_reload`: Use only if not configured any hooks (type: `bool`), experimental feature. Its better create autocommands for the filetypes you want to hot reload.
 
 ### Setup Filetypes
 

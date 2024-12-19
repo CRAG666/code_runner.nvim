@@ -1,9 +1,9 @@
 local options = {
   -- choose default mode (valid term, tab, float, toggle, vimux)
   mode = "term",
-  -- add hot reload
-  hot_reload = true,
-  -- Focus on runner window(only works on toggle, term and tab mode)
+  -- add hot reload (Experimental)
+  hot_reload = false,
+  -- Focus on runner window(only works on term and tab mode)
   focus = true,
   -- startinsert (see ':h inserting-ex')
   startinsert = false,
@@ -32,16 +32,14 @@ local options = {
     -- Transparency (see ':h winblend')
     blend = 0,
   },
-  better_term = {  -- Toggle mode replacement
+  better_term = { -- Toggle mode replacement
     clean = false, -- Clean terminal before launch
-    number = 10,   -- Use nil for dynamic number and set init
+    number = 10, -- Use nil for dynamic number and set init
     init = nil,
   },
   filetype_path = "",
   -- Execute before executing a file
-  before_run_filetype = function()
-    vim.cmd(":w")
-  end,
+  before_run_filetype = function() end,
   filetype = {
     javascript = "node",
     java = {
