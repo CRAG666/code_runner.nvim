@@ -1,6 +1,8 @@
 local commands = require("code_runner.commands")
 local o = require("code_runner.options")
 
+local M = {}
+
 local function setup(opt)
   -- Load json config and convert to table
   local load_json_as_table = require("code_runner.load_json")
@@ -40,6 +42,7 @@ local function setup(opt)
       { title = "Code Runner Error" }
     )
   end
+  commands.set_utils(o.get())
 end
 
 local function open_json(json_path)
@@ -56,8 +59,6 @@ local function completion(ArgLead, options)
   end
   return options
 end
-
-local M = {}
 
 M.open_filetype_suported = function()
   open_json(o.get().filetype_path)
@@ -80,7 +81,7 @@ M.setup = function(user_options)
   end
 
   -- Commands with autocomplete
-  local modes = vim.tbl_keys(commands.modes)
+  local modes = vim.tbl_keys(commands.get_modes())
   -- Format:
   --  CoomandName = { function, option_list }
   local completion_cmds = {
