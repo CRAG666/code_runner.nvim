@@ -105,6 +105,7 @@ M.setup = function(user_options)
     })
   end
   M.run_code = commands.run_code
+  M.run_from_fn = commands.run_from_fn
   M.run_filetype = commands.run_filetype
   M.run_project = commands.run_project
   M.run_close = commands.run_close

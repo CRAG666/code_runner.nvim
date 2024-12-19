@@ -56,6 +56,11 @@ function M.run_code(filetype, user_argument)
   end
 end
 
+---@param cmd string? The command to execute.
+function M.run_from_fn(cmd)
+  return get_filetype():runFromFn(cmd)
+end
+
 --- Retrieves the current project command.
 ---@return string? The project-specific command.
 function M.get_project_command()

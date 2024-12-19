@@ -45,7 +45,7 @@ end
 
 --- Executes a specific command provided as a function parameter.
 ---@param cmd string|table The command to execute, either as a string or a table.
-function FileType:run_from_fn(cmd)
+function FileType:runFromFn(cmd)
   local command = type(cmd) == "table" and table.concat(cmd, " ") or cmd
   assert(type(command) == "string", "The parameter 'cmd' must be a string or a table")
   local path = vim.fn.expand("%:p")

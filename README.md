@@ -131,13 +131,24 @@ All run commands allow restart. So, for example, if you use a command that does 
 Recommended mappings:
 
 ```lua
-vim.keymap.set('n', '<leader>r', ':RunCode<CR>', { noremap = true, silent = false })
+vim.keymap.set('n', '<leader>rr', ':RunCode<CR>', { noremap = true, silent = false })
 vim.keymap.set('n', '<leader>rf', ':RunFile<CR>', { noremap = true, silent = false })
 vim.keymap.set('n', '<leader>rft', ':RunFile tab<CR>', { noremap = true, silent = false })
 vim.keymap.set('n', '<leader>rp', ':RunProject<CR>', { noremap = true, silent = false })
 vim.keymap.set('n', '<leader>rc', ':RunClose<CR>', { noremap = true, silent = false })
 vim.keymap.set('n', '<leader>crf', ':CRFiletype<CR>', { noremap = true, silent = false })
 vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent = false })
+```
+lua functions:
+
+```lua
+require("code_runner").run_code() -- Runs based on file type, first checking if belongs to project, then if filetype mapping exists.
+require("code_runner").run_from_fn() -- Run any command.
+require("code_runner").run_filetype() -- Run the current file (optionally you can select an opening mode).
+require("code_runner").run_project() -- Run the current project(If you are in a project otherwise you will not do anything,).
+require("code_runner").run_close()   -- Close runner(Doesn't work in better_term mode, use native plugin options).
+require("code_runner").get_filetype_command() -- Get the current command for this filetype
+require("code_runner").get_project_command() -- Get the current command for this project
 ```
 
 ## Parameters
@@ -477,8 +488,8 @@ end
 These functions could be useful if you intend to create plugins around code_runner, currently only the file type and current project commands can be accessed respectively
 
 ```lua
-require("code_runner.commands").get_filetype_command() -- get the current command for this filetype
-require("code_runner.commands").get_project_command() -- get the current command for this project
+require("code_runner").get_filetype_command() -- get the current command for this filetype
+require("code_runner").get_project_command() -- get the current command for this project
 ```
 
 ### Harpoon
