@@ -23,7 +23,7 @@ end
 function M.create_stop_hot_reload(id)
   vim.api.nvim_create_user_command("CrStopHr", function(opts)
     require("code_runner.hooks.autocmd").stop(id)
-  end)
+  end, { desc = "Stop hot reload for code runner", nargs = 0 })
 end
 
 return M
