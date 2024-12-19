@@ -3,22 +3,6 @@ local FileType = require("code_runner.filetype")
 local Project = require("code_runner.project")
 local Utils = require("code_runner.utils")
 
---- Close runner
----@param bufname string?
-local function closeRunner(bufname)
-  bufname = bufname or pattern .. vim.fn.expand("%:t:r")
-  local current_buf = vim.fn.bufname("%")
-
-  if string.find(current_buf, pattern) then
-    vim.cmd("bwipeout!")
-  else
-    local bufid = vim.fn.bufnr(bufname)
-    if bufid ~= -1 then
-      vim.cmd("bwipeout! " .. bufid)
-    end
-  end
-end
-
 -- Variables globales dentro del módulo
 local ft, project, utils = nil, nil, nil
 
@@ -99,14 +83,15 @@ end
 
 --- Cierra la ejecución actual
 function M.run_close()
-  if project then
-    project:setRootPath()
-    if project.context then
-      closeRunner(pattern .. project.context.name)
-    else
-      closeRunner()
-    end
+  if not project then
+    project = Project:new(utils)
   end
+  local bufname = nil
+  project:setRootPath()
+  if project.context then
+    bufname = pattern .. project.context.name
+  end
+  utils:close(bufname)
 end
 
 --- Obtiene los modos disponibles

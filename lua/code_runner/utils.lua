@@ -50,12 +50,28 @@ function Utils:getCommand(filetype, path)
   return command and self:replaceVars(command, path) or nil
 end
 
+--- Close runner
+---@param bufname string?
+function Utils:close(bufname)
+  bufname = bufname or pattern .. vim.fn.expand("%:t:r")
+  local current_buf = vim.fn.bufname("%")
+
+  if string.find(current_buf, pattern) then
+    vim.cmd("bwipeout!")
+  else
+    local bufid = vim.fn.bufnr(bufname)
+    if bufid ~= -1 then
+      vim.cmd("bwipeout! " .. bufid)
+    end
+  end
+end
+
 function Utils:execute(command, bufname, prefix)
   prefix = prefix or self.opt.prefix
   bufname = "file " .. bufname
   local current_win_id = vim.api.nvim_get_current_win()
 
-  self:closeRunner(bufname)
+  self:close(bufname)
   vim.cmd(prefix)
   vim.fn.termopen(command)
   vim.cmd("norm G")
