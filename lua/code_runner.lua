@@ -112,7 +112,9 @@ M.setup = function(user_options)
   M.get_filetype_command = commands.get_filetype_command
   M.get_project_command = commands.get_project_command
   if o.get().hot_reload then
-    local id = au_cd.create_on_write(M.run_code)
+    local id = au_cd.create_on_write(function(...)
+      commands.run_code()
+    end)
     utils.create_stop_hot_reload(id)
   end
 end

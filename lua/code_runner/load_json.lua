@@ -8,7 +8,7 @@ function load_as_table(json_path)
   if file then
     -- read all contents of file into a string
     contents = file:read("*a")
-    local status, result = pcall(vim.fn.json_decode, contents)
+    local status, result = pcall(vim.json.decode, contents)
     io.close(file)
     if status then
       return result

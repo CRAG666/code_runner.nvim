@@ -40,7 +40,7 @@ function M.run_code(filetype, user_argument)
   local utils = get_utils(user_argument)
 
   if filetype and filetype ~= "" then
-    local cmd_to_execute = FileType:getCommand(filetype)
+    local cmd_to_execute = utils:getCommand(filetype)
     if cmd_to_execute then
       utils.opt.before_run_filetype()
       utils:runMode(cmd_to_execute, vim.fn.expand("%:t:r"))
