@@ -125,7 +125,11 @@ function Utils:getModes()
       self:betterTerm(command)
     end,
     toggleterm = function(command)
-      vim.cmd(string.format('TermExec cmd="%s"', command))
+      if vim.fn.exists(":TermExec") == 2 then
+        vim.cmd(string.format('TermExec cmd="%s"', command))
+      else
+        notify.error("The 'TermExec' does not exist.", "Toggleterm")
+      end
     end,
     vimux = function(command)
       if vim.fn.exists(":VimuxRunCommand") == 2 then
