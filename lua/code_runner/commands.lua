@@ -50,7 +50,7 @@ function M.run_code(filetype, user_argument)
   end
 
   -- Fallback to project or file type execution
-  local context = get_project():run(false)
+  local context = get_project():run(nil, false)
   if not context then
     get_filetype():run()
   end
