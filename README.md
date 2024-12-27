@@ -102,7 +102,7 @@ require('code_runner').setup({
 > A common mistake is using relative paths instead of absolute paths in . Use absolute paths in configurations or else the plugin won't work, in case you like to use short or relative paths you can use something like this `vim.fn.expand('~/.config/nvim/project_manager.json')`
 
 > **Note**
-> If you want to change where the code is displayed you need to specify the [`mode`]() attribute in the setup `function`
+> If you want to change where the code is displayed, you need to specify the [`mode`]() attribute in the setup `function`
 
 ```lua
 -- this is a config example
