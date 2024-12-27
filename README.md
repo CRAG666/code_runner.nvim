@@ -115,7 +115,7 @@ require('code_runner').setup {
 ## Commands
 
 > **Note**
-> To check what modes ore supported see [mode parameter](#setup).
+> To check what modes are supported see [mode parameter](#setup).
 
 All run commands allow restart. So, for example, if you use a command that does not have hot reload, you can call a command again and it will close the previous one and start again.
 
