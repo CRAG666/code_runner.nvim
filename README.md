@@ -102,7 +102,7 @@ require('code_runner').setup({
 > A common mistake is using relative paths instead of absolute paths in . Use absolute paths in configurations or else the plugin won't work, in case you like to use short or relative paths you can use something like this `vim.fn.expand('~/.config/nvim/project_manager.json')`
 
 > **Note**
-> If you want to change where the code is displayed, you need to specify the [`mode`]() attribute in the setup `function`
+> If you want to change where the code is displayed, you need to specify the [`mode`](#setup-global) attribute in the setup `function`
 
 ```lua
 -- this is a config example
@@ -115,7 +115,7 @@ require('code_runner').setup {
 ## Commands
 
 > **Note**
-> To check what modes are supported see [mode parameter](#setup).
+> To check what modes are supported see [mode parameter](#setup-global).
 
 All run commands allow restart. So, for example, if you use a command that does not have hot reload, you can call a command again and it will close the previous one and start again.
 
