@@ -195,7 +195,7 @@ Parameters:
 ### Setup Filetypes
 
 > **Note**
-> The commands are runned in a shell. This means that you can't run neovim commands with [this](https://github.com/CRAG666/code_runner.nvim/issues/59).
+> The commands are run in a shell. This means that you can't run neovim commands with [this](https://github.com/CRAG666/code_runner.nvim/issues/59).
 
 #### Lua
 
