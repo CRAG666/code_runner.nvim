@@ -102,7 +102,7 @@ require('code_runner').setup({
 > A common mistake is using relative paths instead of absolute paths in . Use absolute paths in configurations or else the plugin won't work, in case you like to use short or relative paths you can use something like this `vim.fn.expand('~/.config/nvim/project_manager.json')`
 
 > **Note**
-> If you want to change were the code is displayed you need to specify the [`mode`]() attribute in the setup `function`
+> If you want to change where the code is displayed, you need to specify the [`mode`](#setup-global) attribute in the setup `function`
 
 ```lua
 -- this is a config example
@@ -115,7 +115,7 @@ require('code_runner').setup {
 ## Commands
 
 > **Note**
-> To check what modes ore supported see [mode parameter](#setup).
+> To check what modes are supported see [mode parameter](#setup-global).
 
 All run commands allow restart. So, for example, if you use a command that does not have hot reload, you can call a command again and it will close the previous one and start again.
 
@@ -195,7 +195,7 @@ Parameters:
 ### Setup Filetypes
 
 > **Note**
-> The commands are runned in a shell. This means that you can't run neovim commands with [this](https://github.com/CRAG666/code_runner.nvim/issues/59).
+> The commands are run in a shell. This means that you can't run neovim commands with [this](https://github.com/CRAG666/code_runner.nvim/issues/59).
 
 #### Lua
 
@@ -257,7 +257,7 @@ If you want to add some other language or some other command follow this structu
 
 There are 3 main ways to configure the execution of a project (found in the example.)
 
-1. Use the default command defined in the filetypes file (see `:CRFiletype`or check your config). In order to do that it is necessary to define file_name.
+1. Use the default command defined in the filetypes file (see `:CRFiletype` or check your config). In order to do that it is necessary to define file_name.
 2. Use a different command than the one set in `CRFiletype` or your config. In this case, the file_name and command must be provided.
 3. Use a command to run the project. It is only necessary to define command (You do not need to write navigate to the root of the project, because automatically the plugin is located in the root of the project).
 
@@ -268,7 +268,7 @@ To match the entire path to a directory you cannot simply append `/`. This is
 due to `vim.fs.normalize` being used. Append `/.-` instead to prevent stripping
 of `/`.
 
-Also see [project parameters](#setup-projects) to set correctly your project commands.
+Also see [project parameters](#setup-projects) to correctly set your project commands.
 
 #### Lua
 
