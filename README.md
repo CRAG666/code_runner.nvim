@@ -159,7 +159,7 @@ This are the the configuration option you can pass to the `setup` function. To s
 
 Parameters:
 
-- `mode`: Mode in which you want to run. Are supported: "better_term", "float", "tab", "toggleterm", "vimux" (type: `bool`)
+- `mode`: Mode in which you want to run. Are supported: "better_term", "float", "tab", "toggleterm", "vimux" (type: `string`)
 - `focus`: Focus on runner window. Only works on term and tab mode (type: `bool`)
 - `startinsert`: init in insert mode.Only works on term and tab mode (type: `bool`)
 - `term`: Configurations for the integrated terminal
