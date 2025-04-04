@@ -32,9 +32,9 @@ code_runner.setup([{opts}])                                              *code_r
     command that maps to that {opt} from the keys in the supported files
     json
 :RunFile {modes}                                                        *:RunFile*
-    Run the current file(optionally you can select an opening {mode}: {"toggle", "float", "tab", "toggleterm", "buf"}, default: "term").
+    Run the current file(optionally you can select an opening {mode}: {"toggle", "float", "tab", "toggleterm", "buf", "better_term", "vimux"}, default: "term").
 :RunProject                                                             *:RunProject*
-    Run the current project(If you are in a project otherwise you will not do anything, optionally you can select an opening {mode}: {"toggle", "float", "tab", "toggleterm", "buf"}, default: "term").
+    Run the current project(If you are in a project otherwise you will not do anything, optionally you can select an opening {mode}: {"toggle", "float", "tab", "toggleterm", "buf", "better_term", "vimux"}, default: "term").
 
 ==============================================================================
 SETTINGS                                                        *code_runner-settings*
@@ -79,7 +79,7 @@ default value: >
 <
 
 mode                                            *code_runner-settings-mode*
-    Mode in which you want to run(default: term, valid options: {"toggle", "float", "tab", "toggleterm", "buf"}),
+    Mode in which you want to run(default: term, valid options: {"toggle", "float", "tab", "toggleterm", "buf", "better_term", "vimux"}),
 
 startinsert                                     *code_runner-settings-startinsert*
     Init in insert mode(default: false)
