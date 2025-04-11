@@ -1,0 +1,12 @@
+[doc]
+name = "hello"
+bundle = "https://data1.fullyjustified.net/tlextras-2022.0r0.tar"
+
+[[output]]
+name = "default"
+type = "pdf"
+inputs = [
+    "_preamble.tex",
+    "index.tex",
+    "_postamble.tex",
+]
