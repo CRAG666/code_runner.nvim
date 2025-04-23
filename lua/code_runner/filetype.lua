@@ -1,5 +1,4 @@
 local Singleton = require("code_runner.singleton")
-local notify = require("code_runner.hooks.notify")
 
 -- Definition of the FileType class
 local FileType = {}
@@ -38,9 +37,6 @@ function FileType:run(mode)
   local cmd = nvim_files[vim.bo.filetype]
   if cmd then
     vim.cmd(cmd)
-  else
-    notify.warn("No command available for this file type", "CodeRunner")
-  end
 end
 
 --- Executes a specific command provided as a function parameter.
