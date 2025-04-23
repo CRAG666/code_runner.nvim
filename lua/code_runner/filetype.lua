@@ -37,6 +37,7 @@ function FileType:run(mode)
   local cmd = nvim_files[vim.bo.filetype]
   if cmd then
     vim.cmd(cmd)
+  end
 end
 
 --- Executes a specific command provided as a function parameter.
