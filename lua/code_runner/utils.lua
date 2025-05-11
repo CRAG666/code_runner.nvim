@@ -143,4 +143,5 @@ function Utils:getModes()
     end,
   }
 end
+
 return Singleton(Utils)

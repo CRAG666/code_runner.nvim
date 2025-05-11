@@ -32,9 +32,9 @@ local options = {
     -- Transparency (see ':h winblend')
     blend = 0,
   },
-  better_term = { -- Toggle mode replacement
+  better_term = {  -- Toggle mode replacement
     clean = false, -- Clean terminal before launch
-    number = 10, -- Use nil for dynamic number and set init
+    number = 10,   -- Use nil for dynamic number and set init
     init = nil,
   },
   filetype_path = "",

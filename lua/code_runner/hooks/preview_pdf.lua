@@ -12,25 +12,24 @@ end
 
 ---@class CommandConfig
 ---@field command string Prefix used to identify the terminals created
----@field args string Terminal window position
+---@field args table Terminal window position
 ---@field preview_cmd string Window size
 ---@field overwrite_output string? Path where the file with the same name is saved
 
 ---@param command_config CommandConfig
 ---@param to string
----@param open boolean?
 local function convertToPdf(command_config, to)
   local on_exit = function(obj)
     if obj.code > 0 then
-      notify.error("Error in compiling!!", "CodeRunner Hook")
+      notify.info("Errors during Compiling but not tracked", "Tectonic")
       utils.preview_close()
     else
-      notify.info("Finish compiling!!", "CodeRunner Hook")
+      notify.info("Finished Compiling", command_config.command)
       utils.preview_open(to, command_config.preview_cmd)
     end
   end
 
-  vim.system(vim.list_extend(command_config.command, command_config.args), {}, vim.schedule_wrap(on_exit))
+  vim.system(vim.list_extend({ command_config.command }, command_config.args), {}, vim.schedule_wrap(on_exit))
 end
 
 local active_talbe = {}
@@ -57,9 +56,11 @@ local run = function(command_config)
     local fn = function()
       convertToPdf(command_config, tmpFile)
     end
+    notify.info("Start HotReload", command_config.command)
     id = au.create_on_write(fn, fileName)
     active_talbe[bufnr] = id
   else
+    notify.info("Stop HotReload", "Tectonic")
     au.stop(active_talbe[bufnr])
   end
 end
