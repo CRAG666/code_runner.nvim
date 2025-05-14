@@ -1,6 +1,6 @@
 <h1 align='center'>Code_Runner</h1>
 
-<h4 align='center'>🔥 Code Runner for Neovim written in pure lua 🔥</h4>
+<h4 align='center'>🔥 Blazing fast Code Runner for Neovim written in pure lua 🔥</h4>
 
 <p align='center'><img src='https://i.ibb.co/1njTRTL/ezgif-com-video-to-gif.gif'></p>
 
@@ -10,7 +10,7 @@ When I was still in college it was common to try multiple programming languages,
 
 ## Requirements
 
-- Neovim (>= 0.8)
+- Neovim (>= 0.10)
 
 ## Install
 
@@ -362,14 +362,14 @@ This module allows us to send a command to compile to pdf as well as show the re
             preview.run {
               command = "tectonic",
               args = { "$fileName", "--keep-logs", "-o", "/tmp" },
-              preview_cmd = preview_cmd,
+              preview_cmd = "zathura --fork",
               overwrite_output = "/tmp",
             }
           end,
           Project = function()
             -- this is my personal config for compiling a project with tectonic
             -- for example --keep-logs is used to keep the logs of the compilation, see tectonic -X build --help for more info
-            require("code_runner.hooks.tectonic").build(preview_cmd, { "--keep-logs" }) -- Build the project, default command is tectonic -X build
+            require("code_runner.hooks.tectonic").build("zathura --fork", { "--keep-logs" }) -- Build the project, default command is tectonic -X build
           end,
         }
       end,
@@ -380,21 +380,21 @@ This module allows us to send a command to compile to pdf as well as show the re
             hook.run {
               command = "pandoc",
               args = { "$fileName", "-o", "$tmpFile", "-t pdf" },
-              preview_cmd = preview_cmd,
+              preview_cmd = "zathura --fork",
             }
           end,
           Presentation = function()
             hook.run {
               command = "pandoc",
               args = { "$fileName", "-o", "$tmpFile", "-t beamer" },
-              preview_cmd = preview_cmd,
+              preview_cmd = "zathura --fork",
             }
           end,
           Eisvogel = function()
             hook.run {
               command = "bash",
               args = { "./build.sh" },
-              preview_cmd = preview_cmd,
+              preview_cmd = "zathura --fork",
               overwrite_output = ".",
             }
           end,
