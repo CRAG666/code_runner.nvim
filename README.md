@@ -66,8 +66,19 @@ require('code_runner').setup({
   filetype = {
     java = {
       "cd $dir &&",
+      'echo "-- compiling $fileName" &&',
       "javac $fileName &&",
-      "java $fileNameWithoutExt"
+      'echo "-- done " &&',
+      "for main in $( cat $fileName | pcregrep -M 'class.*{(.|\n)*public *static *void *main\\( *String *\\[\\] *args *\\) *\\{' | grep -o 'class *[a-zA-Z0-9]*' | sed -e 's/class *//g' ) ; do ; echo \"\n-- Running $main\n\" && java $main ; done",
+    },
+    kotlin = {
+      "cd $dir &&",
+      "echo compiling code &&",
+      "kotlinc $fileName &&",
+      "clear && echo cleaning up &&",
+      "rm -r META-INF &&",
+      "clear &&",
+      "kotlin \"$(echo $fileName | sed 's/.*/\\u&/' | sed 's/\\.\\s*\\([a-z]\\)/\\.\\u\\1/g' | sed 's/\\.//g' )\"",
     },
     python = "python3 -u",
     typescript = "deno run",
@@ -139,6 +150,7 @@ vim.keymap.set('n', '<leader>rc', ':RunClose<CR>', { noremap = true, silent = fa
 vim.keymap.set('n', '<leader>crf', ':CRFiletype<CR>', { noremap = true, silent = false })
 vim.keymap.set('n', '<leader>crp', ':CRProjects<CR>', { noremap = true, silent = false })
 ```
+
 lua functions:
 
 ```lua
