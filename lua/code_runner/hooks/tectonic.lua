@@ -3,6 +3,7 @@ local notify = require("code_runner.hooks.notify")
 local autocmd = require("code_runner.hooks.autocmd")
 local pdf_path = ""
 local cmd = ""
+local root_path = ""
 
 local on_exit = function(obj)
   if obj.code == 0 then
@@ -25,7 +26,7 @@ local on_exit = function(obj)
     local file, lnum, message = string.match(lines[i], error_pattern)
     if file and lnum and message then
       table.insert(error_lines, {
-        filename = file,
+        filename = root_path .. "/src/" .. file,
         lnum = tonumber(lnum),
         col = 1,
         text = message,
@@ -50,7 +51,7 @@ function M.build(preview_cmd, tectonic_args, root_patterns)
   tectonic_args = tectonic_args or {}
   if vim.g.tectonic_open == nil then
     notify.info("Start HotReload", "Tectonic")
-    local root_path = vim.fs.root(0, root_patterns)
+    root_path = vim.fs.root(0, root_patterns)
     local compile = { "tectonic", "-X", "build" }
     for _, arg in ipairs(tectonic_args) do
       table.insert(compile, arg)

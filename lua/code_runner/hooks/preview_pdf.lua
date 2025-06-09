@@ -22,7 +22,6 @@ local function convertToPdf(command_config, to)
   local on_exit = function(obj)
     if obj.code > 0 then
       notify.info("Errors during Compiling but not tracked", "Tectonic")
-      utils.preview_close()
     else
       notify.info("Finished Compiling", command_config.command)
       utils.preview_open(to, command_config.preview_cmd)
@@ -32,12 +31,12 @@ local function convertToPdf(command_config, to)
   vim.system(vim.list_extend({ command_config.command }, command_config.args), {}, vim.schedule_wrap(on_exit))
 end
 
-local active_talbe = {}
+local active_table = {}
 
 ---@param command_config CommandConfig Table of options
 local run = function(command_config)
   bufnr = vim.api.nvim_get_current_buf()
-  if vim.tbl_isempty(active_talbe) or vim.tbl_get(active_tamble, bufnr) then
+  if vim.tbl_isempty(active_table) or vim.tbl_get(active_tamble, bufnr) then
     local fileName = vim.fn.expand("%:p")
     if fileName == nil then
       return
@@ -57,11 +56,17 @@ local run = function(command_config)
       convertToPdf(command_config, tmpFile)
     end
     notify.info("Start HotReload", command_config.command)
+    convertToPdf(command_config, tmpFile)
     id = au.create_on_write(fn, fileName)
-    active_talbe[bufnr] = id
+    active_table[bufnr] = id
+    vim.api.nvim_create_autocmd("VimLeave", {
+      callback = function()
+        utils.preview_close()
+      end,
+    })
   else
     notify.info("Stop HotReload", "Tectonic")
-    au.stop(active_talbe[bufnr])
+    au.stop(active_table[bufnr])
   end
 end
 
