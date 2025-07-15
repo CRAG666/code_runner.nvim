@@ -1,4 +1,4 @@
-*code_runner.txt*          For NVIM v0.10.0          Last change: 2024 June 01
+*code_runner.txt*          For NVIM v0.11.0          Last change: 2025 July 15
 
 ==============================================================================
 Table of Contents                              *code_runner-table-of-contents*
@@ -43,7 +43,7 @@ environment, but this plugin is still my swiss army knife.
 
 REQUIREMENTS                       *code_runner-code_runner.nvim-requirements*
 
-- Neovim (>= 0.10)
+- Neovim (>= 0.11)
 
 
 INSTALL                                 *code_runner-code_runner.nvim-install*
@@ -522,7 +522,7 @@ a new vertical windows and reload on save. Read the comments for more info.
         vim.cmd 'vsplit term://'
     
         -- Run the TypeScript file and print the result
-        vim.fn.termopen('ts-node ' .. fileName)
+        vim.fn.jobstart('ts-node ' .. fileName)
     
         -- Restore the focus to the original window
         vim.fn.win_gotoid(current_win)
