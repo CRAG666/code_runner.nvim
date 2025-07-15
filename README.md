@@ -10,7 +10,7 @@ When I was still in college it was common to try multiple programming languages,
 
 ## Requirements
 
-- Neovim (>= 0.10)
+- Neovim (>= 0.11)
 
 ## Install
 
@@ -449,7 +449,7 @@ local function runTsFile(fileName)
     vim.cmd 'vsplit term://'
 
     -- Run the TypeScript file and print the result
-    vim.fn.termopen('ts-node ' .. fileName)
+    vim.fn.jobstart('ts-node ' .. fileName)
 
     -- Restore the focus to the original window
     vim.fn.win_gotoid(current_win)
