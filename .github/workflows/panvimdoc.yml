@@ -1,7 +1,14 @@
 # https://github.com/kdheepak/panvimdoc
 name: panvimdoc
 
-on: [push]
+on:
+  push:
+    paths:
+      - README.md
+      - .github/workflows/panvimdoc.yml
+
+permissions:
+  contents: write
 
 jobs:
   docs:
@@ -12,8 +19,8 @@ jobs:
       - uses: kdheepak/panvimdoc@main
         with:
           vimdoc: code_runner
-          version: "NVIM v0.10.0"
+          version: "NVIM v0.11.0"
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "chore(docs): Auto generate docs"
+          commit_message: "docs: :memo: Auto generate docs"
           branch: ${{ github.head_ref }}
