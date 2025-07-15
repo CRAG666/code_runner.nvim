@@ -126,7 +126,7 @@ local function execute(command, bufname, bufname_prefix)
     local current_wind_id = vim.api.nvim_get_current_win()
     closeRunner(bufname)
     vim.cmd(bufname_prefix)
-    vim.fn.termopen(command)
+    vim.fn.jobstart(command)
     vim.cmd("norm G")
     vim.opt_local.relativenumber = false
     vim.opt_local.number = false
