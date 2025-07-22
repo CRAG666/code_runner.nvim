@@ -449,7 +449,7 @@ local function runTsFile(fileName)
     vim.cmd 'vsplit term://'
 
     -- Run the TypeScript file and print the result
-    vim.fn.jobstart('ts-node ' .. fileName)
+    vim.fn.jobstart('ts-node ' .. fileName, {term=true})
 
     -- Restore the focus to the original window
     vim.fn.win_gotoid(current_win)

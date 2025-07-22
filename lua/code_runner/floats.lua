@@ -34,7 +34,7 @@ function M.floating(command)
   )
   vim.api.nvim_set_option_value("winblend", opt.float.blend, { win = win_id })
 
-  vim.fn.jobstart(command)
+  vim.fn.jobstart(command, {term=true})
   if opt.startinsert then
     vim.cmd("startinsert")
   end
