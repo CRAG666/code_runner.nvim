@@ -1,4 +1,4 @@
-*code_runner.txt*          For NVIM v0.11.0          Last change: 2025 July 15
+*code_runner.txt*          For NVIM v0.11.0          Last change: 2025 July 22
 
 ==============================================================================
 Table of Contents                              *code_runner-table-of-contents*
@@ -522,7 +522,7 @@ a new vertical windows and reload on save. Read the comments for more info.
         vim.cmd 'vsplit term://'
     
         -- Run the TypeScript file and print the result
-        vim.fn.jobstart('ts-node ' .. fileName)
+        vim.fn.jobstart('ts-node ' .. fileName, {term=true})
     
         -- Restore the focus to the original window
         vim.fn.win_gotoid(current_win)
