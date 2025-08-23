@@ -5,15 +5,29 @@ local pdf_path = ""
 local cmd = ""
 local root_path = ""
 
-local on_exit = function(obj)
-  if obj.code == 0 then
+local stderr_lines = {}
+
+local on_stderr = function(_, data) -- job_id, data, event
+  if data then
+    for _, line in ipairs(data) do
+      if line ~= "" then
+        table.insert(stderr_lines, line)
+      end
+    end
+  end
+end
+
+local on_exit = function(_, code) -- job_id, code, event
+  if code == 0 then
     vim.cmd("cclose")
     vim.fn.setqflist({}, "r", { title = "Tectonic Errors", items = {} })
     notify.info("Finished Compiling", "Tectonic")
     utils.preview_open(pdf_path, cmd)
+    stderr_lines = {} -- Clear for next run
     return
   end
-  local lines = vim.split(obj.stderr, "\n", { trimempty = true })
+
+  local lines = stderr_lines
   local error_lines = {}
   local error_pattern = "error:%s+(%S+):(%d+):%s+(.*)"
   local warning_pattern = "warning: (.+)"
@@ -35,12 +49,15 @@ local on_exit = function(obj)
     end
     i = i - 1
   end
+
   if #error_lines > 0 then
     notify.info("Errors during Compiling", "Tectonic")
     vim.fn.setqflist({}, "r", { title = "Tectonic Errors", items = error_lines })
     vim.cmd("copen")
+  else
+    notify.info("Errors during Compiling but not tracked", "Tectonic")
   end
-  notify.info("Errors during Compiling but not tracked", "Tectonic")
+  stderr_lines = {} -- Clear for next run
 end
 
 local M = {}
@@ -60,7 +77,12 @@ function M.build(preview_cmd, tectonic_args, root_patterns)
     notify.info(root_path, "Tectonic")
     id = autocmd.create_on_write(function()
       notify.info("Compiling ...", "Tectonic")
-      vim.system(compile, {}, vim.schedule_wrap(on_exit))
+      stderr_lines = {} -- Reset before new compilation
+      vim.fn.jobstart(compile, {
+        on_stderr = vim.schedule_wrap(on_stderr),
+        on_exit = vim.schedule_wrap(on_exit),
+        stderr_buffered = true,
+      })
     end, "*.tex")
 
     vim.api.nvim_create_autocmd("VimLeave", {
