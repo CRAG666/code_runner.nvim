@@ -30,7 +30,11 @@ local function convertToPdf(command_config, to)
     end
   end
 
-  vim.system(vim.list_extend({ command_config.command }, command_config.args), { text = true }, vim.schedule_wrap(on_exit))
+  vim.system(
+    vim.list_extend({ command_config.command }, command_config.args),
+    { text = true },
+    vim.schedule_wrap(on_exit)
+  )
 end
 
 local active_table = {}

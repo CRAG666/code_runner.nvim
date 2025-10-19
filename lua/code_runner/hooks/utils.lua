@@ -6,7 +6,7 @@ local job = nil
 
 function M.preview_open(file, command)
   if job == nil then
-    notify.warn("Preview already running", "Zathura")
+    notify.warn("Preview already running", command)
     job = vim.system({ command, file }, {}, function(obj)
       job = nil
     end)
