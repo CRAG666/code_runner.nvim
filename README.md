@@ -76,22 +76,7 @@ require('code_runner').setup({
       "rustc $fileName &&",
       "$dir/$fileNameWithoutExt"
     },
-    c = function(...)
-      c_base = {
-        "cd $dir &&",
-        "gcc $fileName -o",
-        "/tmp/$fileNameWithoutExt",
-      }
-      local c_exec = {
-        "&& /tmp/$fileNameWithoutExt &&",
-        "rm /tmp/$fileNameWithoutExt",
-      }
-      vim.ui.input({ prompt = "Add more args:" }, function(input)
-        c_base[4] = input
-        vim.print(vim.tbl_extend("force", c_base, c_exec))
-        require("code_runner.commands").run_from_fn(vim.list_extend(c_base, c_exec))
-      end)
-    end,
+    c = "cd $dir && gcc $fileName -o /tmp/$fileNameWithoutExt && /tmp/$fileNameWithoutExt",
   },
 })
 ```
@@ -252,6 +237,95 @@ The available variables are the following:
 - `end`: finish the command (it is useful for commands that do not require final autocompletion)
 
 If you want to add some other language or some other command follow this structure `key: commans`.
+
+### Interactive Command-Line Arguments
+
+For compiled languages or programs that accept runtime arguments, you can prompt users interactively using function-based filetype configurations. This is particularly useful when testing programs with different inputs.
+
+#### Basic Pattern
+
+Use `vim.ui.input()` within a function to prompt for arguments before running:
+
+```lua
+require('code_runner').setup({
+  filetype = {
+    c = function()
+      vim.ui.input({ prompt = "Arguments (leave empty for none): " }, function(input)
+        if not input then return end
+        
+        local cmd = "cd $dir && gcc $fileName -o /tmp/$fileNameWithoutExt && /tmp/$fileNameWithoutExt"
+        if input ~= "" then
+          cmd = cmd .. " " .. input
+        end
+        
+        require("code_runner.commands").run_from_fn(cmd)
+      end)
+    end,
+  },
+})
+```
+
+**Note:** Arguments with spaces should be quoted in your input, e.g., `hello world --flag="with space"` will correctly parse as separate arguments with the space preserved in the quoted value.
+
+#### Reusable Helper Function
+
+To avoid repetition across multiple languages, extract the pattern into a helper function:
+
+```lua
+-- Define helper function before setup
+local function prompt_args_runner(base_cmd)
+  return function()
+    vim.ui.input({ prompt = "Arguments (leave empty for none): " }, function(input)
+      if not input then return end
+      
+      local cmd = base_cmd
+      if input ~= "" then
+        cmd = cmd .. " " .. input
+      end
+      
+      require("code_runner.commands").run_from_fn(cmd)
+    end)
+  end
+end
+
+-- Use in setup
+require('code_runner').setup({
+  filetype = {
+    c = prompt_args_runner("cd $dir && gcc $fileName -o /tmp/$fileNameWithoutExt && /tmp/$fileNameWithoutExt"),
+    cpp = prompt_args_runner("cd $dir && g++ $fileName -o /tmp/$fileNameWithoutExt && /tmp/$fileNameWithoutExt"),
+    java = prompt_args_runner("cd $dir && javac $fileName && java $fileNameWithoutExt"),
+    python = prompt_args_runner("python3 -u $file"),
+    rust = prompt_args_runner("cd $dir && rustc $fileName && $dir/$fileNameWithoutExt"),
+  },
+})
+```
+
+#### Example Usage
+
+Given a C program that prints its arguments:
+
+```c
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+    printf("argc = %d\n", argc);
+    for (int i = 0; i < argc; i++) {
+        printf("argv[%d] = '%s'\n", i, argv[i]);
+    }
+    return 0;
+}
+```
+
+When you run `:RunFile`, you'll be prompted for arguments. Example inputs and their results:
+
+| Input | Result |
+|-------|--------|
+| `hello world` | 3 arguments: `program`, `hello`, `world` |
+| `--flag="with space"` | 2 arguments: `program`, `--flag=with space` |
+| `"first arg" "second arg"` | 3 arguments: `program`, `first arg`, `second arg` |
+| *(empty)* | 1 argument: `program` (no prompt needed) |
+
+This pattern works with all modes (toggleterm, float, tab, etc.) and leverages the plugin's variable replacement system.
 
 ### Setup Projects
 
