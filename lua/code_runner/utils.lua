@@ -29,10 +29,11 @@ function Utils:ctor(opt)
       self:betterTerm(command)
     end,
     toggleterm = function(command)
-      if vim.fn.exists(":TermExec") == 2 then
-        vim.cmd(string.format('TermExec cmd="%s"', command))
+      local ok, toggleterm = pcall(require, "toggleterm")
+      if ok then
+        toggleterm.exec(command)
       else
-        notify.error("The 'TermExec' does not exist.", "Toggleterm")
+        notify.error("The 'toggleterm' plugin is not installed.", "Toggleterm")
       end
     end,
     vimux = function(command)
