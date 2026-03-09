@@ -43,7 +43,8 @@ function M.run_code(filetype, user_argument)
     local cmd_to_execute = utils:getCommand(filetype)
     if cmd_to_execute then
       utils.opt.before_run_filetype()
-      utils:runMode(cmd_to_execute, vim.fn.expand("%:t:r"))
+      local filename = vim.fn.shellescape(vim.fn.expand("%:t:r"))
+      utils:runMode(cmd_to_execute, filename)
       return
     end
     return -- Exit if there is no valid command.
