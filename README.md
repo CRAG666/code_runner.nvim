@@ -203,7 +203,7 @@ filetype = {
 },
 ```
 
-If you want to add some other language or some other command follow this structure `key = commans`.
+If you want to add some other language or some other command follow this structure `key = commands`.
 
 #### Json
 
@@ -236,7 +236,7 @@ The available variables are the following:
 - `dir`: path to directory of current open file (e.g. `/home/user/current_dir`)
 - `end`: finish the command (it is useful for commands that do not require final autocompletion)
 
-If you want to add some other language or some other command follow this structure `key: commans`.
+If you want to add some other language or some other command follow this structure `key: commands`.
 
 ### Interactive Command-Line Arguments
 
@@ -362,7 +362,7 @@ project = {
   ["~/cpp/example"] = {
     name = "ExapleCpp",
     description = "Project with make file",
-    command = "make buid && cd buid/ && ./compiled_file"
+    command = "make build && cd build/ && ./compiled_file"
   },
   ["~/private/.*terraform%-prod.-/.-"] = {
     name = "ExampleTerraform",
@@ -390,7 +390,7 @@ project = {
   "~/cpp/example": {
     "name": "ExapleCpp",
     "description": "Project with make file",
-    "command": "make buid && cd buid/ && ./compiled_file"
+    "command": "make build && cd build/ && ./compiled_file"
   },
   "~/private/.*terrafrom%-prod.-/.-": {
     "name": "ExampleTerraform",
