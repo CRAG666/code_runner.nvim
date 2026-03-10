@@ -45,7 +45,7 @@ function Utils:ctor(opt)
           "Vimux"
         )
       end
-    end
+    end,
   }
 end
 
@@ -69,15 +69,17 @@ function Utils:replaceVars(command, path)
   -- Check if we already have the result cached
   local cache_key = command .. ":" .. path
   local cached = var_cache[cache_key]
-  if cached then return cached end
+  if cached then
+    return cached
+  end
 
   local no_sub_command = command
 
   -- Pre-calculate replacement values to avoid multiple vim.fn calls
   local file_info = {
-    nameWithoutExt = vim.fn.fnamemodify(path, ":t:r"),
-    name = vim.fn.fnamemodify(path, ":t"),
-    dir = vim.fn.fnamemodify(path, ":p:h")
+    nameWithoutExt = vim.fn.shellescape(vim.fn.fnamemodify(path, ":t:r")),
+    name = vim.fn.shellescape(vim.fn.fnamemodify(path, ":t")),
+    dir = vim.fn.shellescape(vim.fn.fnamemodify(path, ":p:h")),
   }
 
   -- Use gsub once with a replacement function
@@ -87,7 +89,7 @@ function Utils:replaceVars(command, path)
     elseif var == "fileName" then
       return file_info.name
     elseif var == "file" then
-      return path
+      return vim.fn.shellescape(path)
     elseif var == "dir" then
       return file_info.dir
     elseif var == "end" then
@@ -98,7 +100,7 @@ function Utils:replaceVars(command, path)
   end)
 
   if command == no_sub_command then
-    command = command .. " " .. path
+    command = command .. " " .. vim.fn.shellescape(path)
   end
 
   -- Store result in cache
