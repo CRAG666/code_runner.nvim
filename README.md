@@ -140,7 +140,7 @@ require("code_runner").get_project_command() -- Get the current command for this
 
 ### Setup Global
 
-This are the the configuration option you can pass to the `setup` function. To see the default values see: [`code_runner.nvim/lua/code_runner/options`](https://github.com/CRAG666/code_runner.nvim/blob/main/lua/code_runner/options.lua).
+These are the configuration options you can pass to the `setup` function. To see the default values see: [`code_runner.nvim/lua/code_runner/options`](https://github.com/CRAG666/code_runner.nvim/blob/main/lua/code_runner/options.lua).
 
 Parameters:
 
