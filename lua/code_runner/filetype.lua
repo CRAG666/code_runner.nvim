@@ -1,17 +1,22 @@
-local Singleton = require("code_runner.singleton")
-
--- Tabla de comandos para archivos nvim pre-cargada
+-- Built-in commands for native Neovim files
 local NVIM_FILES = {
   lua = "luafile %",
   vim = "source %",
 }
 
--- Definition of the FileType class
+---@class FileType
 local FileType = {}
 FileType.__index = FileType
 
---- Constructor for the FileType class.
----@param utils table A utility object, required for execution.
+---@param utils Utils
+---@return FileType
+function FileType.new(utils)
+  local self = setmetatable({}, FileType)
+  self:ctor(utils)
+  return self
+end
+
+---@param utils Utils
 function FileType:ctor(utils)
   assert(utils, "utils is required")
   self.opt = utils.opt
@@ -22,19 +27,16 @@ function FileType:ctor(utils)
   end
 end
 
---- Retrieves the command associated with the current file type.
----@return string The command for the current file type, or an empty string if none exists.
+---@return string command Empty string when the filetype has no command.
 function FileType:getCommand()
   return self.utils:getCommand(vim.bo.filetype) or ""
 end
 
---- Executes the current file based on its file type.
 ---@param mode string? The mode in which the command should run.
 function FileType:run(mode)
   local command = self:getCommand()
 
   if command ~= "" then
-    -- Hook before_run_filetype solo si existe
     local before_run = self.opt.before_run_filetype
     if before_run then
       before_run()
@@ -51,8 +53,7 @@ function FileType:run(mode)
   end
 end
 
---- Executes a specific command provided as a function parameter.
----@param cmd string|table The command to execute, either as a string or a table.
+---@param cmd string|table The command to execute, as a string or list of parts.
 function FileType:runFromFn(cmd)
   local command
   if type(cmd) == "table" then
@@ -69,5 +70,4 @@ function FileType:runFromFn(cmd)
   self.utils:runMode(expanded_command, self.get_filename())
 end
 
--- Convert FileType into a singleton
-return Singleton(FileType)
+return FileType

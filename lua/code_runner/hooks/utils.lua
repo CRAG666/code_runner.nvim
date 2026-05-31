@@ -5,12 +5,13 @@ local M = {}
 local job = nil
 
 function M.preview_open(file, command)
-  if job == nil then
+  if job ~= nil then
     notify.warn("Preview already running", command)
-    job = vim.system({ command, file }, {}, function(obj)
-      job = nil
-    end)
+    return
   end
+  job = vim.system({ command, file }, {}, function(obj)
+    job = nil
+  end)
 end
 
 function M.preview_close()
@@ -61,6 +62,13 @@ function M.create_job_runner(opts)
       stop(bufnr)
     end
   end
+
+  vim.api.nvim_create_autocmd("VimLeavePre", {
+    once = true,
+    callback = function()
+      stop_all()
+    end,
+  })
 
   local function start(cmd)
     local bufnr = vim.api.nvim_get_current_buf()

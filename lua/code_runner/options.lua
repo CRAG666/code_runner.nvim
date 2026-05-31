@@ -8,6 +8,8 @@ local options = {
   -- startinsert (see ':h inserting-ex')
   startinsert = false,
   insert_prefix = "",
+  -- For float mode: jump back to the previous window after opening the runner
+  wincmd = false,
   term = {
     --  Position to open the terminal, this option is ignored if mode ~= term
     position = "bot",
@@ -82,18 +84,63 @@ local function concat(v)
   return v
 end
 
--- set user config
+-- Paths to JSON config resolved lazily on first access, so reading and
+-- decoding them stays off Neovim's startup path.
+local pending_filetype_path = nil
+local pending_project_path = nil
+
+-- Resolve any pending JSON config. Memoized: each path is loaded at most once,
+-- on the first M.get() that needs it (e.g. the first :RunCode or completion).
+local function resolve_pending()
+  if pending_filetype_path then
+    local path = pending_filetype_path
+    pending_filetype_path = nil
+    local filetype = require("code_runner.load_json")(path)
+    if filetype then
+      options.filetype = vim.tbl_map(concat, vim.tbl_deep_extend("force", options.filetype, filetype))
+    else
+      require("code_runner.hooks.notify").error("Error trying to load filetypes commands", "Code Runner Error")
+    end
+  end
+  if pending_project_path then
+    local path = pending_project_path
+    pending_project_path = nil
+    local project = require("code_runner.load_json")(path)
+    if project then
+      options.project = vim.tbl_deep_extend("force", options.project, project)
+    else
+      require("code_runner.hooks.notify").error("Error trying to load project commands", "Code Runner Error")
+    end
+  end
+end
+
 ---@param user_options table
 M.set = function(user_options)
   if user_options.startinsert then
     user_options.insert_prefix = "startinsert"
+  end
+  -- Defer JSON loading to first use when the user only points at a path.
+  if vim.tbl_isempty(user_options.filetype or {}) and (user_options.filetype_path or "") ~= "" then
+    pending_filetype_path = user_options.filetype_path
+  end
+  if vim.tbl_isempty(user_options.project or {}) and (user_options.project_path or "") ~= "" then
+    pending_project_path = user_options.project_path
   end
   options = vim.tbl_deep_extend("force", options, user_options)
   options.filetype = vim.tbl_map(concat, options.filetype)
   options.prefix = string.format("%s %d new", options.term.position, options.term.size)
 end
 
+-- Full options, resolving any deferred JSON config first. Use this whenever
+-- filetype/project commands are needed.
 M.get = function()
+  resolve_pending()
+  return options
+end
+
+-- Options without triggering JSON resolution. Use only for scalar settings that
+-- never come from JSON (e.g. hot_reload), to avoid forcing a disk read.
+M.get_raw = function()
   return options
 end
 

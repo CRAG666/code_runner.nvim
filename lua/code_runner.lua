@@ -1,54 +1,15 @@
-local commands = require("code_runner.commands")
-local au_cd = require("code_runner.hooks.autocmd")
-local utils = require("code_runner.hooks.utils")
-local notify = require("code_runner.hooks.notify")
 local o = require("code_runner.options")
 
 local M = {}
 
 local function setup(opt)
-  -- Load json config and convert to table
-  local load_json_as_table = require("code_runner.load_json")
-
-  -- Convert json filetype as table lua
-  if vim.tbl_isempty(opt.filetype or {}) then
-    opt.filetype_path = opt.filetype_path or ""
-    if opt.filetype_path ~= "" then
-      local filetype = load_json_as_table(opt.filetype_path)
-      if not filetype then
-        notify.error("Error trying to load filetypes commands", "Code Runner Error")
-      end
-      opt.filetype = filetype or {}
-    end
-  end
-
-  -- Convert json project as table lua
-  if vim.tbl_isempty(opt.project or {}) then
-    opt.project_path = opt.project_path or ""
-    if opt.project_path ~= "" then
-      local project = load_json_as_table(opt.project_path)
-      if not project then
-        notify.error("Error trying to load project commands", "Code Runner Error")
-      end
-      opt.project = project or {}
-    end
-  end
-
-  -- set user options
+  -- Store user options. JSON config (filetype_path/project_path) is loaded
+  -- lazily on first use, not here, to keep setup off the startup hot path.
   o.set(opt)
-
-  -- Message if json file not exist
-  if vim.tbl_isempty(o.get().filetype) then
-    notify.error(
-      "Not exist command for filetypes or format invalid, if use json please execute :CRFiletype or if use lua edit setup",
-      "Code Runner Error"
-    )
-  end
 end
 
 local function open_json(json_path)
-  local command = "tabnew " .. json_path
-  vim.cmd(command)
+  vim.cmd("tabnew " .. json_path)
 end
 
 local function completion(ArgLead, options)
@@ -69,30 +30,41 @@ M.open_project_manager = function()
   open_json(o.get().project_path)
 end
 
+-- The mode list is static; building it pulls in the command chain, so we cache
+-- it and only build it the first time :RunFile/:RunProject completion is used.
+local modes_cache = nil
+local function get_modes()
+  if not modes_cache then
+    modes_cache = vim.tbl_keys(require("code_runner.commands").get_modes())
+  end
+  return modes_cache
+end
+
 M.setup = function(user_options)
   setup(user_options or {})
 
-  local simple_cmds = {
-    RunClose = commands.run_close,
-    CRFiletype = M.open_filetype_suported,
-    CRProjects = M.open_project_manager,
-  }
-  for cmd, func in pairs(simple_cmds) do
-    vim.api.nvim_create_user_command(cmd, func, { nargs = 0 })
-  end
+  -- Simple commands lazily pull in the command module only when invoked.
+  vim.api.nvim_create_user_command("RunClose", function()
+    require("code_runner.commands").run_close()
+  end, { nargs = 0 })
+  vim.api.nvim_create_user_command("CRFiletype", M.open_filetype_suported, { nargs = 0 })
+  vim.api.nvim_create_user_command("CRProjects", M.open_project_manager, { nargs = 0 })
 
-  -- Commands with autocomplete
-  local modes = vim.tbl_keys(commands.get_modes())
-  -- Format:
-  --  CoomandName = { function, option_list }
+  -- Commands with autocomplete.
+  -- Format: CommandName = { command_fn_name, options_provider }
   local completion_cmds = {
-    RunCode = { commands.run_code, vim.tbl_keys(o.get().filetype) },
-    RunFile = { commands.run_filetype, modes },
-    RunProject = { commands.run_project, modes },
+    RunCode = {
+      "run_code",
+      function()
+        return vim.tbl_keys(o.get().filetype)
+      end,
+    },
+    RunFile = { "run_filetype", get_modes },
+    RunProject = { "run_project", get_modes },
   }
   for cmd, cmo in pairs(completion_cmds) do
     vim.api.nvim_create_user_command(cmd, function(opts)
-      cmo[1](unpack(opts.fargs))
+      require("code_runner.commands")[cmo[1]](unpack(opts.fargs))
     end, {
       nargs = "*",
       complete = function(ArgLead, word, ...)
@@ -100,22 +72,40 @@ M.setup = function(user_options)
         if #vim.split(word, "%s+") > 2 then
           return
         end
-        return completion(ArgLead, cmo[2])
+        return completion(ArgLead, cmo[2]())
       end,
     })
   end
-  M.run_code = commands.run_code
-  M.run_from_fn = commands.run_from_fn
-  M.run_filetype = commands.run_filetype
-  M.run_project = commands.run_project
-  M.run_close = commands.run_close
-  M.get_filetype_command = commands.get_filetype_command
-  M.get_project_command = commands.get_project_command
-  if o.get().hot_reload then
-    local id = au_cd.create_on_write(function(...)
-      commands.run_code()
+
+  -- Public API as thin lazy wrappers, so requiring this module never pulls in
+  -- the heavier command/filetype/project/utils chain on its own.
+  M.run_code = function(...)
+    return require("code_runner.commands").run_code(...)
+  end
+  M.run_from_fn = function(...)
+    return require("code_runner.commands").run_from_fn(...)
+  end
+  M.run_filetype = function(...)
+    return require("code_runner.commands").run_filetype(...)
+  end
+  M.run_project = function(...)
+    return require("code_runner.commands").run_project(...)
+  end
+  M.run_close = function(...)
+    return require("code_runner.commands").run_close(...)
+  end
+  M.get_filetype_command = function(...)
+    return require("code_runner.commands").get_filetype_command(...)
+  end
+  M.get_project_command = function(...)
+    return require("code_runner.commands").get_project_command(...)
+  end
+
+  if o.get_raw().hot_reload then
+    local id = require("code_runner.hooks.autocmd").create_on_write(function(...)
+      require("code_runner.commands").run_code()
     end)
-    utils.create_stop_hot_reload(id)
+    require("code_runner.hooks.utils").create_stop_hot_reload(id)
   end
 end
 

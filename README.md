@@ -28,6 +28,21 @@ require("lazy").setup({
 }
 ```
 
+> **Tip (blazing fast startup):** load the plugin on demand so it costs nothing
+> until you actually run code. The plugin already defers its internal modules and
+> JSON config, but lazy-loading on the commands/keys you use is the biggest win:
+
+```lua
+{
+  "CRAG666/code_runner.nvim",
+  cmd = { "RunCode", "RunFile", "RunProject", "RunClose", "CRFiletype", "CRProjects" },
+  -- keys = { "<leader>r" }, -- add the mappings you use
+  opts = {
+    -- your config (mode, filetype, ...) goes here
+  },
+}
+```
+
 - With [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua

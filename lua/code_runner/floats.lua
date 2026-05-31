@@ -1,6 +1,16 @@
 local M = {}
 local o = require("code_runner.options")
 
+-- Open a terminal running `command` in the current buffer, using the modern
+-- jobstart API when available and falling back to termopen on older Neovim.
+local function term_open(command)
+  if vim.fn.has("nvim-0.11") == 1 then
+    vim.fn.jobstart(command, { term = true })
+  else
+    vim.fn.termopen(command)
+  end
+end
+
 function M.floating(command)
   local opt = o.get()
   local buf = vim.api.nvim_create_buf(false, true)
@@ -25,7 +35,7 @@ function M.floating(command)
     col = col,
   })
 
-  vim.fn.termopen(command)
+  term_open(command)
 
   if opt.startinsert then
     vim.cmd("startinsert")

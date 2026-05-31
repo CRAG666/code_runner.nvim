@@ -3,30 +3,20 @@ local FileType = require("code_runner.filetype")
 local Project = require("code_runner.project")
 local Utils = require("code_runner.utils")
 
-local first_run = true
-
---- Initializes the utility module with options and user arguments.
 ---@param args table User-provided arguments.
----@return utils Utils initialized utility object.
+---@return Utils
 local function get_utils(args)
-  local options = {}
-  if first_run then
-    options = Options.get()
-    first_run = false
-  end
-  local utils = Utils.new(options)
+  local utils = Utils.new(Options.get())
   utils:setUserArgument(args)
   return utils
 end
 
---- Initializes the file type module.
----@return FileType The initialized file type object.
+---@return FileType
 local function get_filetype()
   return FileType.new(get_utils({}))
 end
 
---- Initializes the project module.
----@return Project The initialized project object.
+---@return Project
 local function get_project()
   return Project.new(get_utils({}))
 end
@@ -47,10 +37,9 @@ function M.run_code(filetype, user_argument)
       utils:runMode(cmd_to_execute, filename)
       return
     end
-    return -- Exit if there is no valid command.
+    return
   end
 
-  -- Fallback to project or file type execution
   local context = get_project():run(nil, false)
   if not context then
     get_filetype():run()
@@ -62,31 +51,26 @@ function M.run_from_fn(cmd)
   return get_filetype():runFromFn(cmd)
 end
 
---- Retrieves the current project command.
----@return string? The project-specific command.
+---@return string? command
 function M.get_project_command()
   return get_project():getCommand()
 end
 
---- Runs the project in a specific mode.
 ---@param mode string? The execution mode.
 function M.run_project(mode)
   get_project():run(mode)
 end
 
---- Retrieves the current file type command.
----@return string? The file type-specific command.
+---@return string? command
 function M.get_filetype_command()
   return get_filetype():getCommand()
 end
 
---- Runs the file type in a specific mode.
 ---@param mode string? The execution mode.
 function M.run_filetype(mode)
   get_filetype():run(mode)
 end
 
---- Closes the currently running execution context.
 function M.run_close()
   local bufname = nil
   local project = get_project()
@@ -97,8 +81,7 @@ function M.run_close()
   get_utils({}):close(bufname)
 end
 
---- Retrieves the available modes.
----@return table The table of available modes.
+---@return table modes
 function M.get_modes()
   local utils = get_utils({})
   return utils and utils.modes or {}

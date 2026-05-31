@@ -1,12 +1,25 @@
 local notify = require("code_runner.hooks.notify")
-local Singleton = require("code_runner.singleton")
 local pattern = "crunner_"
 
--- Cache for variable replacement results
-local var_cache = setmetatable({}, { __mode = "kv" }) -- weak cache table
+-- Open a terminal running `command` in the current buffer, using the modern
+-- jobstart API when available and falling back to termopen on older Neovim.
+local function term_open(command)
+  if vim.fn.has("nvim-0.11") == 1 then
+    vim.fn.jobstart(command, { term = true })
+  else
+    vim.fn.termopen(command)
+  end
+end
 
+---@class Utils
 local Utils = {}
 Utils.__index = Utils
+
+function Utils.new(opt)
+  local self = setmetatable({}, Utils)
+  self:ctor(opt)
+  return self
+end
 
 function Utils:ctor(opt)
   assert(opt, "opt is required")
@@ -14,7 +27,6 @@ function Utils:ctor(opt)
   self.btm_number = self.opt.better_term.init
   self._user_argument = {}
 
-  -- Pre-initialize mode table to avoid recreating it each time
   self.modes = {
     term = function(command, bufname)
       self:execute(command, bufname)
@@ -54,7 +66,6 @@ function Utils:setUserArgument(user_argument)
 end
 
 function Utils:replaceVars(command, path)
-  -- Process function commands
   if type(command) == "function" then
     local cmd = command(self._user_argument)
     if type(cmd) == "string" then
@@ -66,23 +77,14 @@ function Utils:replaceVars(command, path)
     end
   end
 
-  -- Check if we already have the result cached
-  local cache_key = command .. ":" .. path
-  local cached = var_cache[cache_key]
-  if cached then
-    return cached
-  end
-
   local no_sub_command = command
 
-  -- Pre-calculate replacement values to avoid multiple vim.fn calls
   local file_info = {
     nameWithoutExt = vim.fn.shellescape(vim.fn.fnamemodify(path, ":t:r")),
     name = vim.fn.shellescape(vim.fn.fnamemodify(path, ":t")),
     dir = vim.fn.shellescape(vim.fn.fnamemodify(path, ":p:h")),
   }
 
-  -- Use gsub once with a replacement function
   command = command:gsub("%$(%w+)", function(var)
     if var == "fileNameWithoutExt" then
       return file_info.nameWithoutExt
@@ -103,8 +105,6 @@ function Utils:replaceVars(command, path)
     command = command .. " " .. vim.fn.shellescape(path)
   end
 
-  -- Store result in cache
-  var_cache[cache_key] = command
   return command
 end
 
@@ -135,13 +135,12 @@ function Utils:execute(command, bufname, prefix)
   local current_win_id = vim.api.nvim_get_current_win()
 
   vim.cmd(prefix)
-  vim.fn.termopen(command)
+  term_open(command)
 
-  -- Group local operations
   local buf = vim.api.nvim_get_current_buf()
-  vim.api.nvim_buf_set_option(buf, "relativenumber", false)
-  vim.api.nvim_buf_set_option(buf, "number", false)
-  vim.api.nvim_buf_set_option(buf, "filetype", "crunner")
+  vim.bo[buf].relativenumber = false
+  vim.bo[buf].number = false
+  vim.bo[buf].filetype = "crunner"
 
   vim.cmd(bufname)
 
@@ -160,7 +159,7 @@ function Utils:betterTerm(command)
   local betterTerm = package.loaded["betterTerm"] or require("betterTerm")
   if betterTerm then
     self.btm_number = self.opt.better_term.number or (self.btm_number + 1)
-    betterTerm.send(command, self.btm_number, { clean = self.opt.clean })
+    betterTerm.send(command, self.btm_number, { clean = self.opt.better_term.clean })
   end
 end
 
@@ -177,4 +176,4 @@ function Utils:runMode(command, bufname, mode)
   mode_func(command, bufname)
 end
 
-return Singleton(Utils)
+return Utils
