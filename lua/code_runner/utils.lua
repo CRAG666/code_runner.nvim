@@ -138,8 +138,9 @@ function Utils:execute(command, bufname, prefix)
   term_open(command)
 
   local buf = vim.api.nvim_get_current_buf()
-  vim.bo[buf].relativenumber = false
-  vim.bo[buf].number = false
+  local win = vim.api.nvim_get_current_win()
+  vim.wo[win].relativenumber = false
+  vim.wo[win].number = false
   vim.bo[buf].filetype = "crunner"
 
   vim.cmd(bufname)
