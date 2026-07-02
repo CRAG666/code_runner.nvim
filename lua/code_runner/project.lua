@@ -1,4 +1,11 @@
 local notify = require("code_runner.hooks.notify")
+local load_json = require("code_runner.load_json")
+
+-- Per-project config file: place it in the project root to define the command.
+-- Same fields as a `project` entry: { "name": ..., "command": ..., "file_name": ..., "mode": ... }
+-- Hidden and prefixed to avoid clashing with the json files used for
+-- filetype/project config (the README suggests naming those code_runner.json).
+local LOCAL_CONFIG = ".crproject.json"
 
 -- Cache for normalized paths, shared across instances
 local path_cache = {}
@@ -74,8 +81,59 @@ function Project:setRootPath()
       name = matching_data.name,
       command = matching_data.command,
       file_name = matching_data.file_name,
+      mode = matching_data.mode,
     }
+    return
   end
+
+  self:detectRoot(file_path)
+end
+
+-- Fallback when no configured project matches: search upward for a local
+-- config file or a known root marker (pom.xml, Cargo.toml, ...).
+---@param file_path string Directory of the current buffer.
+function Project:detectRoot(file_path)
+  local markers = self.opt.root_markers or {}
+  local names = { LOCAL_CONFIG }
+  for _, marker in ipairs(markers) do
+    names[#names + 1] = marker[1]
+  end
+
+  -- Nearest ancestor wins; within a directory, `names` order gives the
+  -- local config file priority over markers.
+  local found = vim.fs.find(names, { upward = true, type = "file", path = file_path })[1]
+  if not found then
+    return
+  end
+
+  local root = vim.fs.dirname(found)
+  local file_name = vim.fs.basename(found)
+  local data
+
+  if file_name == LOCAL_CONFIG then
+    data = load_json(found)
+    if not data or not data.command then
+      notify.error("Invalid " .. found .. ": expected a json object with a 'command' key", "Code Runner Error")
+      return
+    end
+  else
+    for _, marker in ipairs(markers) do
+      if marker[1] == file_name then
+        data = { name = file_name, command = marker[2] }
+        break
+      end
+    end
+  end
+
+  self.matching_root_path = root
+  self.initial_command = data.command
+  self.context = {
+    path = root,
+    name = data.name or file_name,
+    command = data.command,
+    file_name = data.file_name,
+    mode = data.mode,
+  }
 end
 
 function Project:setCommand()

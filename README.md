@@ -73,6 +73,7 @@ Please see my config [run_code.lua](https://github.com/CRAG666/dotfiles/blob/mai
   see [Hooks](#hooks)
 - Assign commands to projects without files in the root of the project
 - Run project commands in different modes for a per projects base
+- Auto-detect projects by root files (`pom.xml`, `Cargo.toml`, `go.mod`, ...) or a per-project `.crproject.json`, see [Project auto-detection](#project-auto-detection)
 
 ## Setup
 
@@ -196,6 +197,7 @@ Parameters:
 - `filetype_path`: Absolute path to json file config (type: `absolute paths`)
 - `project`: If you prefer to use lua instead of json files, you can add your settings by project here (type: `table`)
 - `project_path`: Absolute path to json file config (type: `absolute paths`)
+- `root_markers`: Ordered list of `{ file, command }` pairs used to auto-detect a project root when no configured project matches (type: `table`). See [Project auto-detection](#project-auto-detection).
 - `hot_reload`: Use only if not configured any hooks (type: `bool`), experimental feature. Its better create autocommands for the filetypes you want to hot reload.
 
 ### Setup Filetypes
@@ -433,6 +435,51 @@ project = {
 
 > **Note**
 > Don't forget to name your projects because if you don't do so code runner will fail as it uses the name for the buffer name
+
+### Project auto-detection
+
+If the current file does not belong to any configured project, code runner
+searches upward from the file's directory for known root files and runs the
+associated command from that root. No configuration needed: open any file
+inside a Maven project (a `pom.xml` in the root) and `:RunCode` /
+`:RunProject` will run maven, without opening `pom.xml` first.
+
+Priority: configured `project` entries > `.crproject.json` in the project
+root > `root_markers` (nearest ancestor first).
+
+The defaults:
+
+```lua
+root_markers = {
+  { "pom.xml", "mvn compile exec:java" },
+  { "build.gradle", "./gradlew run" },
+  { "Cargo.toml", "cargo run" },
+  { "go.mod", "go run ." },
+  { "package.json", "npm start" },
+  { "Makefile", "make" },
+  { "CMakeLists.txt", "cmake -B build && cmake --build build" },
+}
+```
+
+Override the list in `setup()` to change commands or add markers; set
+`root_markers = {}` to disable detection.
+
+#### Per-project config file
+
+Drop a `.crproject.json` in your project root to define how that project is
+compiled/run, keeping the config with the project instead of in your Neovim
+setup. It accepts the same parameters as a `project` entry:
+
+```json
+{
+  "name": "MyApp",
+  "command": "mvn clean package && java -jar target/app.jar",
+  "mode": "float"
+}
+```
+
+`command` is required; `name`, `file_name` and `mode` are optional. This file
+always wins over `root_markers`.
 
 ## Hooks
 

@@ -72,6 +72,18 @@ local options = {
   },
   project_path = "",
   project = {},
+  -- Root markers checked upward from the current file when no configured
+  -- project matches. Ordered: first marker found in the nearest ancestor wins.
+  -- A ".crproject.json" file in the project root always takes priority.
+  root_markers = {
+    { "pom.xml", "mvn compile exec:java" },
+    { "build.gradle", "./gradlew run" },
+    { "Cargo.toml", "cargo run" },
+    { "go.mod", "go run ." },
+    { "package.json", "npm start" },
+    { "Makefile", "make" },
+    { "CMakeLists.txt", "cmake -B build && cmake --build build" },
+  },
   prefix = "",
 }
 
