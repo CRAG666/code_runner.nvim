@@ -6,7 +6,8 @@ local job = nil
 
 function M.preview_open(file, command)
   if job ~= nil then
-    notify.warn("Preview already running", command)
+    -- Viewer already open: it reloads the pdf on change, warning on every
+    -- recompile would just be noise.
     return
   end
   job = vim.system({ command, file }, {}, function(obj)

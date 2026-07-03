@@ -10,6 +10,12 @@ local LOCAL_CONFIG = ".crproject.json"
 -- Cache for normalized paths, shared across instances
 local path_cache = {}
 
+-- Active watchers, shared across instances: root path -> autocmd id.
+-- With `watch = true` (project entry or .crproject.json) running the project
+-- re-runs its command on every write under the root; running again stops it.
+local watchers = {}
+local watch_group = vim.api.nvim_create_augroup("CodeRunnerProjectWatch", { clear = true })
+
 ---@class Project
 local Project = {}
 Project.__index = Project
@@ -82,6 +88,7 @@ function Project:setRootPath()
       command = matching_data.command,
       file_name = matching_data.file_name,
       mode = matching_data.mode,
+      watch = matching_data.watch,
     }
     return
   end
@@ -133,6 +140,7 @@ function Project:detectRoot(file_path)
     command = data.command,
     file_name = data.file_name,
     mode = data.mode,
+    watch = data.watch,
   }
 end
 
@@ -182,11 +190,36 @@ function Project:run(mode, notify_enable)
 
   self:setCommand()
 
-  if notify_enable then
+  local run_mode = mode or self.context.mode
+
+  if self.context.watch then
+    local root = self.context.path
+
+    -- Toggle: running a watched project again stops the watcher.
+    if watchers[root] then
+      vim.api.nvim_del_autocmd(watchers[root])
+      watchers[root] = nil
+      if notify_enable then
+        notify.info("Stop watch: " .. self.context.name, "Run Project")
+      end
+      return true
+    end
+
+    local utils, command, name = self.utils, self.context.command, self.context.name
+    watchers[root] = vim.api.nvim_create_autocmd("BufWritePost", {
+      group = watch_group,
+      pattern = root .. "/*",
+      callback = function()
+        utils:runMode(command, name, run_mode)
+      end,
+    })
+    if notify_enable then
+      notify.info("Watch: " .. self.context.name, "Run Project")
+    end
+  elseif notify_enable then
     notify.info(self.context.name, "Run Project")
   end
 
-  local run_mode = mode or self.context.mode
   self.utils:runMode(self.context.command, self.context.name, run_mode)
   return true
 end

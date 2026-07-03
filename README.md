@@ -69,6 +69,8 @@ Please see my config [run_code.lua](https://github.com/CRAG666/dotfiles/blob/mai
 - Run code in a split
 - Run code with toggleTerm
 - Run code in a split tmux pane(you need [preservim/vimux](https://github.com/preservim/vimux/) in your dependencies)
+- Run code in a [snacks.nvim](https://github.com/folke/snacks.nvim) terminal (you need `folke/snacks.nvim` in your dependencies)
+- Send errors to the quickfix list, like vim-dispatch (`mode = "quickfix"`)
 - Custom hooks, for example preview in files like markdown, hot reload enabled.
   see [Hooks](#hooks)
 - Assign commands to projects without files in the root of the project
@@ -166,7 +168,8 @@ These are the configuration options you can pass to the `setup` function. To see
 
 Parameters:
 
-- `mode`: Mode in which you want to run. Are supported: "better_term", "float", "tab", "toggleterm", "vimux" (type: `string`)
+- `mode`: Mode in which you want to run. Are supported: "better_term", "float", "tab", "toggleterm", "vimux", "snacks", "quickfix" (type: `string`)
+  - `quickfix` runs the command without a terminal (like vim-dispatch): the output is parsed with `'errorformat'` and sent to the quickfix list, which opens only when parseable errors are found. A failing command whose output matches nothing in `'errorformat'` notifies instead of opening the list (inspect it with `:copen`). Use `:compiler` (or set `errorformat`) in the source buffer for language-specific parsing. There is no live output or stdin, so use it for compile/lint/test commands, not for watchers or interactive programs. Requires Neovim >= 0.10.
 - `focus`: Focus on runner window. Only works on term and tab mode (type: `bool`)
 - `startinsert`: init in insert mode.Only works on term and tab mode (type: `bool`)
 - `term`: Configurations for the integrated terminal
@@ -429,6 +432,7 @@ project = {
 - `description`: Project description
 - `file_name`: Filename relative to root path
 - `command`: Command to run the project. It is possible to use variables exactly the same as we would in [`CRFiletype`](#commands).
+- `watch`: Re-run the command on every write under the project root; run the project again to stop (type: `bool`)
 
 > **Warning**
 > Avoid using all the parameters at the same time. The correct way to use them is shown in the example and described above.
@@ -478,8 +482,22 @@ setup. It accepts the same parameters as a `project` entry:
 }
 ```
 
-`command` is required; `name`, `file_name` and `mode` are optional. This file
-always wins over `root_markers`.
+`command` is required; `name`, `file_name`, `mode` and `watch` are optional.
+This file always wins over `root_markers`.
+
+With `"watch": true` the command is re-run on every write under the project
+root — useful for tools without a native watch mode (gcc, pandoc, ...):
+
+```json
+{
+  "name": "Poster",
+  "command": "typst compile poster.typ",
+  "watch": true
+}
+```
+
+Run the project once to start watching; run it again to stop. `watch` also
+works in regular `project` entries.
 
 ## Hooks
 

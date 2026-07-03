@@ -179,7 +179,7 @@ do
   contains(u:getCommand("python", "/tmp/x.py"), "python -u '/tmp/x.py'", "getCommand builds the filetype command")
   eq(u:getCommand("no_such_ft", "/tmp/x.zz"), nil, "getCommand returns nil for unmapped filetypes")
 
-  for _, mode in ipairs({ "term", "tab", "float", "better_term", "toggleterm", "vimux" }) do
+  for _, mode in ipairs({ "term", "tab", "float", "better_term", "toggleterm", "vimux", "snacks", "quickfix" }) do
     eq(type(u.modes[mode]), "function", "mode '" .. mode .. "' is registered")
   end
 
@@ -187,6 +187,144 @@ do
     u:runMode("echo hi", "bufname", "not_a_mode")
   end)
   check(#notes > 0 and notes[1].level == vim.log.levels.WARN, "runMode warns on an unknown mode")
+
+  -- Modes backed by optional plugins notify an error when the plugin is absent.
+  for _, mode in ipairs({ "toggleterm", "snacks" }) do
+    local plugin_notes = with_notify(function()
+      u:runMode("echo hi", "bufname", mode)
+    end)
+    check(
+      #plugin_notes > 0 and plugin_notes[1].level == vim.log.levels.ERROR,
+      "mode '" .. mode .. "' errors when its plugin is missing"
+    )
+  end
+
+  -- With snacks installed (stubbed), the command is forwarded to its terminal.
+  local opened
+  package.loaded["snacks.terminal"] = {
+    open = function(cmd, opts)
+      opened = { cmd = cmd, opts = opts }
+    end,
+  }
+  u:runMode("echo snack", "bufname", "snacks")
+  package.loaded["snacks.terminal"] = nil
+  eq(opened and opened.cmd, "echo snack", "snacks mode forwards the command to Snacks.terminal.open")
+  eq(opened and opened.opts.auto_close, false, "snacks terminal stays open after the command exits")
+end
+
+-- ---------------------------------------------------------------------------
+-- Quickfix mode (dispatch-style error handling)
+-- ---------------------------------------------------------------------------
+print("quickfix mode")
+do
+  local u = Utils.new(Options.get())
+  local dir = tmpdir()
+
+  -- Errors in the output land in the quickfix list and are parsed with the
+  -- buffer-local errorformat.
+  vim.cmd("edit " .. dir .. "/qf_src.py")
+  vim.bo.errorformat = "%f:%l: %m"
+  u:runMode("printf 'qf_src.py:3: boom\\n'; exit 1", "qf", "quickfix")
+  local ok = vim.wait(3000, function()
+    return vim.fn.getqflist({ title = 1 }).title:find("qf_src", 1, true) ~= nil
+  end)
+  check(ok, "quickfix list is populated after the command exits")
+  local items = vim.fn.getqflist()
+  eq(#items, 1, "one entry parsed from the error output")
+  eq(items[1] and items[1].lnum, 3, "line number is parsed via errorformat")
+  contains(items[1] and items[1].text, "boom", "error text is kept")
+  eq(items[1] and items[1].valid, 1, "the entry is a valid error")
+  check(vim.fn.getwininfo and #vim.tbl_filter(function(w)
+    return w.quickfix == 1
+  end, vim.fn.getwininfo()) > 0, "quickfix window opens when there are errors")
+  vim.cmd("cclose")
+
+  -- Real compiler errors: gcc output parsed with gcc's errorformat.
+  if vim.fn.executable("gcc") == 1 then
+    local cdir = tmpdir()
+    write_file(cdir .. "/bad.c", {
+      "int main(void) {",
+      "  return x;", -- 'x' is undeclared: error at line 2
+      "}",
+    })
+    vim.cmd("edit " .. cdir .. "/bad.c")
+    vim.bo.errorformat = "%f:%l:%c: %t%*[^:]: %m"
+    u:runMode("cd " .. cdir .. " && gcc bad.c -o bad", "qf", "quickfix")
+    local compiled = vim.wait(5000, function()
+      return vim.fn.getqflist({ title = 1 }).title:find("gcc bad.c", 1, true) ~= nil
+    end)
+    check(compiled, "quickfix list is populated from a real gcc run")
+    local errors = vim.tbl_filter(function(i)
+      return i.valid == 1
+    end, vim.fn.getqflist())
+    check(#errors > 0, "gcc errors produce valid quickfix entries")
+    local first = errors[1] or {}
+    eq(first.lnum, 2, "gcc error points at the offending line")
+    eq(vim.fn.bufname(first.bufnr or -1):find("bad.c", 1, true) ~= nil, true, "gcc error points at the source file")
+    check(first.col > 0, "gcc error carries a column")
+    contains(first.text, "x", "gcc error message mentions the undeclared symbol")
+    vim.cmd("cclose")
+  else
+    print("  SKIP: gcc not available, real-compiler quickfix test skipped")
+  end
+
+  -- Relative paths in the output (lualatex's "./main.tex:3: ...") resolve
+  -- against the dir of the command's leading `cd`, not Neovim's cwd.
+  local texroot = tmpdir()
+  write_file(texroot .. "/main.tex", { "\\documentclass{article}" })
+  vim.cmd("edit " .. texroot .. "/main.tex")
+  vim.bo.errorformat = "%f:%l: %m"
+  local nvim_cwd = vim.fn.getcwd()
+  u:runMode("cd '" .. texroot .. "' && printf './main.tex:3: Undefined control sequence.\\n'; exit 12", "qf", "quickfix")
+  local resolved = vim.wait(3000, function()
+    return vim.fn.getqflist({ title = 1 }).title:find(texroot, 1, true) ~= nil
+  end)
+  check(resolved, "quickfix list is populated for cd-prefixed commands")
+  local rel_items = vim.tbl_filter(function(i)
+    return i.valid == 1
+  end, vim.fn.getqflist())
+  eq(#rel_items, 1, "relative path from the command's dir yields a valid entry")
+  contains(vim.fn.fnamemodify(vim.fn.bufname(rel_items[1] and rel_items[1].bufnr or -1), ":p"), texroot, "entry resolves inside the command's dir")
+  eq(vim.fn.getcwd(), nvim_cwd, "neovim's cwd is restored after parsing")
+  vim.cmd("cclose")
+
+  -- A failing command with no parseable errors warns instead of opening
+  -- the quickfix window with noise (e.g. latexmk failing while up-to-date).
+  vim.cmd("edit " .. dir .. "/qf_noise.py")
+  vim.bo.errorformat = "%f:%l: %m"
+  local warn_captured = {}
+  local orig_warn_notify = vim.notify
+  vim.notify = function(msg, level)
+    warn_captured[#warn_captured + 1] = { msg = msg, level = level }
+  end
+  u:runMode("printf 'Latexmk: Nothing to do\\n'; exit 12", "qf", "quickfix")
+  local warned = vim.wait(3000, function()
+    return #warn_captured > 0
+  end)
+  vim.notify = orig_warn_notify
+  check(warned and warn_captured[1].level == vim.log.levels.WARN, "unparseable failure warns instead of opening quickfix")
+  contains(warn_captured[1] and warn_captured[1].msg, "exit 12", "the warning reports the exit code")
+  eq(#vim.tbl_filter(function(w)
+    return w.quickfix == 1
+  end, vim.fn.getwininfo()), 0, "quickfix window stays closed on unparseable failure")
+
+  -- A clean run notifies success and does not open the quickfix window.
+  vim.cmd("edit " .. dir .. "/qf_ok.py")
+  vim.bo.errorformat = "%f:%l: %m"
+  local captured = {}
+  local orig_notify = vim.notify
+  vim.notify = function(msg, level)
+    captured[#captured + 1] = { msg = msg, level = level }
+  end
+  u:runMode("printf 'all good\\n'", "qf", "quickfix")
+  local notified = vim.wait(3000, function()
+    return #captured > 0
+  end)
+  vim.notify = orig_notify
+  check(notified and captured[1].level == vim.log.levels.INFO, "successful run notifies instead of opening quickfix")
+  eq(#vim.tbl_filter(function(w)
+    return w.quickfix == 1
+  end, vim.fn.getwininfo()), 0, "quickfix window stays closed on success")
 end
 
 -- ---------------------------------------------------------------------------
@@ -355,6 +493,39 @@ do
   local orphan = Project.new(Utils.new(Options.get()))
   orphan:setRootPath()
   eq(orphan.context, nil, "no context without markers or config")
+end
+
+-- ---------------------------------------------------------------------------
+-- Project watch (re-run on write)
+-- ---------------------------------------------------------------------------
+print("project watch")
+do
+  local root = tmpdir()
+  write_file(root .. "/.crproject.json", { '{ "name": "watched", "command": "echo w", "watch": true }' })
+  vim.cmd("silent edit " .. root .. "/main.txt")
+
+  local u = Utils.new(Options.get())
+  local runs = 0
+  u.runMode = function()
+    runs = runs + 1
+  end
+
+  eq(Project.new(u):run(nil, false), true, "watched project runs")
+  eq(runs, 1, "first run executes the command")
+
+  vim.cmd("silent write")
+  eq(runs, 2, "a write under the root re-runs the command")
+
+  vim.cmd("edit " .. tmpdir() .. "/outside.txt")
+  vim.cmd("silent write")
+  eq(runs, 2, "writes outside the root do not re-run")
+
+  -- Running the project again toggles the watcher off without re-running.
+  vim.cmd("silent edit " .. root .. "/main.txt")
+  eq(Project.new(u):run(nil, false), true, "toggle-stop still reports success")
+  eq(runs, 2, "toggle-stop does not execute the command")
+  vim.cmd("silent write")
+  eq(runs, 2, "after stopping, writes no longer re-run")
 end
 
 -- ---------------------------------------------------------------------------

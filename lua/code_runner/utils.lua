@@ -48,6 +48,18 @@ function Utils:ctor(opt)
         notify.error("The 'toggleterm' plugin is not installed.", "Toggleterm")
       end
     end,
+    quickfix = function(command)
+      self:quickfix(command)
+    end,
+    snacks = function(command)
+      local ok, snacks_terminal = pcall(require, "snacks.terminal")
+      if ok then
+        -- auto_close=false keeps the output visible after the command exits.
+        snacks_terminal.open(command, { auto_close = false })
+      else
+        notify.error("The 'folke/snacks.nvim' plugin is not installed.", "Snacks")
+      end
+    end,
     vimux = function(command)
       if vim.fn.exists(":VimuxRunCommand") == 2 then
         vim.fn.VimuxRunCommand(command)
@@ -162,6 +174,67 @@ function Utils:betterTerm(command)
     self.btm_number = self.opt.better_term.number or (self.btm_number + 1)
     betterTerm.send(command, self.btm_number, { clean = self.opt.better_term.clean })
   end
+end
+
+-- Dispatch-style runner: execute the command without a terminal, parse the
+-- output with 'errorformat' and send it to the quickfix list. stdout/stderr
+-- arrive separated and unrendered (no PTY), which is what makes error
+-- parsing reliable — see https://github.com/neovim/neovim/issues/23660.
+function Utils:quickfix(command)
+  if vim.fn.has("nvim-0.10") == 0 then
+    notify.error("The quickfix mode requires Neovim >= 0.10 (vim.system).", "Quickfix")
+    return
+  end
+
+  -- Capture the buffer-local errorformat now: :compiler and ftplugins set it
+  -- per language, and the callback runs after the user may switch buffers.
+  local efm = vim.bo.errorformat ~= "" and vim.bo.errorformat or vim.o.errorformat
+
+  -- ponytail: single shellcmdflag word; covers sh/zsh/fish, not powershell.
+  -- Compilers print paths relative to the dir the command runs in (e.g.
+  -- lualatex's "./main.tex:3: ..."), but that `cd` happens in the subshell.
+  -- Parse it from the command so entries resolve against the right dir.
+  local run_dir = command:match("^cd%s+'([^']-)'%s*&&") or command:match("^cd%s+([^&%s]+)%s*&&")
+
+  vim.system({ vim.o.shell, vim.o.shellcmdflag, command }, { text = true }, function(out)
+    vim.schedule(function()
+      local output = (out.stdout or "") .. (out.stderr or "")
+      local lines = vim.split(output, "\n", { trimempty = true })
+
+      -- setqflist resolves relative filenames against the cwd at parse time,
+      -- so hop to the command's dir while parsing and hop right back.
+      local prev_dir
+      if run_dir and vim.fn.isdirectory(run_dir) == 1 then
+        prev_dir = vim.fn.chdir(run_dir)
+      end
+      vim.fn.setqflist({}, " ", { title = command, lines = lines, efm = efm })
+      if prev_dir and prev_dir ~= "" then
+        vim.fn.chdir(prev_dir)
+      end
+
+      local has_errors = false
+      for _, item in ipairs(vim.fn.getqflist()) do
+        if item.valid == 1 then
+          has_errors = true
+          break
+        end
+      end
+
+      -- Only auto-open on parseable errors. A nonzero exit alone is not a
+      -- reliable signal: e.g. latexmk keeps failing while up-to-date after a
+      -- past error, printing only noise the errorformat can't use.
+      if has_errors then
+        vim.cmd("copen")
+      elseif out.code ~= 0 then
+        notify.warn(
+          ("Command failed (exit %d) with no parseable errors. Use :copen to inspect the output."):format(out.code),
+          "Quickfix"
+        )
+      else
+        notify.info("Success: " .. command, "Quickfix")
+      end
+    end)
+  end)
 end
 
 function Utils:runMode(command, bufname, mode)

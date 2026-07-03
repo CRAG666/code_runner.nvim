@@ -1,5 +1,5 @@
 local options = {
-  -- choose default mode (valid term, tab, float, better_term, toggle, vimux)
+  -- choose default mode (valid term, tab, float, better_term, toggleterm, vimux, snacks, quickfix)
   mode = "term",
   -- add hot reload (Experimental)
   hot_reload = false,
