@@ -160,6 +160,8 @@ function Utils:execute(command, bufname, prefix)
   if prefix ~= "tabnew" then
     vim.bo.buflisted = false
   end
+  
+  vim.api.nvim_win_set_cursor(win, { vim.api.nvim_buf_line_count(buf), 0 })
 
   if self.opt.focus then
     vim.cmd(self.opt.insert_prefix)
