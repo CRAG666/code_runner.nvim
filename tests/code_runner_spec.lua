@@ -137,6 +137,23 @@ do
 
   contains(u:replaceVars("python $fileName", path), "'bar.py'", "$fileName expands to the escaped basename")
   contains(u:replaceVars("run $fileNameWithoutExt", path), "'bar'", "$fileNameWithoutExt drops the extension")
+  local file_without_ext = vim.fn.shellescape(vim.fn.fnamemodify(path, ":p:r"))
+  eq(
+    u:replaceVars("run $dir/$fileNameWithoutExt", path),
+    "run " .. file_without_ext,
+    "the slash-separated executable path is escaped as one argument"
+  )
+  eq(
+    u:replaceVars([[run $dir\$fileNameWithoutExt]], path),
+    "run " .. file_without_ext,
+    "the backslash-separated executable path is escaped as one argument"
+  )
+  local percent_path = "/home/100% real/main.c"
+  eq(
+    u:replaceVars("run $dir/$fileNameWithoutExt", percent_path),
+    "run " .. vim.fn.shellescape(vim.fn.fnamemodify(percent_path, ":p:r")),
+    "percent signs in the executable path are preserved"
+  )
   contains(u:replaceVars("cd $dir", path), "'/home/foo'", "$dir expands to the escaped parent dir")
   contains(u:replaceVars("cat $file", path), "'/home/foo/bar.py'", "$file expands to the escaped full path")
   eq(u:replaceVars("end$end here", path), "end here", "$end expands to empty string")
@@ -167,6 +184,14 @@ do
     nil,
     "function command returning a non string/table yields nil"
   )
+
+  for _, filetype in ipairs({ "c", "cpp", "rust" }) do
+    contains(
+      u:getCommand(filetype, path),
+      file_without_ext,
+      "default " .. filetype .. " runner escapes the executable path as one shell argument"
+    )
+  end
 end
 
 -- ---------------------------------------------------------------------------
