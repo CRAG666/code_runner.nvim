@@ -97,6 +97,17 @@ function Utils:replaceVars(command, path)
     dir = vim.fn.shellescape(vim.fn.fnamemodify(path, ":p:h")),
   }
 
+  -- Compiled-language commands combine these variables into one executable path.
+  -- Escape that complete path first; escaping each fragment separately
+  -- produces '"dir"/"name"', which cmd.exe treats as two tokens.
+  local file_without_ext = vim.fn.shellescape(vim.fn.fnamemodify(path, ":p:r"))
+  command = command:gsub("%$dir/%$fileNameWithoutExt", function()
+    return file_without_ext
+  end)
+  command = command:gsub("%$dir\\%$fileNameWithoutExt", function()
+    return file_without_ext
+  end)
+
   command = command:gsub("%$(%w+)", function(var)
     if var == "fileNameWithoutExt" then
       return file_info.nameWithoutExt
